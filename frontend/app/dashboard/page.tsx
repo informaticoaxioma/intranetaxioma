@@ -23,8 +23,6 @@ import Link from "next/link"
 const stats = [
   { label: "Documentos", value: "128", icon: DescriptionIcon, change: "+12 este mes" },
   { label: "Eventos", value: "8", icon: CalendarTodayIcon, change: "Esta semana" },
-  { label: "Empleados", value: "524", icon: GroupIcon, change: "+3 nuevos" },
-  { label: "Mensajes", value: "24", icon: ChatBubbleOutlineIcon, change: "Sin leer" },
 ]
 
 const recentDocuments = [
@@ -40,12 +38,15 @@ const upcomingEvents = [
   { name: "Town Hall mensual", time: "11:00 AM", date: "Viernes" },
 ]
 
-const quickActions = [
-  { label: "Solicitar vacaciones", href: "/dashboard/requests" },
-  { label: "Ver nómina", href: "/dashboard/payroll" },
-  { label: "Reportar incidencia", href: "/dashboard/support" },
-  { label: "Reservar sala", href: "/dashboard/rooms" },
-]
+const corporateNews = [
+  { title: "Nueva política interna", date: "Hace 2 días" },
+  { title: "Actualización de sistema ERP", date: "Hace 5 días" },
+];
+
+const employee = {
+  name: "Juan Diaz",
+  position: "Backend Engineer",
+};
 
 export default function DashboardPage() {
   return (
@@ -69,7 +70,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-2">
         {stats.map((stat) => {
           const Icon = stat.icon
           return (
@@ -99,71 +100,38 @@ export default function DashboardPage() {
       {/* Main content grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent documents */}
-        <Card   sx={{ borderRadius: 4 }} className="lg:col-span-2 ">
-            <CardHeader 
-                  title={
-                    <Typography
-                      variant="h5"
-                      sx={{
-                        fontWeight: "bold",
-                        fontSize: "1.5rem",
-                        color: "var(--foreground)",
-                      }}
-                    >
-                      Documentos Recientes
-                    </Typography>
-                  }
-              subheader="Últimas actualizaciones en documentos corporativos"
-              action={
-                <Link href="/dashboard/documents" passHref>
-                  <Button
-                    size="medium"
-                    endIcon={<ArrowForwardIcon />}
-                    sx={{
-                      textTransform: "none",
-                      color: "#6a1936",
-                      backgroundColor: "white",
-                      borderRadius: 2,
-                      fontWeight: "600",
-                      "&:hover": {
-                        backgroundColor: "#6a1936",
-                        color: "white",
-                        borderRadius: 2,
-                      },
-                    }}
-                  >
-                    Ver todos
-                  </Button>
-                </Link>
-              }
-            />
+        <Card sx={{ borderRadius: 4 }}>
+          <CardHeader
+            title={
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: "1.5rem",
+                  color: "var(--foreground)",
+                }}
+              >
+                Noticias Corporativas
+              </Typography>
+            }
+            subheader="Últimas novedades de la empresa"
+          />
           <CardContent>
             <div className="space-y-4">
-              {recentDocuments.map((doc, index) => (
+              {corporateNews.map((news, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-4 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
+                  className="p-4 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <DescriptionIcon className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground">{doc.name}</p>
-                      <p className="text-sm text-muted-foreground">{doc.date}</p>
-                    </div>
-                  </div>
-                  <span className="px-3 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary">
-                    {doc.status}
-                  </span>
+                  <p className="font-medium text-foreground">{news.title}</p>
+                  <p className="text-sm text-muted-foreground">{news.date}</p>
                 </div>
               ))}
             </div>
           </CardContent>
         </Card>
 
-        {/* Upcoming events */}
-        <Card  sx={{ borderRadius: 4 }} className="">
+                <Card  sx={{ borderRadius: 4 }} className="">
                       <CardHeader 
                   title={
                     <Typography
@@ -224,6 +192,54 @@ export default function DashboardPage() {
             </CardActions>
           </CardContent>
         </Card>
+
+        {/* Card 2: Empleado del Mes */}
+        <Card sx={{ borderRadius: 4 }}>
+          <CardHeader
+            title={
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: "1.5rem",
+                  color: "var(--foreground)",
+                }}
+              >
+                Empleado del Mes
+              </Typography>
+            }
+            subheader="Reconocimiento destacado"
+          />
+          <CardContent>
+            <div className="flex flex-col items-center text-center gap-4">
+              
+              {/* Avatar */}
+              <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+                {/* Puedes reemplazar por <Avatar src="..." /> */}
+                <span className="text-2xl font-bold text-primary">
+                  {employee.name.charAt(0)}
+                </span>
+              </div>
+
+              {/* Info */}
+              <div>
+                <p className="font-semibold text-lg text-foreground">
+                  {employee.name}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {employee.position}
+                </p>
+              </div>
+
+              {/* Badge */}
+              <span className="px-3 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary">
+                Destacado
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Upcoming events */}
       </div>
 
 

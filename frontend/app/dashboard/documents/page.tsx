@@ -132,11 +132,17 @@ function EyeIcon() {
 // Datos de carpetas
 const carpetas = [
   { id: 1, nombre: "Políticas y Normativas", color: "#722F37", cantidad: 24 },
-  { id: 2, nombre: "Recursos Humanos", color: "#4A1C23", cantidad: 18 },
+  { id: 2, nombre: "Contabilidad y RRHH", color: "#4A1C23", cantidad: 18 },
   { id: 3, nombre: "Manuales y Guías", color: "#8B4513", cantidad: 32 },
   { id: 4, nombre: "Plantillas", color: "#5D6D7E", cantidad: 45 },
   { id: 5, nombre: "Formación", color: "#1E88E5", cantidad: 15 },
-  { id: 6, nombre: "Comunicados", color: "#43A047", cantidad: 28 },
+  { id: 6, nombre: "Concesiones", color: "#43A047", cantidad: 30 },
+  { id: 7, nombre: "Asesorías", color: "#FFDE21", cantidad: 8 },
+  { id: 8, nombre: "Flota", color: "#650099", cantidad: 15 },
+  { id: 9, nombre: "Informática", color: "#FF0000", cantidad: 30 },
+
+
+
 ]
 
 // Datos de documentos
@@ -148,7 +154,7 @@ const documentos = [
     categoria: "Políticas y Normativas",
     tamaño: "2.4 MB",
     fechaModificacion: "15 Dic 2025",
-    autor: "Recursos Humanos",
+    autor: "Contabilidad y RRHH",
     favorito: true,
     descargas: 245,
   },
@@ -156,7 +162,7 @@ const documentos = [
     id: 2,
     nombre: "Manual de Onboarding 2025",
     tipo: "pdf",
-    categoria: "Recursos Humanos",
+    categoria: "Contabilidad y RRHH",
     tamaño: "5.8 MB",
     fechaModificacion: "10 Dic 2025",
     autor: "RRHH",
@@ -211,7 +217,7 @@ const documentos = [
     id: 7,
     nombre: "Calendario de Vacaciones 2026",
     tipo: "xlsx",
-    categoria: "Recursos Humanos",
+    categoria: "Contabilidad y RRHH",
     tamaño: "245 KB",
     fechaModificacion: "25 Nov 2025",
     autor: "RRHH",
@@ -266,7 +272,7 @@ const documentos = [
     id: 12,
     nombre: "Comunicado Fin de Año",
     tipo: "docx",
-    categoria: "Comunicados",
+    categoria: "Concesiones",
     tamaño: "520 KB",
     fechaModificacion: "10 Nov 2025",
     autor: "Dirección",
@@ -278,11 +284,15 @@ const documentos = [
 const categorias = [
   "Todos",
   "Políticas y Normativas",
-  "Recursos Humanos",
+  "Contabilidad y RRHH",
   "Manuales y Guías",
   "Plantillas",
   "Formación",
-  "Comunicados",
+  "Concesiones",
+  "Asesorías",
+  "Flota",
+  "Informática",
+
 ]
 
 function DocumentosContent() {
