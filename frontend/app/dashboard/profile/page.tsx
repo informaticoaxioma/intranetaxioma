@@ -32,14 +32,14 @@ import {
 
 
 const userInfo = {
-  name: "Juan Díaz García",
-  role: "Desarrollador Senior",
+  name: "Carolina Perez",
+  role: "Coordinadora de Contratos",
   department: "Tecnología",
-  email: "juan.diaz@empresa.com",
+  email: "carolina.perez@empresa.com",
   phone: "+34 612 345 678",
   location: "Madrid, España",
   startDate: "15 de Marzo, 2020",
-  manager: "María López",
+  manager: "Luis Maluenda",
   employeeId: "EMP-2020-0342",
   contractUrl: "/public/DocumentoActa.pdf", // o URL firmada desde backend
 }

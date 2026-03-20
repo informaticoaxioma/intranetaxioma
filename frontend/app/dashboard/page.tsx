@@ -44,8 +44,8 @@ const corporateNews = [
 ];
 
 const employee = {
-  name: "Juan Diaz",
-  position: "Backend Engineer",
+  name: "Carolina Perez",
+  position: "Coordinadora de Contratos",
 };
 
 export default function DashboardPage() {
@@ -54,7 +54,7 @@ export default function DashboardPage() {
       {/* Welcome section */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Bienvenido Administrador Juan.  </h1>
+          <h1 className="text-2xl font-bold text-foreground">Bienvenida Carolina.  </h1>
           <p className="text-muted-foreground">Aquí tienes un resumen de lo que está pasando en la empresa</p>
         </div>
         <div className="text-right">

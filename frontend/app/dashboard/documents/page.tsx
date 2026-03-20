@@ -344,7 +344,7 @@ function DocumentosContent() {
             Accede a políticas, manuales, plantillas y más para facilitar tu trabajo diario.
           </Typography>
         </Box>
-
+        
         <Button
           variant="contained"
           component={Link}
