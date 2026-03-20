@@ -12,7 +12,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Grid,
   Avatar,
   Divider,
   Alert,
@@ -30,6 +29,7 @@ import {
   ListItemText,
   ListItemIcon,
 } from "@mui/material"
+import Grid from "@mui/material/GridLegacy";
 import { ThemeProvider } from "@mui/material/styles"
 import { muiTheme } from "@/lib/mui-theme"
 import Link from "next/link"
@@ -48,7 +48,7 @@ import {
   IconClock,
   IconSettings,
   IconTrash2,
-} from "../../../../components/icons"
+} from "@/app/components/icons"
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -294,8 +294,7 @@ export default function EditarUsuarioPage() {
           <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)} sx={{ borderBottom: 1, borderColor: "divider", px: 2 }}>
             <Tab icon={<IconUser className="w-4 h-4" />} iconPosition="start" label="Información Personal" />
             <Tab icon={<IconShield className="w-4 h-4" />} iconPosition="start" label="Seguridad" />
-            <Tab icon={<IconClock className="w-4 h-4" />} iconPosition="start" label="Actividad" />
-            <Tab icon={<IconSettings className="w-4 h-4" />} iconPosition="start" label="Configuración" />
+
           </Tabs>
 
           {/* Tab 0: Información Personal */}
@@ -510,7 +509,6 @@ export default function EditarUsuarioPage() {
                     <InputLabel>Rol de Usuario</InputLabel>
                     <Select value={formData.rol} label="Rol de Usuario" onChange={(e) => handleChange("rol", e.target.value)}>
                       <MenuItem value="admin">Administrador</MenuItem>
-                      <MenuItem value="editor">Editor</MenuItem>
                       <MenuItem value="usuario">Usuario</MenuItem>
                     </Select>
                   </FormControl>
@@ -529,66 +527,7 @@ export default function EditarUsuarioPage() {
             </Box>
           </TabPanel>
 
-          {/* Tab 2: Actividad */}
-          <TabPanel value={tabValue} index={2}>
-            <Box sx={{ px: 3 }}>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
-                Registro de Actividad
-              </Typography>
-              <List>
-                {activityLog.map((log, index) => (
-                  <ListItem key={index} divider={index < activityLog.length - 1}>
-                    <ListItemIcon>
-                      <IconClock className="w-5 h-5 text-gray-400" />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={log.accion}
-                      secondary={`${log.fecha} | IP: ${log.ip}`}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </Box>
-          </TabPanel>
 
-          {/* Tab 3: Configuración */}
-          <TabPanel value={tabValue} index={3}>
-            <Box sx={{ px: 3 }}>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
-                Preferencias de Notificaciones
-              </Typography>
-              <Box sx={{ maxWidth: 600 }}>
-                <FormControlLabel
-                  control={<Switch defaultChecked color="primary" />}
-                  label="Recibir notificaciones por correo electrónico"
-                />
-                <FormControlLabel
-                  control={<Switch defaultChecked color="primary" />}
-                  label="Notificaciones de nuevos documentos"
-                />
-                <FormControlLabel
-                  control={<Switch defaultChecked color="primary" />}
-                  label="Recordatorios de eventos"
-                />
-                <FormControlLabel
-                  control={<Switch color="primary" />}
-                  label="Resumen semanal de actividad"
-                />
-              </Box>
-
-              <Divider sx={{ my: 4 }} />
-
-              <Typography variant="h6" fontWeight={600} gutterBottom color="error">
-                Zona de Peligro
-              </Typography>
-              <Alert severity="warning" sx={{ mb: 2, maxWidth: 600 }}>
-                Las siguientes acciones son irreversibles. Proceda con precaución.
-              </Alert>
-              <Button variant="outlined" color="error" startIcon={<IconTrash2 className="w-4 h-4" />}>
-                Eliminar Cuenta Permanentemente
-              </Button>
-            </Box>
-          </TabPanel>
         </Paper>
 
         {/* Snackbar */}

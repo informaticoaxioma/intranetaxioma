@@ -60,13 +60,18 @@ export default function ProfilePage() {
     const [tab, setTab] = useState("info")
 
   return (
+    <>
     <Stack spacing={4}>
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Mi Perfil</h1>
-          <p className="text-muted-foreground">Gestiona tu información personal y profesional</p>
-        </div>
+        <Box>
+          <Typography variant="h4" sx={{ color: "#4A1C23", fontWeight: 700 }} >
+            Gestión de Perfil
+          </Typography>
+          <Typography variant="body2" sx={{ mt: 0.5 }}>
+            Gestiona tu perfil y mantén tu información actualizada para una mejor experiencia en la intranet corporativa
+          </Typography>
+        </Box>
         <Button
           variant={isEditing ? "contained" : "outlined"}
           startIcon={<EditIcon />}
@@ -632,7 +637,7 @@ export default function ProfilePage() {
         </Card>
       )}
     </Stack>
-
+</>
   )
 }
 

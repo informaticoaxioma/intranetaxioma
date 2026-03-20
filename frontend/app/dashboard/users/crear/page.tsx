@@ -11,7 +11,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Grid,
+
   Avatar,
   Divider,
   Alert,
@@ -25,6 +25,7 @@ import {
   Step,
   StepLabel,
 } from "@mui/material"
+import Grid from "@mui/material/GridLegacy";
 import { ThemeProvider } from "@mui/material/styles"
 import { muiTheme } from "@/lib/mui-theme"
 import Link from "next/link"
@@ -39,7 +40,7 @@ import {
   IconEyeOff,
   IconCamera,
   IconCheck,
-} from "../../../components/icons"
+} from "@/app/components/icons"
 
 const steps = ["Información Personal", "Información Laboral", "Acceso y Permisos"]
 

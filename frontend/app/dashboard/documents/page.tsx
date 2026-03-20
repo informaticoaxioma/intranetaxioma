@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, Suspense } from "react"
-import { useSearchParams } from "next/navigation"
 import Box from "@mui/material/Box"
 import Card from "@mui/material/Card"
 import CardContent from "@mui/material/CardContent"
@@ -25,7 +24,9 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup"
 import Breadcrumbs from "@mui/material/Breadcrumbs"
 import Link from "@mui/material/Link"
 import Tooltip from "@mui/material/Tooltip"
+import Button from "@mui/material/Button"
 import { MuiProvider } from "@/app/components/mui-provider"
+import { IconPlus } from "@/app/components/icons"
 
 // Iconos SVG inline para evitar problemas con lucide-react
 function SearchIcon() {
@@ -319,19 +320,48 @@ function DocumentosContent() {
   return (
     <Box sx={{ maxWidth: 1400, mx: "auto" }}>
       {/* Header */}
-      <Box sx={{ mb: 4 }}>
         <Breadcrumbs sx={{ mb: 2 }}>
           <Link underline="hover" color="inherit" href="/dashboard">
             Inicio
           </Link>
           <Typography color="text.primary">Documentos</Typography>
         </Breadcrumbs>
-        <Typography variant="h4" sx={{ color: "primary.dark", mb: 1, fontWeight: 600 }}>
-          Centro de Documentos
-        </Typography>
-        <Typography variant="body1" sx={{ color: "text.secondary" }}>
-          Accede a todos los documentos, políticas, manuales y recursos de la empresa
-        </Typography>
+      <Box
+        sx={{
+          mb: 4,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 2,
+        }}
+      >
+        <Box>
+          <Typography variant="h4" sx={{ color: "primary.dark", mb: 1 }}>
+            Centro de Documentos
+          </Typography>
+          <Typography variant="body1" sx={{ color: "text.secondary" }}>
+            Accede a políticas, manuales, plantillas y más para facilitar tu trabajo diario.
+          </Typography>
+        </Box>
+
+        <Button
+          variant="contained"
+          component={Link}
+          href="/dashboard/documents/crear"
+          sx={{
+            textTransform: "none",
+            backgroundColor: "#6a1936",
+            borderRadius: 2,
+            fontSize: "1.25rem",
+            fontWeight: 600,
+            "&:hover": {
+              backgroundColor: "#4a1025",
+            },
+          }}
+        >
+          <IconPlus className="w-5 h-5 mr-1" /> Subir Documento
+        </Button>
       </Box>
 
       {/* Carpetas */}
