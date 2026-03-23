@@ -29,6 +29,7 @@ import MenuItem from "@mui/material/MenuItem"
 
 
 import { MuiProvider } from "@/app/components/mui-provider"
+import { resume } from "react-dom/server"
 
 const noticias = [
   {
@@ -117,6 +118,7 @@ function NoticiasContent() {
 
 const [form, setForm] = useState({
   titulo: "",
+  resumen: "",
   texto: "",
   categoria: "",
   autor: "",
@@ -127,6 +129,7 @@ const handleCreateNews = async () => {
   const data = new FormData();
 
   data.append("titulo", form.titulo);
+  data.append("resumen", form.resumen);
   data.append("texto", form.texto);
   data.append("categoria", form.categoria);
   data.append("autor", form.autor || "Desconocido");
@@ -179,7 +182,7 @@ const handleCreateNews = async () => {
           startIcon={<AddIcon />}
           onClick={() => setOpenModal(true)}
           component={Link}
-          href="/dashboard/users/crear"
+          href="#"
           sx={{
             textTransform: "none",
             backgroundColor: "#6a1936",
@@ -329,6 +332,15 @@ const handleCreateNews = async () => {
             fullWidth
             value={form.titulo}
             onChange={(e) => setForm({ ...form, titulo: e.target.value })}
+          />
+
+          <TextField
+            label="Resumen"
+            fullWidth
+            multiline
+            rows={4}
+            value={form.resumen}
+            onChange={(e) => setForm({ ...form, resumen: e.target.value })}
           />
 
           <TextField

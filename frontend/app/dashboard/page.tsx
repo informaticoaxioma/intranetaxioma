@@ -25,12 +25,6 @@ const stats = [
   { label: "Eventos", value: "8", icon: CalendarTodayIcon, change: "Esta semana" },
 ]
 
-const recentDocuments = [
-  { name: "Política de teletrabajo 2025", date: "Hace 2 horas", status: "Nuevo" },
-  { name: "Manual de onboarding", date: "Hace 1 día", status: "Actualizado" },
-  { name: "Reglamento interno", date: "Hace 3 días", status: "Revisado" },
-  { name: "Beneficios corporativos", date: "Hace 1 semana", status: "Nuevo" },
-]
 
 const upcomingEvents = [
   { name: "Reunión de equipo", time: "10:00 AM", date: "Hoy" },
@@ -39,7 +33,8 @@ const upcomingEvents = [
 ]
 
 const corporateNews = [
-  { title: "Nueva política interna", date: "Hace 2 días" },
+  { title: "Plan de beneficios para empleados 2026", date: "Hace 2 días" },
+  { title: "Resultados financieros Q2", date: "Hace 4 días" },
   { title: "Actualización de sistema ERP", date: "Hace 5 días" },
 ];
 

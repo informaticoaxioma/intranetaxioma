@@ -223,7 +223,7 @@ export function LoginForm() {
                 Recuérdame
               </label>
               </div>
-              <a href="#" className="text-sm text-primary hover:text-accent transition-colors font-medium">
+              <a href="/auth/forgot-password" className="text-sm text-primary hover:text-accent transition-colors font-medium">
                 ¿Olvidaste tu contraseña?
               </a>
             </div>
@@ -285,10 +285,10 @@ export function LoginForm() {
           <div className="text-center space-y-3">
             <p className="text-sm text-muted-foreground">Contacta al departamento de TI para soporte técnico</p>
             <a
-              href="mailto:soporte@empresa.com"
+              href="mailto:informatico.inc@axioma.cl"
               className="inline-flex items-center gap-2 text-sm text-primary hover:text-accent transition-colors font-medium"
             >
-              soporte@empresa.com
+              informatico.inc@axioma.cl
             </a>
           </div>
 
