@@ -8,12 +8,16 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-FROM node:20 AS builder
+FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
+ENV NODE_ENV=production
 
-COPY . .
-RUN npm run build
+COPY --from=builder /app ./
+
+RUN npm install --omit=dev
+
+EXPOSE 3000
+
+CMD ["npx", "next", "start", "-H", "0.0.0.0", "-p", "3000"]

@@ -43,8 +43,6 @@ services:
     - "3000:3000"
     networks:
       - intranet
-    depends_on:
-      - backend
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=Host(`intranet.local`)"
