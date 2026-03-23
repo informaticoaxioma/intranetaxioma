@@ -41,9 +41,6 @@ services:
     container_name: intranet-frontend
     ports:
     - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
     networks:
       - intranet
     depends_on:
