@@ -52,8 +52,8 @@ export function LoginForm() {
                 </div>
             </div>
             <div>
-              <h2 className="text-xl font-bold tracking-tight">EMPRESA</h2>
-              <p className="text-sm text-primary-foreground/70">Corporación S.A.</p>
+              <h2 className="text-xl font-bold tracking-tight">Axioma</h2>
+              <p className="text-sm text-primary-foreground/70">Ingenieros y Consultores S.A.</p>
             </div>
           </div>
 
@@ -81,7 +81,7 @@ export function LoginForm() {
           </div>
 
           <p className="text-sm text-primary-foreground/60">
-            © 2025 Empresa Corporación S.A. Todos los derechos reservados.
+            © 2026 Axioma Ingenieros y Consultores S.A. Todos los derechos reservados.
           </p>
         </div>
 
@@ -99,8 +99,8 @@ export function LoginForm() {
                  <Business className="w-7 h-7 text-primary-foreground" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-foreground">EMPRESA</h2>
-              <p className="text-sm text-muted-foreground">Corporación S.A.</p>
+              <h2 className="text-xl font-bold text-foreground">Axioma</h2>
+              <p className="text-sm text-muted-foreground">Ingenieros y Consultores S.A.</p>
             </div>
           </div>
 
@@ -293,7 +293,7 @@ export function LoginForm() {
           </div>
 
           <p className="lg:hidden text-center text-xs text-muted-foreground pt-4">
-            © 2025 Empresa Corporación S.A. Todos los derechos reservados.
+            © 2026 Axioma Ingenieros y Consultores S.A. Todos los derechos reservados.
           </p>
         </div>
       </div>
