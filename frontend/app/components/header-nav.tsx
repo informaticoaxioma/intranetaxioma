@@ -143,10 +143,10 @@ export function HeaderNav() {
             {!isMobile && (
               <Box display="flex" flexDirection="column" textAlign="left">
                 <Typography sx={{ fontSize: 14, fontWeight: 600, color: "text.primary" }}>
-                  Juan Díaz
+                  Carolina Perez
                 </Typography>
                 <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
-                  Ingeniero Backend
+                  Coordinadora de Contratos
                 </Typography>
               </Box>
             )}
@@ -174,9 +174,6 @@ export function HeaderNav() {
               Ver Perfil
             </MenuItem>
 
-            <MenuItem component={Link} href="/dashboard/settings">
-              Configuración
-            </MenuItem>
 
             <Divider />
 

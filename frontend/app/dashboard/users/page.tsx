@@ -52,7 +52,7 @@ import {
   IconMail,
   IconPhone,
   IconDownload,
-} from "../../components/icons"
+} from "@/app/components/icons"
 
 interface User {
   id: number
@@ -266,10 +266,10 @@ export default function GestionUsuariosPage() {
         {/* Header */}
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}>
           <Box>
-            <Typography variant="h4" fontWeight="bold" color="primary">
+            <Typography variant="h4" sx={{ color: "#4A1C23", fontWeight: 700 }} >
               Gestión de Usuarios
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+            <Typography variant="body2" sx={{ mt: 0.5 }}>
               Administra los usuarios de la intranet corporativa
             </Typography>
           </Box>

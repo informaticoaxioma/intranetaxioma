@@ -21,11 +21,10 @@ import {
   ListItem,
   ListItemText,
   Divider,
-  Avatar,
-  AvatarGroup,
 } from "@mui/material"
 import { ThemeProvider } from "@mui/material/styles"
 import { muiTheme } from "@/lib/mui-theme"
+import { IconPlus, IconUserPlus } from "@/app/components/icons"
 
 
 interface Event {
@@ -213,6 +212,7 @@ export default function CalendarioPage() {
     .slice(0, 5)
 
   return (
+    <>
     <ThemeProvider theme={muiTheme}>
       <Box sx={{ p: 4, bgcolor: "#F5F1EB", minHeight: "100vh" }}>
         {/* Header */}
@@ -227,17 +227,22 @@ export default function CalendarioPage() {
           </Box>
           <Button
             variant="contained"
-            startIcon={/*<IconPlus className="w-5 h-5" />*/ null}
+            startIcon={<IconPlus className="w-5 h-5" /> }
             onClick={() => setIsNewEventOpen(true)}
-            sx={{
-              bgcolor: "#722F37",
-              "&:hover": { bgcolor: "#4A1C23" },
-              textTransform: "none",
-              px: 3,
-            }}
+          sx={{
+            textTransform: "none",
+            backgroundColor: "#6a1936",
+            borderRadius: 2,
+            fontSize: "1.25rem",
+            fontWeight: 600,
+            "&:hover": {
+              backgroundColor: "#4a1025",
+            },
+          }}
           >
             Nuevo Evento
           </Button>
+
         </Box>
 
         <Box sx={{ display: "flex", gap: 3 }}>
@@ -534,35 +539,6 @@ export default function CalendarioPage() {
                     </Box>
                   )}
 
-                  {selectedEvent.attendees && (
-                    <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
-                      
-                      <Box>
-                        <Typography sx={{ fontSize: "0.875rem", color: "#4A1C23", mb: 1 }}>
-                          Participantes
-                        </Typography>
-                        <AvatarGroup max={5}>
-                          {selectedEvent.attendees.map((attendee, i) => (
-                            <Avatar
-                              key={i}
-                              sx={{
-                                width: 32,
-                                height: 32,
-                                bgcolor: "#722F37",
-                                fontSize: "0.75rem",
-                              }}
-                            >
-                              {attendee.split(" ").map(n => n[0]).join("")}
-                            </Avatar>
-                          ))}
-                        </AvatarGroup>
-                        <Typography sx={{ fontSize: "0.75rem", color: "#999", mt: 1 }}>
-                          {selectedEvent.attendees.join(", ")}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  )}
-
                   {selectedEvent.description && (
                     <Box sx={{ mt: 1 }}>
                       <Typography sx={{ fontSize: "0.875rem", fontWeight: 500, color: "#4A1C23", mb: 0.5 }}>
@@ -668,20 +644,20 @@ export default function CalendarioPage() {
               </Box>
 
               <Box sx={{ display: "flex", gap: 2 }}>
-                <TextField
-                  label="Hora inicio"
-                  type="time"
-                  fullWidth
-                  InputLabelProps={{ shrink: true }}
-                  value={newEvent.startTime}
-                  onChange={(e) => setNewEvent({ ...newEvent, startTime: e.target.value })}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      "&.Mui-focused fieldset": { borderColor: "#722F37" },
-                    },
-                    "& .MuiInputLabel-root.Mui-focused": { color: "#722F37" },
-                  }}
-                />
+                  <TextField
+                    label="Hora inicio"
+                    type="time"
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
+                    value={newEvent.startTime}
+                    onChange={(e) => setNewEvent({ ...newEvent, startTime: e.target.value })}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        "&.Mui-focused fieldset": { borderColor: "#722F37" },
+                      },
+                      "& .MuiInputLabel-root.Mui-focused": { color: "#722F37" },
+                    }}
+                  />
                 <TextField
                   label="Hora fin"
                   type="time"
@@ -710,7 +686,6 @@ export default function CalendarioPage() {
                   "& .MuiInputLabel-root.Mui-focused": { color: "#722F37" },
                 }}
               />
-
               <TextField
                 label="Descripcion"
                 fullWidth
@@ -753,5 +728,6 @@ export default function CalendarioPage() {
         </Dialog>
       </Box>
     </ThemeProvider>
+    </>
   )
 }

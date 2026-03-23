@@ -69,13 +69,7 @@ export function SidebarNav() {
 
       {/* Bottom section */}
       <div className="p-4 border-t border-primary-foreground/10 space-y-1">
-        <Link
-          href="/dashboard/settings"
-          className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-primary-foreground/70 hover:bg-card/10 hover:text-primary-foreground transition-all duration-200"
-        >
-          <Settings className="w-5 h-5" />
-          Configuración
-        </Link>
+
         <Link
           href="/"
           className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-primary-foreground/70 hover:bg-card/10 hover:text-primary-foreground transition-all duration-200"

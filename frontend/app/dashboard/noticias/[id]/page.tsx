@@ -8,7 +8,6 @@ import CardMedia from "@mui/material/CardMedia"
 import Typography from "@mui/material/Typography"
 import Chip from "@mui/material/Chip"
 import Button from "@mui/material/Button"
-import Avatar from "@mui/material/Avatar"
 import Divider from "@mui/material/Divider"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
@@ -18,7 +17,14 @@ import Paper from "@mui/material/Paper"
 import IconButton from "@mui/material/IconButton"
 import { MuiProvider } from "@/app/components/mui-provider"
 import { useParams } from "next/navigation"
-
+import { useEffect, useState } from "react"
+import Grid from "@mui/material/GridLegacy";
+import FormControl from "@mui/material/FormControl"
+import InputLabel from "@mui/material/InputLabel"
+import Select from "@mui/material/Select"
+import MenuItem from "@mui/material/MenuItem"
+import { Avatar, TextField } from "@mui/material"
+import { resume } from "react-dom/server"
 
 const noticias: Record<
   string,
@@ -37,22 +43,22 @@ const noticias: Record<
 > = {
   "1": {
     id: 1,
-    titulo: "Nuevo plan de beneficios para empleados 2025",
+    titulo: "Nuevo plan de beneficios para empleados 2026",
     resumen:
       "La empresa anuncia mejoras significativas en el plan de beneficios incluyendo seguro médico ampliado, días de vacaciones adicionales y nuevos programas de bienestar.",
     contenido: [
-      "Nos complace anunciar el lanzamiento de nuestro nuevo plan de beneficios para el año 2025, el cual representa una mejora sustancial respecto a años anteriores y refleja nuestro compromiso continuo con el bienestar de todos nuestros colaboradores.",
+      "Nos complace anunciar el lanzamiento de nuestro nuevo plan de beneficios para el año 2026, el cual representa una mejora sustancial respecto a años anteriores y refleja nuestro compromiso continuo con el bienestar de todos nuestros colaboradores.",
       "Entre las principales novedades del plan se incluyen: ampliación de la cobertura del seguro médico para incluir tratamientos especializados y medicina preventiva, incremento de 5 días adicionales de vacaciones para todos los empleados con más de 2 años de antigüedad, y un nuevo programa de bienestar integral que incluye acceso a gimnasios, sesiones de mindfulness y apoyo psicológico.",
       "Adicionalmente, hemos implementado un programa de trabajo flexible que permite a los empleados elegir entre modalidad híbrida o remota según las necesidades de cada puesto. Este programa busca mejorar el balance entre la vida personal y laboral.",
       "El nuevo plan también contempla mejoras en el programa de desarrollo profesional, incluyendo presupuesto individual para capacitaciones, certificaciones y asistencia a conferencias del sector.",
       "Invitamos a todos los empleados a revisar los detalles completos del plan en el portal de Recursos Humanos y a participar en las sesiones informativas que se llevarán a cabo durante las próximas semanas.",
     ],
     categoria: "Recursos Humanos",
-    fecha: "5 Diciembre 2025",
+    fecha: "5 Abril 2026",
     imagen: "/corporate-benefits-employee-wellness-program.png",
-    autor: "María González",
-    autorCargo: "Directora de Recursos Humanos",
-    autorAvatar: "/professional-woman-portrait.png",
+    autor: "Carolina Perez",
+    autorCargo: "Coordinadora de Contratos",
+    autorAvatar: "/coordinadora_axioma_rrhh.jpeg",
   },
   "2": {
     id: 2,
@@ -60,14 +66,14 @@ const noticias: Record<
     resumen:
       "Los resultados financieros del Q3 muestran un crecimiento del 15% respecto al año anterior, superando las proyecciones iniciales.",
     contenido: [
-      "Es con gran satisfacción que compartimos los resultados financieros del tercer trimestre de 2025, los cuales han superado significativamente las expectativas establecidas a principios de año.",
+      "Es con gran satisfacción que compartimos los resultados financieros del tercer trimestre de 2026, los cuales han superado significativamente las expectativas establecidas a principios de año.",
       "Los ingresos totales alcanzaron los 45 millones de euros, representando un crecimiento del 15% respecto al mismo período del año anterior. Este resultado se debe principalmente al excelente desempeño de nuestras líneas de negocio principales y a la exitosa expansión en nuevos mercados.",
       "El margen operativo se situó en el 22%, mejorando 3 puntos porcentuales respecto al Q3 de 2024, gracias a las iniciativas de optimización de costos y mejora de eficiencia implementadas durante el año.",
       "Destacamos especialmente el crecimiento del 25% en el segmento de servicios digitales, que se ha convertido en uno de los principales motores de crecimiento de la compañía.",
       "De cara al cierre de año, mantenemos una perspectiva positiva y confiamos en alcanzar los objetivos anuales establecidos. Agradecemos a todo el equipo por su compromiso y dedicación que hacen posibles estos resultados.",
     ],
     categoria: "Finanzas",
-    fecha: "3 Diciembre 2025",
+    fecha: "3 Diciembre 2026",
     imagen: "/business-growth-financial-chart-success.png",
     autor: "Carlos Ramírez",
     autorCargo: "Director Financiero",
@@ -76,9 +82,9 @@ const noticias: Record<
 }
 
 const noticiasRelacionadas = [
-  { id: 3, titulo: "Inauguración de nuevas oficinas en Barcelona", fecha: "1 Dic 2025" },
-  { id: 4, titulo: "Programa de capacitación en inteligencia artificial", fecha: "28 Nov 2025" },
-  { id: 5, titulo: "Celebración del 25 aniversario de la empresa", fecha: "25 Nov 2025" },
+  { id: 3, titulo: "Inauguración de nuevas oficinas en Barcelona", fecha: "1 Dic 2026" },
+  { id: 4, titulo: "Programa de capacitación en inteligencia artificial", fecha: "28 Nov 2026" },
+  { id: 5, titulo: "Celebración del 25 aniversario de la empresa", fecha: "25 Nov 2026" },
 ]
 
 function ArrowLeftIcon() {
@@ -125,6 +131,70 @@ function NoticiaContent() {
   const id = params.id as string
   const noticia = noticias[id] || noticias["1"]
 
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [formData, setFormData] = useState({
+    titulo: "",
+    resumen: "",
+    texto: "",
+    categoria: "",
+    autor: "",
+  });
+
+  useEffect(() => {
+  const mockNews = {
+      titulo: "Nueva política interna",
+      texto: "Se implementan cambios en procesos corporativos...",
+      resumen: "La empresa anuncia una nueva política interna que afectará los procesos corporativos a partir del próximo mes.",
+      categoria: "Recursos Humanos",
+      autor: "Carolina Perez",
+    };
+
+    setFormData(mockNews);
+  }, [params.id]);
+
+  const handleSave = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.titulo) newErrors.titulo = "Requerido";
+    if (!formData.texto) newErrors.texto = "Requerido";
+    if (!formData.resumen) newErrors.resumen = "Requerido";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      setSnackbar({
+        open: true,
+        message: "Completa los campos requeridos",
+        severity: "error",
+      });
+      return;
+    }
+
+    console.log("Noticia actualizada:", formData);
+
+    setSnackbar({
+      open: true,
+      message: "Noticia actualizada correctamente",
+      severity: "success",
+    });
+
+    setIsEditing(false);
+  };
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error",
+  });
+
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: "" }));
+  }
+
+
+
   return (
     <Box sx={{ maxWidth: 1200, mx: "auto" }}>
       {/* Navegación */}
@@ -137,82 +207,229 @@ function NoticiaContent() {
         >
           Volver a noticias
         </Button>
+
+        <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="h4" fontWeight="bold" color="primary">
+              {isEditing ? "Editar Noticia" : noticia.titulo}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              ID: {params.id}
+            </Typography>
+          </Box>
+
+          {!isEditing ? (
+            <Button
+              variant="contained"
+              onClick={() => setIsEditing(true)}
+              sx={{
+                textTransform: "none",
+                backgroundColor: "#6a1936",
+                fontWeight: 600,
+              }}
+            >
+              Editar
+            </Button>
+          ) : (
+            <Button variant="outlined" onClick={() => setIsEditing(false)}>
+              Cancelar
+            </Button>
+          )}
+        </Box>
+
       </Box>
 
       <Box sx={{ display: "flex", gap: 4, flexDirection: { xs: "column", lg: "row" } }}>
         {/* Contenido Principal */}
         <Box sx={{ flex: 1 }}>
-          <Paper sx={{ overflow: "hidden" }}>
-            {/* Imagen de cabecera */}
-            <CardMedia component="img" height="350" image={noticia.imagen} alt={noticia.titulo} />
+          <Paper sx={{ overflow: "hidden", borderRadius: 4 }}>
+            {/* Imagen */}
+            <CardMedia
+              component="img"
+              height="350"
+              image={noticia.imagen}
+              alt={noticia.titulo}
+            />
 
+            {/* Contenido */}
             <Box sx={{ p: 4 }}>
-              {/* Metadatos */}
-              <Box sx={{ display: "flex", gap: 1, mb: 2, flexWrap: "wrap", alignItems: "center" }}>
-                <Chip label={noticia.categoria} color="primary" />
-                <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  {noticia.fecha}
-                </Typography>
-              </Box>
+              {!isEditing ? (
+                <>
+                  {/* Categoría + Fecha */}
+                  <Box sx={{ display: "flex", gap: 1, mb: 2, alignItems: "center" }}>
+                    <Chip label={noticia.categoria} color="primary" />
+                    <Typography variant="body2" color="text.secondary">
+                      {noticia.fecha}
+                    </Typography>
+                  </Box>
+                  <Divider sx={{ my: 4 }} />
 
-              {/* Título */}
-              <Typography variant="h4" sx={{ color: "primary.dark", mb: 3, fontWeight: 700 }}>
-                {noticia.titulo}
-              </Typography>
 
-              {/* Resumen */}
-              <Typography
-                variant="subtitle1"
-                sx={{
-                  color: "text.secondary",
-                  mb: 4,
-                  fontStyle: "italic",
-                  borderLeft: "4px solid",
-                  borderColor: "primary.main",
-                  pl: 2,
-                }}
-              >
-                {noticia.resumen}
-              </Typography>
-
-              {/* Autor */}
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4 }}>
-                <Avatar src={noticia.autorAvatar} sx={{ width: 56, height: 56 }} />
-                <Box>
-                  <Typography variant="subtitle2" sx={{ color: "primary.dark", fontWeight: 600 }}>
-                    {noticia.autor}
+                  {/* Título */}
+                  <Typography
+                    variant="h4"
+                    sx={{ fontWeight: 700, mb: 2, color: "primary.dark" }}
+                  >
+                    {noticia.titulo}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                    {noticia.autorCargo}
+
+                  {/* Resumen */}
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      color: "text.secondary",
+                      mb: 4,
+                      fontStyle: "italic",
+                      borderLeft: "4px solid",
+                      borderColor: "primary.main",
+                      pl: 2,
+                    }}
+                  >
+                    {noticia.resumen}
                   </Typography>
-                </Box>
-              </Box>
 
-              <Divider sx={{ mb: 4 }} />
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <Avatar
+                      src={noticia.autorAvatar }
+                      sx={{ width: 56, height: 56 }}
+                    >
+                      {noticia.autor}
+                    </Avatar>
 
-              {/* Contenido */}
-              <Box sx={{ "& > p": { mb: 3 } }}>
-                {noticia.contenido.map((parrafo, index) => (
-                  <Typography key={index} variant="body1" sx={{ color: "text.primary", lineHeight: 1.8 }}>
-                    {parrafo}
+                    <Box>
+                      <Typography fontWeight="bold">
+                        {noticia.autor}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {noticia.autorCargo}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <Divider sx={{ my: 4 }} />
+
+                  {/* Contenido */}
+                  <Box>
+                    {noticia.contenido.map((p, i) => (
+                      <Typography
+                        key={i}
+                        sx={{
+                          mb: 2,
+                          lineHeight: 1.8,
+                          color: "text.primary",
+                        }}
+                      >
+                        {p}
+                      </Typography>
+                    ))}
+                  </Box>
+                </>
+              ) : (
+                <>
+                  {/* Título edición */}
+                  <Typography
+                    variant="h5"
+                    sx={{ fontWeight: 600, mb: 3, color: "primary.dark" }}
+                  >
+                    Editar Noticia
                   </Typography>
-                ))}
-              </Box>
 
-              <Divider sx={{ my: 4 }} />
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Título"
+                        value={formData.titulo}
+                        onChange={(e) => handleChange("titulo", e.target.value)}
+                      />
+                    </Grid>
 
-              {/* Acciones */}
-              <Box sx={{ display: "flex", gap: 1, justifyContent: "flex-end" }}>
-                <IconButton sx={{ color: "primary.main" }}>
-                  <ShareIcon />
-                </IconButton>
-                <IconButton sx={{ color: "primary.main" }}>
-                  <BookmarkIcon />
-                </IconButton>
-                <IconButton sx={{ color: "primary.main" }}>
-                  <PrintIcon />
-                </IconButton>
-              </Box>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Resumen"
+                        multiline
+                        rows={4}
+                        value={formData.resumen}
+                        onChange={(e) => handleChange("resumen", e.target.value)}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Texto"
+                        multiline
+                        rows={6}
+                        value={formData.texto}
+                        onChange={(e) => handleChange("texto", e.target.value)}
+                      />
+                    </Grid>
+
+
+                    <Grid item xs={12} md={6}>
+                      <FormControl fullWidth>
+                        <InputLabel>Categoría</InputLabel>
+                        <Select
+                          value={formData.categoria}
+                          label="Categoría"
+                          onChange={(e) =>
+                            handleChange("categoria", e.target.value)
+                          }
+                        >
+                          <MenuItem value="recursos_humanos">
+                            Recursos Humanos
+                          </MenuItem>
+                          <MenuItem value="finanzas">Finanzas</MenuItem>
+                          <MenuItem value="corporativo">Corporativo</MenuItem>
+                          <MenuItem value="formacion">Formación</MenuItem>
+                          <MenuItem value="eventos">Eventos</MenuItem>
+                          <MenuItem value="tecnologia">Tecnología</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Autor"
+                        value={formData.autor}
+                        onChange={(e) => handleChange("autor", e.target.value)}
+                      />
+                    </Grid>
+                  </Grid>
+
+                  {/* Botones */}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      gap: 2,
+                      mt: 4,
+                    }}
+                  >
+                    <Button
+                      variant="outlined"
+                      onClick={() => setIsEditing(false)}
+                    >
+                      Cancelar
+                    </Button>
+
+                    <Button
+                      variant="contained"
+                      onClick={handleSave}
+                      sx={{
+                        textTransform: "none",
+                        backgroundColor: "#6a1936",
+                        fontWeight: 600,
+                        "&:hover": { backgroundColor: "#4a1025" },
+                      }}
+                    >
+                      Guardar Cambios
+                    </Button>
+                  </Box>
+                </>
+              )}
             </Box>
           </Paper>
         </Box>
@@ -227,6 +444,7 @@ function NoticiaContent() {
               </Typography>
               <List disablePadding>
                 {noticiasRelacionadas.map((item, index) => (
+                  
                   <Box key={item.id}>
                     <ListItem
                     disablePadding

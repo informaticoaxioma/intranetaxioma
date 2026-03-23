@@ -32,15 +32,16 @@ import {
 
 
 const userInfo = {
-  name: "Juan Díaz García",
-  role: "Desarrollador Senior",
+  name: "Carolina Perez",
+  role: "Coordinadora de Contratos",
   department: "Tecnología",
-  email: "juan.diaz@empresa.com",
+  email: "carolina.perez@empresa.com",
   phone: "+34 612 345 678",
   location: "Madrid, España",
   startDate: "15 de Marzo, 2020",
-  manager: "María López",
+  manager: "Luis Maluenda",
   employeeId: "EMP-2020-0342",
+  contractUrl: "/public/DocumentoActa.pdf", // o URL firmada desde backend
 }
 
 const skills = ["React", "TypeScript", "Node.js", "Python", "SQL", "AWS", "Docker", "Git"]
@@ -52,18 +53,25 @@ const achievements = [
 ]
 
 
+
+
 export default function ProfilePage() {
     const [isEditing, setIsEditing] = useState(false)
     const [tab, setTab] = useState("info")
 
   return (
+    <>
     <Stack spacing={4}>
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Mi Perfil</h1>
-          <p className="text-muted-foreground">Gestiona tu información personal y profesional</p>
-        </div>
+        <Box>
+          <Typography variant="h4" sx={{ color: "#4A1C23", fontWeight: 700 }} >
+            Gestión de Perfil
+          </Typography>
+          <Typography variant="body2" sx={{ mt: 0.5 }}>
+            Gestiona tu perfil y mantén tu información actualizada para una mejor experiencia en la intranet corporativa
+          </Typography>
+        </Box>
         <Button
           variant={isEditing ? "contained" : "outlined"}
           startIcon={<EditIcon />}
@@ -434,6 +442,79 @@ export default function ProfilePage() {
               </Stack>
             </CardContent>
           </Card>
+
+          <Card sx={{ flex: 1, borderRadius: 4, padding: 2 }}>
+            <CardHeader
+              title={
+                <Typography
+                  variant="h1"
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "1.5rem",
+                    color: "var(--foreground)",
+
+                  }}
+                >
+                  Mi Contrato de Trabajo
+                </Typography>
+              }
+              subheader={
+                          <Typography>
+                            Descarga tu contrato laboral en formato PDF
+                          </Typography>
+                        }
+            />
+
+            <CardContent>
+              <Stack spacing={3}>
+
+                {/* Información del archivo */}
+                <Stack spacing={1}>
+                  <Stack
+                    direction="row"
+                    gap={1}
+                    alignItems="center"
+                    sx={{ color: "#5e4a41" }}
+                  >
+                     <EmojiEventsIcon sx={{ fontSize: 40, color: "#7B1E3A" }} />
+                    <Typography sx={{ fontWeight: 600 }}>
+                      Documento
+                    </Typography>
+                  </Stack>
+
+                  <Typography fontWeight="500">
+                    Contrato_Laboral_{userInfo.name}.pdf
+                  </Typography>
+                </Stack>
+
+                {/* Acción descarga */}
+                <Stack direction="row"       spacing={3}
+      alignItems="center"
+      justifyContent="center"
+      textAlign="center">
+                  <Button
+                    variant="contained"
+                    href={userInfo.contractUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      textTransform: "none",
+                      backgroundColor: "#6a1936",
+                      borderRadius: 2,
+                      fontWeight: "600",
+                      paddingX: 3,
+                      "&:hover": {
+                        backgroundColor: "#4a1025",
+                      },
+                    }}
+                  >
+                    Descargar Contrato
+                  </Button>
+                </Stack>
+
+              </Stack>
+            </CardContent>
+          </Card>
         </Stack>
       )}
 
@@ -556,7 +637,7 @@ export default function ProfilePage() {
         </Card>
       )}
     </Stack>
-
+</>
   )
 }
 

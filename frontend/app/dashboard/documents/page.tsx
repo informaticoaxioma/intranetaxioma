@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, Suspense } from "react"
-import { useSearchParams } from "next/navigation"
 import Box from "@mui/material/Box"
 import Card from "@mui/material/Card"
 import CardContent from "@mui/material/CardContent"
@@ -25,7 +24,9 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup"
 import Breadcrumbs from "@mui/material/Breadcrumbs"
 import Link from "@mui/material/Link"
 import Tooltip from "@mui/material/Tooltip"
+import Button from "@mui/material/Button"
 import { MuiProvider } from "@/app/components/mui-provider"
+import { IconPlus } from "@/app/components/icons"
 
 // Iconos SVG inline para evitar problemas con lucide-react
 function SearchIcon() {
@@ -44,6 +45,16 @@ function FolderIcon({ color = "currentColor" }: { color?: string }) {
     </svg>
   )
 }
+
+function editIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M11 4h-1a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1" />
+      <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5Z" />
+    </svg>
+  )
+}
+
 
 function FileIcon({ type }: { type: string }) {
   const colors: Record<string, string> = {
@@ -132,11 +143,17 @@ function EyeIcon() {
 // Datos de carpetas
 const carpetas = [
   { id: 1, nombre: "Políticas y Normativas", color: "#722F37", cantidad: 24 },
-  { id: 2, nombre: "Recursos Humanos", color: "#4A1C23", cantidad: 18 },
+  { id: 2, nombre: "Contabilidad y RRHH", color: "#4A1C23", cantidad: 18 },
   { id: 3, nombre: "Manuales y Guías", color: "#8B4513", cantidad: 32 },
   { id: 4, nombre: "Plantillas", color: "#5D6D7E", cantidad: 45 },
   { id: 5, nombre: "Formación", color: "#1E88E5", cantidad: 15 },
-  { id: 6, nombre: "Comunicados", color: "#43A047", cantidad: 28 },
+  { id: 6, nombre: "Concesiones", color: "#43A047", cantidad: 30 },
+  { id: 7, nombre: "Asesorías", color: "#FFDE21", cantidad: 8 },
+  { id: 8, nombre: "Flota", color: "#650099", cantidad: 15 },
+  { id: 9, nombre: "Informática", color: "#FF0000", cantidad: 30 },
+
+
+
 ]
 
 // Datos de documentos
@@ -148,7 +165,7 @@ const documentos = [
     categoria: "Políticas y Normativas",
     tamaño: "2.4 MB",
     fechaModificacion: "15 Dic 2025",
-    autor: "Recursos Humanos",
+    autor: "Contabilidad y RRHH",
     favorito: true,
     descargas: 245,
   },
@@ -156,7 +173,7 @@ const documentos = [
     id: 2,
     nombre: "Manual de Onboarding 2025",
     tipo: "pdf",
-    categoria: "Recursos Humanos",
+    categoria: "Contabilidad y RRHH",
     tamaño: "5.8 MB",
     fechaModificacion: "10 Dic 2025",
     autor: "RRHH",
@@ -211,7 +228,7 @@ const documentos = [
     id: 7,
     nombre: "Calendario de Vacaciones 2026",
     tipo: "xlsx",
-    categoria: "Recursos Humanos",
+    categoria: "Contabilidad y RRHH",
     tamaño: "245 KB",
     fechaModificacion: "25 Nov 2025",
     autor: "RRHH",
@@ -266,7 +283,7 @@ const documentos = [
     id: 12,
     nombre: "Comunicado Fin de Año",
     tipo: "docx",
-    categoria: "Comunicados",
+    categoria: "Concesiones",
     tamaño: "520 KB",
     fechaModificacion: "10 Nov 2025",
     autor: "Dirección",
@@ -278,11 +295,15 @@ const documentos = [
 const categorias = [
   "Todos",
   "Políticas y Normativas",
-  "Recursos Humanos",
+  "Contabilidad y RRHH",
   "Manuales y Guías",
   "Plantillas",
   "Formación",
-  "Comunicados",
+  "Concesiones",
+  "Asesorías",
+  "Flota",
+  "Informática",
+
 ]
 
 function DocumentosContent() {
@@ -309,19 +330,48 @@ function DocumentosContent() {
   return (
     <Box sx={{ maxWidth: 1400, mx: "auto" }}>
       {/* Header */}
-      <Box sx={{ mb: 4 }}>
         <Breadcrumbs sx={{ mb: 2 }}>
           <Link underline="hover" color="inherit" href="/dashboard">
             Inicio
           </Link>
           <Typography color="text.primary">Documentos</Typography>
         </Breadcrumbs>
-        <Typography variant="h4" sx={{ color: "primary.dark", mb: 1, fontWeight: 600 }}>
-          Centro de Documentos
-        </Typography>
-        <Typography variant="body1" sx={{ color: "text.secondary" }}>
-          Accede a todos los documentos, políticas, manuales y recursos de la empresa
-        </Typography>
+      <Box
+        sx={{
+          mb: 4,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 2,
+        }}
+      >
+        <Box>
+          <Typography variant="h4" sx={{ color: "primary.dark", mb: 1 }}>
+            Centro de Documentos
+          </Typography>
+          <Typography variant="body1" sx={{ color: "text.secondary" }}>
+            Accede a políticas, manuales, plantillas y más para facilitar tu trabajo diario.
+          </Typography>
+        </Box>
+        
+        <Button
+          variant="contained"
+          component={Link}
+          href="/dashboard/documents/crear"
+          sx={{
+            textTransform: "none",
+            backgroundColor: "#6a1936",
+            borderRadius: 2,
+            fontSize: "1.25rem",
+            fontWeight: 600,
+            "&:hover": {
+              backgroundColor: "#4a1025",
+            },
+          }}
+        >
+          <IconPlus className="w-5 h-5 mr-1" /> Subir Documento
+        </Button>
       </Box>
 
       {/* Carpetas */}
@@ -574,6 +624,21 @@ function DocumentosContent() {
                       <Tooltip title="Descargar">
                         <IconButton size="small" sx={{ color: "primary.main" }}>
                           <DownloadIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Editar documento">
+                        <IconButton
+                          size="small"
+                          sx={{
+                            color: "#6a1936",
+                            "&:hover": {
+                              backgroundColor: "rgba(106,25,54,0.08)",
+                            },
+                          }}
+                          component={Link}
+                          href={`/dashboard/documents/editar/${doc.id}`}
+                        >
+                          {editIcon()}
                         </IconButton>
                       </Tooltip>
                     </Box>

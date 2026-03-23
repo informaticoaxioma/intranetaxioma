@@ -15,7 +15,21 @@ import Tabs from "@mui/material/Tabs"
 import Tab from "@mui/material/Tab"
 import Grid from "@mui/material/Grid"
 import Pagination from "@mui/material/Pagination"
+import Button from "@mui/material/Button"
+import AddIcon from "@mui/icons-material/Add"
+import Dialog from "@mui/material/Dialog"
+import DialogTitle from "@mui/material/DialogTitle"
+import DialogContent from "@mui/material/DialogContent"
+import DialogActions from "@mui/material/DialogActions"
+import Stack from "@mui/material/Stack"
+import FormControl from "@mui/material/FormControl"
+import InputLabel from "@mui/material/InputLabel"
+import Select from "@mui/material/Select"
+import MenuItem from "@mui/material/MenuItem"
+
+
 import { MuiProvider } from "@/app/components/mui-provider"
+import { resume } from "react-dom/server"
 
 const noticias = [
   {
@@ -100,6 +114,35 @@ function SearchIcon() {
 function NoticiasContent() {
   const [tabValue, setTabValue] = useState(0)
   const [busqueda, setBusqueda] = useState("")
+  const [openModal, setOpenModal] = useState(false);
+
+const [form, setForm] = useState({
+  titulo: "",
+  resumen: "",
+  texto: "",
+  categoria: "",
+  autor: "",
+  imagen: null as File | null,
+});
+
+const handleCreateNews = async () => {
+  const data = new FormData();
+
+  data.append("titulo", form.titulo);
+  data.append("resumen", form.resumen);
+  data.append("texto", form.texto);
+  data.append("categoria", form.categoria);
+  data.append("autor", form.autor || "Desconocido");
+
+  if (form.imagen) {
+    data.append("imagen", form.imagen);
+  }
+
+  await fetch("/api/noticias", {
+    method: "POST",
+    body: data,
+  });
+};
 
   const noticiasFiltradas = noticias.filter((noticia) => {
     const matchCategoria = tabValue === 0 || noticia.categoria === categorias[tabValue]
@@ -112,15 +155,47 @@ function NoticiasContent() {
   const noticiasDestacadas = noticias.filter((n) => n.destacada)
 
   return (
+    <>
     <Box sx={{ maxWidth: 1200, mx: "auto" }}>
       {/* Header */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ color: "primary.dark", mb: 1 }}>
-          Noticias Corporativas
-        </Typography>
-        <Typography variant="body1" sx={{ color: "text.secondary" }}>
-          Mantente informado sobre las últimas novedades de la empresa
-        </Typography>
+      <Box
+        sx={{
+          mb: 4,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 2,
+        }}
+      >
+        <Box>
+          <Typography variant="h4" sx={{ color: "primary.dark", mb: 1 }}>
+            Noticias Corporativas
+          </Typography>
+          <Typography variant="body1" sx={{ color: "text.secondary" }}>
+            Mantente informado sobre las últimas novedades de la empresa
+          </Typography>
+        </Box>
+
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => setOpenModal(true)}
+          component={Link}
+          href="#"
+          sx={{
+            textTransform: "none",
+            backgroundColor: "#6a1936",
+            borderRadius: 2,
+            fontSize: "1.25rem",
+            fontWeight: 600,
+            "&:hover": {
+              backgroundColor: "#4a1025",
+            },
+          }}
+        >
+          Nueva noticia
+        </Button>
       </Box>
 
       {/* Noticias Destacadas */}
@@ -245,6 +320,107 @@ function NoticiasContent() {
         <Pagination count={3} color="primary" />
       </Box>
     </Box>
+
+    <Dialog open={openModal} onClose={() => setOpenModal(false)} maxWidth="sm" fullWidth>
+      <DialogTitle>Nueva Noticia</DialogTitle>
+
+      <DialogContent>
+        <Stack spacing={3} sx={{ mt: 1 }}>
+          
+          <TextField
+            label="Título"
+            fullWidth
+            value={form.titulo}
+            onChange={(e) => setForm({ ...form, titulo: e.target.value })}
+          />
+
+          <TextField
+            label="Resumen"
+            fullWidth
+            multiline
+            rows={4}
+            value={form.resumen}
+            onChange={(e) => setForm({ ...form, resumen: e.target.value })}
+          />
+
+          <TextField
+            label="Texto de la noticia"
+            fullWidth
+            multiline
+            rows={4}
+            value={form.texto}
+            onChange={(e) => setForm({ ...form, texto: e.target.value })}
+          />
+
+          <FormControl fullWidth>
+            <InputLabel>Categoría</InputLabel>
+            <Select
+              value={form.categoria}
+              label="Categoría"
+              onChange={(e) =>
+                setForm({ ...form, categoria: e.target.value })
+              }
+            >
+              <MenuItem value="recursos_humanos">Recursos Humanos</MenuItem>
+              <MenuItem value="finanzas">Finanzas</MenuItem>
+              <MenuItem value="corporativo">Corporativo</MenuItem>
+              <MenuItem value="formacion">Formación</MenuItem>
+              <MenuItem value="eventos">Eventos</MenuItem>
+              <MenuItem value="tecnologia">Tecnología</MenuItem>
+            </Select>
+          </FormControl>
+          
+          <TextField
+            label="Autor"
+            fullWidth
+            value={form.autor}
+            onChange={(e) => setForm({ ...form, autor: e.target.value })}
+          />
+
+          <Button
+            variant="outlined"
+            component="label"
+            sx={{ textTransform: "none" }}
+          >
+            Subir Imagen
+            <input
+              type="file"
+              hidden
+              accept="image/png, image/jpeg"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  setForm({ ...form, imagen: file });
+                }
+              }}
+            />
+          </Button>
+
+        </Stack>
+      </DialogContent>
+
+      <DialogActions sx={{ px: 3, pb: 2 }}>
+        <Button onClick={() => setOpenModal(false)}>
+          Cancelar
+        </Button>
+
+        <Button
+          variant="contained"
+          onClick={handleCreateNews}
+          sx={{
+            textTransform: "none",
+            backgroundColor: "#6a1936",
+            fontWeight: 600,
+            "&:hover": {
+              backgroundColor: "#4a1025",
+            },
+          }}
+        >
+          Guardar
+        </Button>
+      </DialogActions>
+    </Dialog>
+  </>
   )
 }
 
