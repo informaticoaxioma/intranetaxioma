@@ -1,11 +1,7 @@
 import DescriptionIcon from '@mui/icons-material/Description';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import GroupIcon from '@mui/icons-material/Group';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 // Card
 import Card from '@mui/material/Card';
@@ -19,10 +15,12 @@ import Typography from '@mui/material/Typography';
 // Button
 import Button from '@mui/material/Button';
 import Link from "next/link"
+import Banner from '../components/banner';
 
 const stats = [
   { label: "Documentos", value: "128", icon: DescriptionIcon, change: "+12 este mes" },
   { label: "Eventos", value: "8", icon: CalendarTodayIcon, change: "Esta semana" },
+  { label: "Vacaciones", value: "15", icon: AccessTimeIcon, change: "días disponibles" },
 ]
 
 
@@ -78,7 +76,6 @@ export default function DashboardPage() {
                     <p className="text-sm text-muted-foreground">{stat.label}</p>
                     <p className="text-3xl font-bold text-foreground mt-1">{stat.value}</p>
                     <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                      <TrendingUpIcon className="w-3 h-3 text-green-600" />
                       {stat.change}
                     </p>
                   </div>
@@ -91,6 +88,8 @@ export default function DashboardPage() {
           )
         })}
       </div>
+
+      <Banner />
 
       {/* Main content grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

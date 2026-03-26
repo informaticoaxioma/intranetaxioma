@@ -52,12 +52,45 @@ const achievements = [
   { title: "Certificación AWS", date: "Junio 2024", icon: WorkIcon },
 ]
 
+const liquidaciones = [
+  {
+    id: 1,
+    nombre: "Liquidación Enero 2026",
+    archivo: "DocumentoActa.pdf",
+    periodo: "2026-01"
+  },
+  {
+    id: 2,
+    nombre: "Liquidación Febrero 2026",
+    archivo: "DocumentoActa.pdf",
+    periodo: "2026-02"
+  }
+];
+
+const vacaciones = [
+  {
+    id: 1,
+    fecha_inicio: "2026-01-10",
+    fecha_fin: "2026-01-19",
+    dias: 10,
+    estado: "Aprobado",
+  },
+  {
+    id: 2,
+    fecha_inicio: "2026-03-01",
+    fecha_fin: "2026-03-04",
+    dias: 5,
+    estado: "Pendiente",
+  },
+];
 
 
 
 export default function ProfilePage() {
     const [isEditing, setIsEditing] = useState(false)
     const [tab, setTab] = useState("info")
+
+    
 
   return (
     <>
@@ -218,6 +251,49 @@ export default function ProfilePage() {
   <Tab
     label="Habilidades"
     value="skills"
+    sx={{
+      textTransform: "none",
+      fontWeight: 500,
+      color: "#33141f",
+      borderRadius: 3,
+      px: 3,
+      "&.Mui-selected": {
+        backgroundColor: "white",
+        color: "#33141f",
+        fontWeight: 600,
+        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+      },
+      "&:hover": {
+        backgroundColor: "rgba(255,255,255,0.5)",
+      },
+    }}
+  />
+
+
+  <Tab
+    label="Liquidaciones"
+    value="payments"
+    sx={{
+      textTransform: "none",
+      fontWeight: 500,
+      color: "#33141f",
+      borderRadius: 3,
+      px: 3,
+      "&.Mui-selected": {
+        backgroundColor: "white",
+        color: "#33141f",
+        fontWeight: 600,
+        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+      },
+      "&:hover": {
+        backgroundColor: "rgba(255,255,255,0.5)",
+      },
+    }}
+  />
+
+  <Tab
+    label="Vacaciones"
+    value="vacations"
     sx={{
       textTransform: "none",
       fontWeight: 500,
@@ -563,6 +639,147 @@ export default function ProfilePage() {
         </Card>
       )}
 
+      {tab === "payments" && (
+        <Card sx={{ overflow: "hidden", borderRadius: 4 }}>
+          <CardHeader
+            title=
+            {<Typography
+                  variant="h1"
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "1.5rem",
+                    color: "var(--foreground)",
+                  }}
+                >
+                  Liquidaciones de sueldo
+                </Typography>}
+            subheader="Historial de liquidaciones disponibles"
+          />
+
+          <CardContent>
+            <Stack spacing={2}>
+              {liquidaciones.map((liq) => (
+                <Card
+                  key={liq.id}
+                  variant="outlined"
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    p: 2,
+                  }}
+                >
+                  {/* Info */}
+                  <div>
+                    <Typography fontWeight="bold">
+                      {liq.nombre}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Periodo: {liq.periodo}
+                    </Typography>
+                  </div>
+
+                  {/* Acción */}
+                  <Button
+                    variant="contained"
+                    href={userInfo.contractUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      textTransform: "none",
+                      backgroundColor: "#6a1936",
+                      borderRadius: 2,
+                      fontWeight: "600",
+                      paddingX: 3,
+                      "&:hover": {
+                        backgroundColor: "#4a1025",
+                      },
+                    }}
+                  >
+                    Descargar
+                  </Button>
+                </Card>
+              ))}
+
+              {liquidaciones.length === 0 && (
+                <Typography color="text.secondary">
+                  No hay liquidaciones disponibles
+                </Typography>
+              )}
+            </Stack>
+          </CardContent>
+        </Card>
+      )}
+
+      {tab === "vacations" && (
+        <Card sx={{ overflow: "hidden", borderRadius: 4 }}>
+          <CardHeader
+            title=
+            {<Typography
+                  variant="h1"
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "1.5rem",
+                    color: "var(--foreground)",
+                  }}
+                >
+                  Historial de Vacaciones
+                </Typography>}
+            subheader="Registro de solicitudes de vacaciones"
+          />
+
+          <CardContent>
+            <Stack spacing={2}>
+              {vacaciones.map((vac) => (
+                <Card
+                  key={vac.id}
+                  variant="outlined"
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    p: 2,
+                  }}
+                >
+                  {/* Info */}
+                  <div>
+                    <Typography fontWeight="bold">
+                      {vac.dias} días solicitados
+                    </Typography>
+
+                    <Typography variant="body2" color="text.secondary">
+                      {vac.fecha_inicio} → {vac.fecha_fin}
+                    </Typography>
+
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color:
+                          vac.estado === "Aprobado"
+                            ? "green"
+                            : vac.estado === "Pendiente"
+                            ? "orange"
+                            : "red",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Estado: {vac.estado}
+                    </Typography>
+                  </div>
+
+                </Card>
+              ))}
+
+              {vacaciones.length === 0 && (
+                <Typography color="text.secondary">
+                  No hay solicitudes de vacaciones
+                </Typography>
+              )}
+            </Stack>
+          </CardContent>
+        </Card>
+      )}
+
       {tab === "achievements" && (
         <Card sx={{ overflow: "hidden", borderRadius: 4 }}>
           <CardHeader
@@ -641,43 +858,4 @@ export default function ProfilePage() {
   )
 }
 
-// 🔹 Componente reutilizable de fila de información
-function InfoRow({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <Stack spacing={1}>
-      <Stack direction="row"
-          sx={{
-            color: "#5e4a41",
-          }}
-          gap={1} alignItems="center">
-        {icon}
-        <Typography
-          sx={{
-            color: "#5e4a41",
-            fontWeight: 600,
-          }}
-        >
-          {label}
-        </Typography>
-      </Stack>
-
-      <Typography
-        fontWeight="500"
-        sx={{
-          color: "text.secondary",
-        }}
-      >
-        {value}
-      </Typography>
-    </Stack>
-  );
-}
 

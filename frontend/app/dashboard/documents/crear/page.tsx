@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Paper,
@@ -27,7 +27,10 @@ const categorias = [
   "Formación",
   "Legal",
   "Tecnología",
+  "Liquidacion",
 ];
+
+
 
 export default function CrearDocumentoPage() {
   const router = useRouter();
@@ -37,7 +40,19 @@ export default function CrearDocumentoPage() {
     categoria: "",
     autor: "",
     archivo: null as File | null,
+    user_id: "",
   });
+
+const [usuarios, setUsuarios] = useState<any[]>([]);
+
+  useEffect(() => {
+  // Simulación de carga
+  setUsuarios([
+    { id: "1", name: "Juan Gomez" },
+    { id: "2", name: "Carolina Perez" },
+    { id: "3", name: "Cristobal Nuñez" },
+  ]);
+}, []);
 
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -46,7 +61,10 @@ export default function CrearDocumentoPage() {
   });
 
   const handleChange = (field: string, value: any) => {
-    setForm({ ...form, [field]: value });
+    setForm((prev) => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   const handleSubmit = () => {
@@ -109,14 +127,38 @@ export default function CrearDocumentoPage() {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} md={6}>
-            <TextField
-              fullWidth
-              label="Autor"
-              value={form.autor}
-              onChange={(e) => handleChange("autor", e.target.value)}
-            />
-          </Grid>
+          {form.categoria === "Liquidacion" && (
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth>
+                <InputLabel>Seleccionar Usuario</InputLabel>
+                <Select
+                  value={form.user_id}
+                  label="Seleccionar Usuario"
+                  onChange={(e) =>
+                    handleChange("user_id", e.target.value)
+                  }
+                >
+                  {usuarios.map((user: any) => (
+                    <MenuItem key={user.id} value={user.id}>
+                      {user.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          )}
+
+          {form.categoria != "Liquidacion" && (
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Autor"
+                value={form.autor}
+                onChange={(e) => handleChange("autor", e.target.value)}
+              />
+            </Grid>
+          )}
+
 
           {/* Upload */}
           <Grid item xs={12}>
