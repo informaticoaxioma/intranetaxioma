@@ -14,6 +14,7 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
+import Link from "next/link";
 // UI
 import {
   Card,
@@ -714,19 +715,40 @@ export default function ProfilePage() {
       {tab === "vacations" && (
         <Card sx={{ overflow: "hidden", borderRadius: 4 }}>
           <CardHeader
-            title=
-            {<Typography
-                  variant="h1"
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "1.5rem",
-                    color: "var(--foreground)",
-                  }}
-                >
-                  Historial de Vacaciones
-                </Typography>}
+            title={<Typography
+                    variant="h1"
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "1.5rem",
+                      color: "var(--foreground)",
+                    }}
+                  >
+                    Historial de Vacaciones
+                  </Typography>}
             subheader="Registro de solicitudes de vacaciones"
+            action={
+              <Button
+                component={Link}
+                href="/dashboard/profile/solicitudvacaciones"
+                variant="contained"
+                sx={{
+                  textTransform: "none",
+                  backgroundColor: "#6a1936",
+                  borderRadius: 2,
+                  fontWeight: "600",
+                  paddingX: 3,
+                  "&:hover": {
+                    backgroundColor: "#4a1025",
+                  },
+                  width: "fit-content",
+                  ml: 2,
+                }}
+              >
+                Solicitar vacaciones
+              </Button>
+            }
           />
+
 
           <CardContent>
             <Stack spacing={2}>
