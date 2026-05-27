@@ -9,9 +9,12 @@ use Illuminate\Http\Request;
 
 class NewsController extends Controller
 {
-    public function __construct(
-        private NewsService $newsService
-    ) {}
+    protected $newsService;
+
+    public function __construct(NewsService $newsService)
+    {
+        $this->newsService = $newsService;
+    }
 
     public function index()
     {
@@ -23,15 +26,17 @@ class NewsController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string'
+            'titulo' => 'required|string|max:255',
+            'resumen' => 'required|string',
+            'texto_noticia' => 'required|string',
+            'categoria' => 'required|string|max:255',
+            'autor' => 'required|string|max:255',
+            'imagen' => 'nullable|string'
         ]);
 
-        $validated['user_id'] = auth()->id();
+        $news = $this->newsService->create($validated);
 
-        return response()->json(
-            $this->newsService->create($validated)
-        );
+        return response()->json($news, 201);
     }
 
     public function show(News $news)
@@ -42,13 +47,17 @@ class NewsController extends Controller
     public function update(Request $request, News $news)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string'
+            'titulo' => 'sometimes|string|max:255',
+            'resumen' => 'sometimes|string',
+            'texto_noticia' => 'sometimes|string',
+            'categoria' => 'sometimes|string|max:255',
+            'autor' => 'sometimes|string|max:255',
+            'imagen' => 'nullable|string'
         ]);
 
-        return response()->json(
-            $this->newsService->update($news, $validated)
-        );
+        $updated = $this->newsService->update($news, $validated);
+
+        return response()->json($updated);
     }
 
     public function destroy(News $news)
@@ -56,7 +65,7 @@ class NewsController extends Controller
         $this->newsService->delete($news);
 
         return response()->json([
-            'message' => 'Noticia eliminada'
+            'message' => 'Noticia eliminada correctamente'
         ]);
     }
 }

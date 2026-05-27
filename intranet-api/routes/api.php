@@ -20,9 +20,17 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Usuarios normales
     Route::get('/news', [NewsController::class, 'index']);
+    Route::get('/news/{news}', [NewsController::class,'show']);
+
     Route::get('/events', [EventController::class, 'index']);
+    Route::get('/events/{event}', [EventController::class, 'show']);
+
     Route::get('/documents', [DocumentController::class, 'index']);
-    Route::get('/payslips', [PayrollController::class, 'index']);
+    Route::get('/documents/{document}', [DocumentController::class, 'show']);
+
+    Route::get('/payrolls', [PayrollController::class, 'index']);
+    Route::get('/my-payrolls', [PayrollController::class, 'myPayrolls']);
+
     Route::get('/vacations', [VacationController::class, 'index']);
 
     // SOLO ADMIN
@@ -40,10 +48,23 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('documents', DocumentController::class)
             ->except(['index', 'show']);
 
-        Route::apiResource('payslips', PayrollController::class)
+        Route::apiResource('payroll', PayrollController::class)
             ->except(['index', 'show']);
 
         Route::apiResource('vacations', VacationController::class)
             ->except(['index', 'show']);
+
+        // Aprobar vacaciones
+        Route::post('/vacations/{vacation}/approve', [
+            VacationController::class,
+            'approve'
+        ]);
+
+        // Rechazar vacaciones
+        Route::post('/vacations/{vacation}/reject', [
+            VacationController::class,
+            'reject'
+        ]);
+
     });
 });

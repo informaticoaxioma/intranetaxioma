@@ -12,11 +12,39 @@ class News extends Model
     protected $table = 'news';
 
     protected $fillable = [
-        'title',
-        'content',
-        'image',
-        'user_id'
+        'titulo',
+        'resumen',
+        'texto_noticia',
+        'categoria',
+        'autor',
+        'imagen'
     ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | ACCESSORS
+    |--------------------------------------------------------------------------
+    */
+
+    public function getImagenUrlAttribute()
+    {
+        if (!$this->imagen) {
+            return null;
+        }
+
+        return asset('storage/' . $this->imagen);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SCOPES
+    |--------------------------------------------------------------------------
+    */
+
+    public function scopeCategoria($query, $categoria)
+    {
+        return $query->where('categoria', $categoria);
+    }
 
     /*
     |--------------------------------------------------------------------------

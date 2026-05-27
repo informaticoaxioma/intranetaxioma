@@ -2,64 +2,61 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Payroll;
+use App\Services\PayrollService;
 use Illuminate\Http\Request;
 
 class PayrollController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $payrollService;
+
+    public function __construct(PayrollService $payrollService)
+    {
+        $this->payrollService = $payrollService;
+    }
+
     public function index()
     {
-        //
+        return response()->json(
+            $this->payrollService->getAll()
+        );
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function myPayrolls(Request $request)
     {
-        //
+        return response()->json(
+            $this->payrollService->getByUser(
+                $request->user()->id
+            )
+        );
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'titulo' => 'required|string|max:255',
+            'periodo' => 'required|string|max:100',
+            'user_id' => 'required|exists:users,id',
+            'archivo' => 'required|string'
+        ]);
+
+        $payroll = $this->payrollService->create($validated);
+
+        return response()->json($payroll, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Payroll $payroll)
     {
-        //
+        return response()->json($payroll);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Payroll $payroll)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Payroll $payroll)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Payroll $payroll)
     {
-        //
+        $this->payrollService->delete($payroll);
+
+        return response()->json([
+            'message' => 'Liquidación eliminada correctamente'
+        ]);
     }
 }

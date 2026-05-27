@@ -2,64 +2,70 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Document;
+use App\Services\DocumentService;
 use Illuminate\Http\Request;
 
 class DocumentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $documentService;
+
+    public function __construct(DocumentService $documentService)
+    {
+        $this->documentService = $documentService;
+    }
+
     public function index()
     {
-        //
+        return response()->json(
+            $this->documentService->getAll()
+        );
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'categoria' => 'required|string|max:255',
+            'autor' => 'required|string|max:255',
+            'tamano_archivo' => 'required|integer',
+            'ultima_modificacion' => 'nullable|date',
+            'archivo' => 'required|string'
+        ]);
+
+        $document = $this->documentService->create($validated);
+
+        return response()->json($document, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Document $document)
     {
-        //
+        return response()->json($document);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Document $document)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Document $document)
     {
-        //
+        $validated = $request->validate([
+            'nombre' => 'sometimes|string|max:255',
+            'categoria' => 'sometimes|string|max:255',
+            'autor' => 'sometimes|string|max:255',
+            'tamano_archivo' => 'sometimes|integer',
+            'ultima_modificacion' => 'nullable|date',
+            'archivo' => 'sometimes|string'
+        ]);
+
+        $updated = $this->documentService->update($document, $validated);
+
+        return response()->json($updated);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Document $document)
     {
-        //
+        $this->documentService->delete($document);
+
+        return response()->json([
+            'message' => 'Documento eliminado correctamente'
+        ]);
     }
 }

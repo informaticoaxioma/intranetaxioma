@@ -12,7 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('documents', function (Blueprint $table) {
+
             $table->id();
+
+            $table->string('nombre');
+
+            $table->string('categoria');
+
+            $table->string('autor');
+
+            $table->bigInteger('tamano_archivo');
+
+            $table->timestamp('ultima_modificacion')->nullable();
+
+            $table->string('archivo');
+
             $table->timestamps();
         });
     }

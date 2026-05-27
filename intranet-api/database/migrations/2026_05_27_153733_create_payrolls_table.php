@@ -12,7 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('payrolls', function (Blueprint $table) {
+
             $table->id();
+
+            $table->string('titulo');
+
+            $table->string('periodo');
+
+            $table->foreignId('user_id')
+                  ->constrained()
+                  ->onDelete('cascade');
+
+            $table->string('archivo');
+
             $table->timestamps();
         });
     }
