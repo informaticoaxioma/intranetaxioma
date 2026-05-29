@@ -19,40 +19,209 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+
             'name' => 'required|string|max:255',
+
+            'apellido' => 'required|string|max:255',
+
             'email' => 'required|email|unique:users,email',
+
             'password' => 'required|min:6',
-            'role' => 'required|in:admin,user'
+
+            'telefono' => 'nullable|string|max:50',
+
+            'direccion' => 'nullable|string|max:255',
+
+            'fecha_nacimiento' => 'nullable|date',
+
+            'departamento' => 'nullable|string|max:255',
+
+            'cargo' => 'nullable|string|max:255',
+
+            'fecha_ingreso' => 'nullable|date',
+
+            'supervision_general' => 'nullable|string|max:255',
+
+            'role' => 'required|in:admin,user',
+
+            'estado_cuenta' => 'required|in:activo,inactivo,suspendido'
         ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | CREATE USER
+        |--------------------------------------------------------------------------
+        */
 
         $user = User::create([
+
             'name' => $validated['name'],
+
+            'apellido' => $validated['apellido'],
+
             'email' => $validated['email'],
-            'password' => Hash::make($validated['password'])
+
+            'password' => Hash::make(
+                $validated['password']
+            ),
+
+            'telefono' => $validated['telefono'] ?? null,
+
+            'direccion' => $validated['direccion'] ?? null,
+
+            'fecha_nacimiento' =>
+                $validated['fecha_nacimiento'] ?? null,
+
+            'departamento' =>
+                $validated['departamento'] ?? null,
+
+            'cargo' =>
+                $validated['cargo'] ?? null,
+
+            'fecha_ingreso' =>
+                $validated['fecha_ingreso'] ?? null,
+
+            'supervision_general' =>
+                $validated['supervision_general'] ?? null,
+
+            'role' => $validated['role'],
+
+            'estado_cuenta' =>
+                $validated['estado_cuenta']
         ]);
 
-        $user->assignRole($validated['role']);
+        /*
+        |--------------------------------------------------------------------------
+        | ASSIGN ROLE
+        |--------------------------------------------------------------------------
+        */
 
-        return response()->json($user);
+        $user->assignRole(
+            $validated['role']
+        );
+
+        return response()->json([
+
+            'message' => 'Usuario creado correctamente',
+
+            'user' => $user
+
+        ], 201);
     }
 
-    public function update(Request $request, User $user)
-    {
+    /*
+    |--------------------------------------------------------------------------
+    | UPDATE USER
+    |--------------------------------------------------------------------------
+    */
+
+    public function update(
+        Request $request,
+        User $user
+    ) {
+
         $validated = $request->validate([
+
             'name' => 'required|string|max:255',
-            'email' => 'required|email',
-            'role' => 'required|in:admin,user'
+
+            'apellido' => 'required|string|max:255',
+
+            'email' =>
+                'required|email|unique:users,email,' . $user->id,
+
+            'password' => 'nullable|min:6',
+
+            'telefono' => 'nullable|string|max:50',
+
+            'direccion' => 'nullable|string|max:255',
+
+            'fecha_nacimiento' => 'nullable|date',
+
+            'departamento' => 'nullable|string|max:255',
+
+            'cargo' => 'nullable|string|max:255',
+
+            'fecha_ingreso' => 'nullable|date',
+
+            'supervision_general' => 'nullable|string|max:255',
+
+            'role' => 'required|in:admin,user',
+
+            'estado_cuenta' => 'required|in:activo,inactivo,suspendido'
         ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | UPDATE USER
+        |--------------------------------------------------------------------------
+        */
 
         $user->update([
+
             'name' => $validated['name'],
-            'email' => $validated['email']
+
+            'apellido' => $validated['apellido'],
+
+            'email' => $validated['email'],
+
+            'telefono' => $validated['telefono'] ?? null,
+
+            'direccion' => $validated['direccion'] ?? null,
+
+            'fecha_nacimiento' =>
+                $validated['fecha_nacimiento'] ?? null,
+
+            'departamento' =>
+                $validated['departamento'] ?? null,
+
+            'cargo' =>
+                $validated['cargo'] ?? null,
+
+            'fecha_ingreso' =>
+                $validated['fecha_ingreso'] ?? null,
+
+            'supervision_general' =>
+                $validated['supervision_general'] ?? null,
+
+            'role' => $validated['role'],
+
+            'estado_cuenta' =>
+                $validated['estado_cuenta']
         ]);
 
-        $user->syncRoles([$validated['role']]);
+        /*
+        |--------------------------------------------------------------------------
+        | UPDATE PASSWORD
+        |--------------------------------------------------------------------------
+        */
 
-        return response()->json($user);
+        if (!empty($validated['password'])) {
+
+            $user->update([
+                'password' => Hash::make(
+                    $validated['password']
+                )
+            ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | UPDATE ROLE
+        |--------------------------------------------------------------------------
+        */
+
+        $user->syncRoles([
+            $validated['role']
+        ]);
+
+        return response()->json([
+
+            'message' => 'Usuario actualizado correctamente',
+
+            'user' => $user
+        ]);
     }
+    
 
     public function destroy(User $user)
     {

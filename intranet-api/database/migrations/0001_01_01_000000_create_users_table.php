@@ -13,10 +13,37 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+
             $table->string('name');
+
+            $table->string('apellido');
+
             $table->string('email')->unique();
+            
+            $table->string('password')->unique();
+
+            $table->string('telefono')->nullable();
+
+            $table->string('direccion')->nullable();
+
+            $table->date('fecha_nacimiento')->nullable();
+
+            $table->string('departamento')->nullable();
+
+            $table->string('cargo')->nullable();
+
+            $table->date('fecha_ingreso')->nullable();
+
+            $table->string('supervision_general')->nullable();
+
+            $table->string('role')->default('user');
+
+            $table->enum('estado_cuenta', [
+                'activo',
+                'inactivo',
+                'suspendido'
+            ])->default('activo');
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });

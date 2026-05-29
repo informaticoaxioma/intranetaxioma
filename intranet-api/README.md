@@ -588,3 +588,151 @@ php artisan optimize:clear
 # Autor
 
 Proyecto Backend Intranet desarrollado con Laravel 12.
+
+# Router
+
+Acá están todas las rutas del proyecto
+
+```text
+resources/js/
+
+├── app.jsx
+│
+├── router/
+│   ├── AppRouter.jsx
+│   ├── PrivateRoute.jsx
+│   └── AdminRoute.jsx
+│
+├── layouts/
+│   ├── RootLayout.jsx
+│   ├── AuthLayout.jsx
+│   ├── DashboardLayout.jsx
+│   └── AdminLayout.jsx
+│
+├── pages/
+│
+│   ├── auth/
+│   │   ├── LoginPage.jsx
+│   │   └── ForgotPasswordPage.jsx
+│   │
+│   ├── dashboard/
+│   │   ├── DashboardPage.jsx
+│   │   ├── DashboardStats.jsx
+│   │   └── DashboardHome.jsx
+│   │
+│   ├── news/
+│   │   ├── NewsPage.jsx
+│   │   ├── NewsCreatePage.jsx
+│   │   ├── NewsEditPage.jsx
+│   │   └── NewsDetailPage.jsx
+│   │
+│   ├── documents/
+│   │   ├── DocumentsPage.jsx
+│   │   ├── DocumentUploadPage.jsx
+│   │   └── DocumentDetailPage.jsx
+│   │
+│   ├── calendar/
+│   │   ├── CalendarPage.jsx
+│   │   ├── EventsPage.jsx
+│   │   └── EventCreatePage.jsx
+│   │
+│   ├── payroll/
+│   │   ├── PayrollPage.jsx
+│   │   └── PayrollDetailPage.jsx
+│   │
+│   ├── vacations/
+│   │   ├── VacationPage.jsx
+│   │   ├── VacationRequestPage.jsx
+│   │   └── VacationAdminPage.jsx
+│   │
+│   ├── profile/
+│   │   ├── ProfilePage.jsx
+│   │   ├── ProfileEditPage.jsx
+│   │   └── ChangePasswordPage.jsx
+│   │
+│   ├── users/
+│   │   ├── UsersPage.jsx
+│   │   ├── UserCreatePage.jsx
+│   │   ├── UserEditPage.jsx
+│   │   └── UserDetailPage.jsx
+│   │
+│   └── errors/
+│       ├── NotFoundPage.jsx
+│       └── UnauthorizedPage.jsx
+│
+├── components/
+│
+│   ├── ui/
+│   │   ├── AppButton.jsx
+│   │   ├── AppCard.jsx
+│   │   ├── AppInput.jsx
+│   │   ├── LoadingSpinner.jsx
+│   │   └── ConfirmDialog.jsx
+│   │
+│   ├── navbar/
+│   │   ├── Navbar.jsx
+│   │   ├── UserMenu.jsx
+│   │   └── NotificationsMenu.jsx
+│   │
+│   ├── sidebar/
+│   │   ├── Sidebar.jsx
+│   │   ├── SidebarItem.jsx
+│   │   └── SidebarGroup.jsx
+│   │
+│   ├── dashboard/
+│   │   ├── StatsCard.jsx
+│   │   ├── NewsWidget.jsx
+│   │   └── CalendarWidget.jsx
+│   │
+│   ├── tables/
+│   │   ├── UsersTable.jsx
+│   │   ├── NewsTable.jsx
+│   │   └── DocumentsTable.jsx
+│   │
+│   └── forms/
+│       ├── LoginForm.jsx
+│       ├── UserForm.jsx
+│       ├── NewsForm.jsx
+│       └── VacationForm.jsx
+│
+├── services/
+│   ├── api.js
+│   ├── authService.js
+│   ├── userService.js
+│   ├── newsService.js
+│   ├── documentService.js
+│   ├── eventService.js
+│   ├── payrollService.js
+│   └── vacationService.js
+│
+├── hooks/
+│   ├── useAuth.js
+│   ├── useUsers.js
+│   ├── useNews.js
+│   └── useVacations.js
+│
+├── store/
+│   ├── authStore.js
+│   ├── userStore.js
+│   └── notificationStore.js
+│
+├── context/
+│   ├── AuthContext.jsx
+│   └── ThemeContext.jsx
+│
+├── lib/
+│   ├── theme.js
+│   ├── axios.js
+│   ├── permissions.js
+│   ├── constants.js
+│   └── helpers.js
+│
+├── assets/
+│   ├── images/
+│   ├── icons/
+│   └── logos/
+│
+└── styles/
+    ├── globals.css
+    └── theme.css
+```
