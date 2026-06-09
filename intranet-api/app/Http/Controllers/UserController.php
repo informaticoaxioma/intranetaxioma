@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,34 +17,34 @@ class UserController extends Controller
         );
     }
 
+    public function show(
+        Request $request,
+        User $user
+    )
+    {
+        return response()->json(
+            $user->load('roles')
+        );
+    }
+
     public function store(Request $request)
     {
+        try {
+        dd($request->all());
         $validated = $request->validate([
 
             'name' => 'required|string|max:255',
-
             'apellido' => 'required|string|max:255',
-
             'email' => 'required|email|unique:users,email',
-
             'password' => 'required|min:6',
-
             'telefono' => 'nullable|string|max:50',
-
             'direccion' => 'nullable|string|max:255',
-
             'fecha_nacimiento' => 'nullable|date',
-
             'departamento' => 'nullable|string|max:255',
-
             'cargo' => 'nullable|string|max:255',
-
             'fecha_ingreso' => 'nullable|date',
-
             'supervision_general' => 'nullable|string|max:255',
-
             'role' => 'required|in:admin,user',
-
             'estado_cuenta' => 'required|in:activo,inactivo,suspendido'
         ]);
 
@@ -107,6 +108,15 @@ class UserController extends Controller
             'user' => $user
 
         ], 201);
+        }
+        catch (\Exception $e) {
+
+        return response()->json([
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => $e->getFile()
+        ], 500);
+    }
     }
 
     /*

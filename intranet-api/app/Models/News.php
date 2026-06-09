@@ -46,14 +46,4 @@ class News extends Model
         return $query->where('categoria', $categoria);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | RELATIONS
-    |--------------------------------------------------------------------------
-    */
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 }

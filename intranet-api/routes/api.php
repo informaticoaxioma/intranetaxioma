@@ -21,13 +21,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Usuarios normales
     Route::get('/news', [NewsController::class, 'index']);
-    Route::get('/news/{news}', [NewsController::class,'show']);
+    Route::get('/news/{id}', [NewsController::class, 'show']);
 
     Route::get('/events', [EventController::class, 'index']);
     Route::get('/events/{event}', [EventController::class, 'show']);
 
     Route::get('/documents', [DocumentController::class, 'index']);
     Route::get('/documents/{document}', [DocumentController::class, 'show']);
+    Route::get('/documents/{document}/download',[DocumentController::class, 'download']);
 
     Route::get('/payrolls', [PayrollController::class, 'index']);
     Route::get('/my-payrolls', [PayrollController::class, 'myPayrolls']);
@@ -37,8 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // SOLO ADMIN
     Route::middleware('role:admin')->group(function () {
 
-        Route::apiResource('users', UserController::class)
-            ->except(['show']);
+        Route::apiResource('users', UserController::class);
 
         Route::apiResource('news', NewsController::class)
             ->except(['index', 'show']);

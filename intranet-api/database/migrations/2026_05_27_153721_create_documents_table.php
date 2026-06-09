@@ -27,6 +27,8 @@ return new class extends Migration
 
             $table->string('archivo');
 
+            $table->string('path');
+
             $table->timestamps();
         });
     }

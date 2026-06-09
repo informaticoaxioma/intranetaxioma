@@ -15,6 +15,7 @@ class Document extends Model
         'autor',
         'tamano_archivo',
         'ultima_modificacion',
+        'path',
         'archivo'
     ];
 

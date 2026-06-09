@@ -27,16 +27,35 @@ class DocumentController extends Controller
     {
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
             'categoria' => 'required|string|max:255',
             'autor' => 'required|string|max:255',
-            'tamano_archivo' => 'required|integer',
-            'ultima_modificacion' => 'nullable|date',
-            'archivo' => 'required|string'
+            'archivo' => 'required|file|max:10240'
+        ]);
+        /*
+        |--------------------------------------------------------------------------
+        | FILE
+        |--------------------------------------------------------------------------
+        */
+        $archivo = $request->file('archivo');
+        $path = $archivo->store(
+            'documents',
+            'public'
+        );
+        $document = Document::create([
+            'nombre' => $validated['nombre'],
+            'descripcion' => $validated['descripcion'] ?? null,
+            'categoria' => $validated['categoria'],
+            'autor' => $validated['autor'],
+            'archivo' => $archivo->getClientOriginalName(),
+            'path' => $path,
+            'tamano_archivo' => $archivo->getSize()
         ]);
 
-        $document = $this->documentService->create($validated);
-
-        return response()->json($document, 201);
+        return response()->json([
+            'message' =>'Documento creado correctamente',
+            'document' => $document
+        ], 201);
     }
 
     public function show(Document $document)
@@ -67,5 +86,19 @@ class DocumentController extends Controller
         return response()->json([
             'message' => 'Documento eliminado correctamente'
         ]);
+
+        
+    }
+
+    public function download(Document $document)
+    {
+
+        return response()->download(
+            storage_path(
+                'app/public/' .
+                $document->path
+            ),
+            $document->archivo
+        );
     }
 }

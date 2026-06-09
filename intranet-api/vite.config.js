@@ -18,7 +18,7 @@ export default defineConfig({
 
                 'resources/css/app.css',
 
-                'resources/js/app.jsx',
+                'resources/js/bootstrap.jsx',
             ],
 
             refresh: true,

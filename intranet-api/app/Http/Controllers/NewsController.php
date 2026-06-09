@@ -31,7 +31,7 @@ class NewsController extends Controller
             'texto_noticia' => 'required|string',
             'categoria' => 'required|string|max:255',
             'autor' => 'required|string|max:255',
-            'imagen' => 'nullable|string'
+            'imagen' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $news = $this->newsService->create($validated);
@@ -39,8 +39,10 @@ class NewsController extends Controller
         return response()->json($news, 201);
     }
 
-    public function show(News $news)
+    public function show($id)
     {
+        $news = News::findOrFail($id);
+
         return response()->json($news);
     }
 
@@ -52,7 +54,7 @@ class NewsController extends Controller
             'texto_noticia' => 'sometimes|string',
             'categoria' => 'sometimes|string|max:255',
             'autor' => 'sometimes|string|max:255',
-            'imagen' => 'nullable|string'
+            'imagen' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $updated = $this->newsService->update($news, $validated);
