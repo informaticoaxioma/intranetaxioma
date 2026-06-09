@@ -39,6 +39,8 @@ export const muiTheme = createTheme({
             primary: "#4A1C23",
 
             secondary: "#722F37",
+
+            gold: "#b79c51",
         },
     },
 

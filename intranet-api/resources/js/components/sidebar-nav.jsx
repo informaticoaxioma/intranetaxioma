@@ -49,7 +49,7 @@ const navItems = [
     },
 
     {
-        path: "/dashboard/noticias",
+        path: "/dashboard/news",
         label: "Noticias",
         icon: Group,
     },
@@ -58,6 +58,11 @@ const navItems = [
         path: "/dashboard/users",
         label: "Usuarios",
         icon: Work,
+    },
+    {
+        path: "/dashboard/payrolls",
+        label: "Liquidaciones",
+        icon: Business,
     },
 ];
 

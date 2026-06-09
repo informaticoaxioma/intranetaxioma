@@ -11,7 +11,8 @@ import WorkIcon from "@mui/icons-material/Work";
 import EditIcon from "@mui/icons-material/Edit";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import { useAuth } from "../../hooks/AuthContext";
+
 
 // UI
 import {
@@ -28,18 +29,7 @@ import {
   Chip,
 } from "@mui/material";
 
-const userInfo = {
-  name: "Carolina Perez",
-  role: "Coordinadora de Contratos",
-  department: "Tecnología",
-  email: "carolina.perez@empresa.com",
-  phone: "+34 612 345 678",
-  location: "Madrid, España",
-  startDate: "15 de Marzo, 2020",
-  manager: "Luis Maluenda",
-  employeeId: "EMP-2020-0342",
-  contractUrl: "/DocumentoActa.pdf",
-};
+
 
 const skills = [
   "React",
@@ -71,8 +61,10 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [tab, setTab] = useState("info");
 
+  const { user } = useAuth();
+
   return (
-    <Stack spacing={4}>
+    <Box className="max-w-[1600px] mx-auto p-6">
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <Box>
@@ -125,102 +117,120 @@ export default function ProfilePage() {
       </div>
 
       {/* CARD PERFIL */}
-      <Card sx={{ overflow: "hidden", borderRadius: 2 }}>
+        <Card
+        sx={{
+            overflow: "hidden",
+            borderRadius: 2,
+            marginTop:1,
+            boxShadow: 2,
+        }}
+        >
+        {/* CABECERA BURDEO */}
         <Box
-          height={120}
-          sx={{
-            background: "linear-gradient(90deg, #6b1426, #541a2c)",
-          }}
-        />
-
-        <CardContent sx={{ position: "relative" }}>
-          <Stack
-            spacing={4}
-            direction={{ xs: "column", md: "row" }}
-            sx={{ mt: -8 }}
-          >
-            {/* AVATAR */}
-            <Box position="relative">
-              <Box
-                width={120}
-                height={120}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                borderRadius={2}
-                bgcolor="#f1f1f1"
-                border="4px solid white"
-                fontSize={28}
-                fontWeight="bold"
-              >
-                CP
-              </Box>
-
-              {isEditing && (
-                <Button
-                  size="small"
-                  sx={{
-                    position: "absolute",
-                    bottom: 4,
-                    right: 4,
-                    borderRadius: "50%",
-                    minWidth: 0,
-                  }}
-                >
-                  <PhotoCameraIcon fontSize="small" />
-                </Button>
-              )}
-            </Box>
-
-            {/* INFO */}
-            <Box
-              flex={1}
-              display="flex"
-              flexDirection="column"
-              justifyContent="center"
-              gap={1.5}
+            sx={{
+            bgcolor: "#6b1426",
+            height: 130,
+            px: 4,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            }}
+        >
+            <Typography
+            variant="h4"
+            className="font-bold text-white"
             >
-              <Typography variant="h5" color="white" fontWeight="bold">
-                {userInfo.name}
-              </Typography>
+            {user?.name} {user?.apellido}
+            </Typography>
 
-              <Typography color="white">
-                {userInfo.role}
-              </Typography>
-
-              <Typography color="rgba(255,255,255,0.8)">
-                {userInfo.department}
-              </Typography>
-            </Box>
-
-            {/* EMPLOYEE ID */}
-            <Box>
-              <Typography
-                variant="body2"
-                color="white"
-                fontWeight="600"
-                mb={0.5}
-              >
+            <Box textAlign="right">
+            <Typography
+            variant="body2"
+            className="font-bold text-white"
+            >
                 ID Empleado
-              </Typography>
+            </Typography>
 
-              <Typography
-                fontFamily="monospace"
-                color="white"
-                fontWeight="600"
-              >
-                {userInfo.employeeId}
-              </Typography>
+            <Typography
+                variant="h7"
+                className="font-semibold text-white"
+            >
+                {user?.id}
+            </Typography>
             </Box>
-          </Stack>
+        </Box>
+
+        {/* CUERPO BLANCO */}
+        <CardContent
+            sx={{
+            bgcolor: "white",
+            py: 4,
+            px: 4,
+            }}
+        >
+            <Stack
+            direction={{ xs: "column", md: "row" }}
+            spacing={3}
+            alignItems="center"
+            >
+            {/* AVATAR */}
+            <Box
+                sx={{
+                width: 120,
+                height: 120,
+                borderRadius: 3,
+                bgcolor: "#E5E5E5",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontWeight: "bold",
+                fontSize: 40,
+                flexShrink: 0,
+                mt: -10,
+                border: "4px solid white",
+                boxShadow: 2,
+                }}
+            >
+                {user?.name
+                .split(" ")
+                .map((n) => n[0])
+                .slice(0, 2)
+                .join("")}{user?.apellido
+                .split(" ")
+                .map((n) => n[0])
+                .slice(0, 2)
+                .join("")}
+            </Box>
+
+            {/* INFORMACIÓN */}
+            <Box>
+                <Typography
+                variant="h6"
+                fontWeight="600"
+                color="#222"
+                >
+                {user?.cargo}
+                </Typography>
+
+                <Typography
+                variant="body1"
+                color="text.secondary"
+                sx={{ mt: 1 }}
+                >
+                {user?.departamento}
+                </Typography>
+            </Box>
+            </Stack>
         </CardContent>
-      </Card>
+        </Card>
 
       {/* TABS */}
       <Tabs
         value={tab}
         onChange={(e, v) => setTab(v)}
         sx={{
+          marginTop:2,
+          marginBottom:2,
           backgroundColor: "#f4ede4",
           p: 1,
           borderRadius: 2,
@@ -259,19 +269,19 @@ export default function ProfilePage() {
                 <InfoRow
                   icon={<EmailIcon fontSize="small" />}
                   label="Correo"
-                  value={userInfo.email}
+                  value={user?.email}
                 />
 
                 <InfoRow
                   icon={<PhoneIcon fontSize="small" />}
                   label="Teléfono"
-                  value={userInfo.phone}
+                  value={user?.telefono}
                 />
 
                 <InfoRow
                   icon={<LocationOnIcon fontSize="small" />}
                   label="Ubicación"
-                  value={userInfo.location}
+                  value={user?.direccion}
                 />
               </Stack>
             </CardContent>
@@ -298,25 +308,25 @@ export default function ProfilePage() {
                 <InfoRow
                   icon={<WorkIcon fontSize="small" />}
                   label="Cargo"
-                  value={userInfo.role}
+                  value={user?.cargo}
                 />
 
                 <InfoRow
                   icon={<ApartmentIcon fontSize="small" />}
                   label="Departamento"
-                  value={userInfo.department}
+                  value={user?.departamento}
                 />
 
                 <InfoRow
                   icon={<PersonIcon fontSize="small" />}
                   label="Supervisor"
-                  value={userInfo.manager}
+                  value={user?.supervision_general}
                 />
 
                 <InfoRow
                   icon={<CalendarTodayIcon fontSize="small" />}
                   label="Ingreso"
-                  value={userInfo.startDate}
+                  value={user?.fecha_ingreso?.substring(0, 10)}
                 />
               </Stack>
             </CardContent>
@@ -428,7 +438,7 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
       )}
-    </Stack>
+    </Box>
   );
 }
 

@@ -1,27 +1,19 @@
 import React, { useState } from "react";
 
 import { useNavigate } from "react-router-dom";
-
 import Button from "@mui/material/Button";
-
 import Checkbox from "@mui/material/Checkbox";
-
 import FormLabel from "@mui/material/FormLabel";
-
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
-
 import IconButton from "@mui/material/IconButton";
-
 import Visibility from "@mui/icons-material/Visibility";
-
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-
 import Lock from "@mui/icons-material/Lock";
-
 import Mail from "@mui/icons-material/Mail";
-
 import Business from "@mui/icons-material/Business";
+
+import { login } from "../../services/api";
 
 export default function LoginPage() {
 
@@ -39,24 +31,26 @@ export default function LoginPage() {
         useState(false);
 
     const handleSubmit = async (e) => {
-
         e.preventDefault();
 
         setIsLoading(true);
 
-        /*
-        |--------------------------------------------------------------------------
-        | AQUÍ IRÁ TU LOGIN API LARAVEL
-        |--------------------------------------------------------------------------
-        */
+        try {
+            const data = await login(email, password);
 
-        await new Promise((res) =>
-            setTimeout(res, 1500)
-        );
+            console.log(data);
 
-        navigate("/dashboard");
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
 
-        setIsLoading(false);
+            navigate("/dashboard");
+
+        } catch (error) {
+            console.error(error);
+            alert("Credenciales incorrectas");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -138,6 +132,8 @@ export default function LoginPage() {
               <div className="relative">
                 <TextField
                 id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 fullWidth
                 required
                 placeholder="Correo Electrónico"
@@ -180,6 +176,8 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   variant="outlined"
                   type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   InputProps={{
                     startAdornment: (
                       <TextField  position="start">

@@ -12,6 +12,18 @@ import LoginPage from "../pages/auth/LoginPage";
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import DashboardLayout from "../layouts/DashboardLayout";
 import ProfilePage from "../pages/profile/ProfilePage";
+import DocumentsPage from "../pages/documents/DocumentsPage";
+import CreateDocumentsPage from "../pages/documents/CreateDocumentsPage";
+import EditDocumentsPage from "../pages/documents/EditDocumentsPage";
+import NewsPage from "../pages/news/NewsPage";
+import CalendarPage from "../pages/calendar/CalendarPage";
+import UsersPage from "../pages/users/UsersPage";
+import CreateUsersPage from "../pages/users/CreateUsersPage";
+import EditUsersPage from "../pages/users/EditUsersPage";
+import NewsDetailPage from "../pages/news/NewsDetailPage";
+import PayrollsPage from "../pages/payroll/PayrollsPage";
+import CreatePayrollsPage from "../pages/payroll/CreatePayrollsPage";
+
 
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
@@ -37,12 +49,11 @@ export default function AppRouter() {
                     path="/dashboard"
 
                     element={
-
+                        <PrivateRoute>
                             <DashboardLayout>
-
                                 <DashboardPage />
-
                             </DashboardLayout>
+                        </PrivateRoute>
                     }
                 />
 
@@ -54,17 +65,167 @@ export default function AppRouter() {
 
                     element={
 
-                    
+                    <PrivateRoute>
                         <DashboardLayout>
-
                             <ProfilePage />
-
                         </DashboardLayout>
+                    </PrivateRoute>
 
                     }
                 />
 
 
+
+                {/* DOCUMENTOS */}
+
+                <Route
+
+                    path="/dashboard/documents"
+
+                    element={
+                    <PrivateRoute>
+                        <DashboardLayout>
+                            <DocumentsPage />
+                        </DashboardLayout>
+                    </PrivateRoute>
+                    }
+                />
+
+                <Route
+
+                    path="/dashboard/documents/crear"
+
+                    element={
+                    <PrivateRoute>
+                        <DashboardLayout>
+                            <CreateDocumentsPage />
+                        </DashboardLayout>
+                    </PrivateRoute>
+                    }
+                />
+
+                <Route
+
+                    path="/dashboard/documents/editar/:id"
+
+                    element={
+                    <PrivateRoute>
+                        <DashboardLayout>
+                            <EditDocumentsPage />
+                        </DashboardLayout>
+                    </PrivateRoute>
+                    }
+                />
+
+                {/* NEWS */}
+
+                <Route
+
+                    path="/dashboard/news"
+
+                    element={
+                        <PrivateRoute>
+                            <DashboardLayout>
+                                <NewsPage />
+                            </DashboardLayout>
+                        </PrivateRoute>
+                    }
+                />
+
+                <Route
+                    path="/dashboard/news/:id"
+                    element={
+                        <PrivateRoute>
+                            <DashboardLayout>
+                                <NewsDetailPage />
+                            </DashboardLayout>
+                        </PrivateRoute>
+                    }
+                />
+
+                {/* CALENDARIO */}
+
+                <Route
+
+                    path="/dashboard/calendar"
+
+                    element={
+                        
+                    <PrivateRoute>
+                        <DashboardLayout>
+                            <CalendarPage />
+                        </DashboardLayout>
+                    </PrivateRoute>
+
+                    }
+                />
+
+                {/* ADMIN USERS */}
+
+                <Route
+
+                    path="/dashboard/users"
+
+                    element={
+                        <PrivateRoute>
+                            <DashboardLayout>
+                                <UsersPage />
+                            </DashboardLayout>
+                        </PrivateRoute>
+                    }
+                />
+
+                <Route
+
+                    path="/dashboard/users/editar/:id"
+
+                    element={
+                        <PrivateRoute>
+                            <DashboardLayout>
+                                <EditUsersPage />
+                            </DashboardLayout>
+                        </PrivateRoute>
+                    }
+                />
+
+                <Route
+
+                    path="/dashboard/users/create"
+
+                    element={
+                        <PrivateRoute>
+                            <DashboardLayout>
+                                <CreateUsersPage />
+                            </DashboardLayout>
+                        </PrivateRoute>
+                    }
+                />
+
+                <Route
+
+                    path="/dashboard/payrolls"
+
+                    element={
+                        <PrivateRoute>
+                            <DashboardLayout>
+                                <PayrollsPage/>
+                            </DashboardLayout>
+                        </PrivateRoute>
+                    }
+                />
+
+                <Route
+
+                    path="/dashboard/payrolls/crear"
+
+                    element={
+                        <PrivateRoute>
+                            <DashboardLayout>
+                                <CreatePayrollsPage/>
+                            </DashboardLayout>
+                        </PrivateRoute>
+                    }
+                />
 
             </Routes>
 

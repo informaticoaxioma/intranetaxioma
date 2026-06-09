@@ -46,7 +46,7 @@ export default function AdminRoute({
 
     if (
         !user ||
-        user.rol !== "admin"
+        user.role !== "admin"
     ) {
 
         return (

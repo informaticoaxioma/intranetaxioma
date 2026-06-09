@@ -214,7 +214,7 @@ export default function DocumentsPage() {
         </Link>
 
         <Typography color="text.primary">
-            Documentos
+            Liquidaciones
         </Typography>
         </Breadcrumbs>
 
@@ -226,11 +226,11 @@ export default function DocumentsPage() {
             variant="h4"
             className="font-bold text-[#4A1C23]"
           >
-            Centro de Documentos
+            Centro de Liquidaciones de Sueldo
           </Typography>
 
           <Typography className="text-gray-500 mt-1">
-            Accede a políticas, manuales y plantillas.
+            Accede a las liquidaciones de sueldo de todos los colaboradores
           </Typography>
         </Box>
 
@@ -238,72 +238,16 @@ export default function DocumentsPage() {
           variant="contained"
           className="!bg-[#6a1936] hover:!bg-[#4a1025]"
            component={Link}
-            to="/dashboard/documents/crear"
+            to="/dashboard/payrolls/crear"
         >
-          Subir Documento
+          Subir Liquidación
         </Button>
       </Box>
 
-      {/* CARPETAS */}
-      <Box className="mb-8">
-        <Typography
-          variant="h6"
-          className="font-semibold text-[#4A1C23] mb-4"
-        >
-          Carpetas
-        </Typography>
-
-        <Grid container spacing={2}>
-          {carpetas.map((carpeta) => (
-            <Grid key={carpeta.id} size={{ xs: 12, sm: 6, md: 4, lg: 3, }} >
-              <Card
-              
-                onClick={() => {
-                  const index = categorias.findIndex(
-                    (c) => c === carpeta.nombre
-                  )
-
-                  if (index !== -1) {
-                    setTabValue(index)
-                  }
-                }}
-                className="cursor-pointer hover:-translate-y-1 transition-all duration-200"
-              >
-                <CardContent className="text-center py-6">
-                  <Folder size={40} color={carpeta.color} />
-
-                  <Typography
-                    className="font-semibold mt-2 truncate text-[#4A1C23]"
-                  >
-                    {carpeta.nombre}
-                  </Typography>
-
-                  <Typography
-                    variant="caption"
-                    className="text-gray-500"
-                  >
-                    {carpeta.cantidad} documents
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
 
       {/* FILTROS */}
       <Box className="flex flex-col lg:flex-row justify-between gap-4 mb-6">
 
-        <Tabs
-          value={tabValue}
-          onChange={(_, newValue) => setTabValue(newValue)}
-          variant="scrollable"
-          scrollButtons="auto"
-        >
-          {categorias.map((cat) => (
-            <Tab key={cat} label={cat} />
-          ))}
-        </Tabs>
 
         <Box className="flex items-center gap-3">
 

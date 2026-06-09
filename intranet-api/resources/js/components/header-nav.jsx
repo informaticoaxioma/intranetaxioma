@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -21,6 +21,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/AuthContext";
 
 export function HeaderNav() {
 
@@ -78,6 +79,7 @@ export function HeaderNav() {
     | RENDER
     |--------------------------------------------------------------------------
     */
+   const { user } = useAuth();
 
     return (
 
@@ -221,7 +223,6 @@ export function HeaderNav() {
 
                         <MenuItem
                             sx={{
-                                flexDirection: "column",
                                 alignItems: "flex-start",
                             }}
                         >
@@ -241,7 +242,6 @@ export function HeaderNav() {
 
                         <MenuItem
                             sx={{
-                                flexDirection: "column",
                                 alignItems: "flex-start",
                             }}
                         >
@@ -261,7 +261,6 @@ export function HeaderNav() {
 
                         <MenuItem
                             sx={{
-                                flexDirection: "column",
                                 alignItems: "flex-start",
                             }}
                         >
@@ -312,8 +311,6 @@ export function HeaderNav() {
 
                                 <Box
                                     display="flex"
-                                    flexDirection="column"
-                                    textAlign="left"
                                 >
 
                                     <Typography
@@ -323,7 +320,7 @@ export function HeaderNav() {
                                             color: "text.primary",
                                         }}
                                     >
-                                        Carolina Perez
+                                        {user?.name || "Nombre"} {user?.apellido || "Apellido"}
                                     </Typography>
 
                                     <Typography
@@ -332,7 +329,7 @@ export function HeaderNav() {
                                             color: "text.secondary",
                                         }}
                                     >
-                                        Coordinadora de Contratos
+                                        {user?.cargo || "Cargo"}
                                     </Typography>
 
                                 </Box>

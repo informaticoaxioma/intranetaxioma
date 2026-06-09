@@ -1,10 +1,7 @@
 import DescriptionIcon from '@mui/icons-material/Description';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import GroupIcon from '@mui/icons-material/Group';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useNavigate } from "react-router-dom";
 
 // Card
@@ -13,11 +10,10 @@ import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 
-// Typography (reemplazo títulos/descripciones)
-import Typography from '@mui/material/Typography';
+import { Typography, Box } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../hooks/AuthContext";
 
-// Button
-import Button from '@mui/material/Button';
 
 const stats = [
   { label: "Documentos", value: "128", icon: DescriptionIcon, change: "+12 este mes" },
@@ -44,25 +40,42 @@ const employee = {
 
 export default function DashboardPage() {
     const navigate = useNavigate();
+    const { user } = useAuth();
+
 
     return (
-
-    <div className="space-y-6">
+    
+    <Box className="space-y-6 max-w-[1400px] mx-auto">
       {/* Welcome section */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Bienvenida Carolina.  </h1>
-          <p className="text-muted-foreground">Aquí tienes un resumen de lo que está pasando en la empresa</p>
+          <Typography
+            variant="h4"
+            className="font-bold text-[#4A1C23]"
+          >
+            Intranet Axioma: {user?.name || "Usuario"}
+          </Typography>
+
+          <Typography
+            variant="body1"
+            className="text-gray-500 mt-1"
+          >
+            Aquí tienes un resumen de lo que está pasando en la empresa
+          </Typography>
         </div>
+
         <div className="text-right">
-          <p className="text-sm text-muted-foreground">
+          <Typography
+            variant="body2"
+            className="text-gray-500"
+          >
             {new Date().toLocaleDateString("es-ES", {
               weekday: "long",
               year: "numeric",
               month: "long",
               day: "numeric",
             })}
-          </p>
+          </Typography>
         </div>
       </div>
 
@@ -164,37 +177,37 @@ export default function DashboardPage() {
                 </div>
               ))}
             </div>
-<CardActions>
+            <CardActions>
 
-    <button
+                <button
 
-        onClick={() =>
-            navigate("/dashboard/calendar")
-        }
+                    onClick={() =>
+                        navigate("/dashboard/calendar")
+                    }
 
-        className="
-        w-full
-        border
-          border-ring
-          hover:text-ring)]
-          mt-2
-          bg-ring
-          hover:bg-white
-          hover:text-ring
-          text-white
-          py-3
-          rounded-lg
-          font-semibold
-          transition-all
-          duration-200
-        "
-    >
+                    className="
+                    w-full
+                    border
+                      border-ring
+                      hover:text-ring)]
+                      mt-2
+                      bg-ring
+                      hover:bg-white
+                      hover:text-ring
+                      text-white
+                      py-3
+                      rounded-lg
+                      font-semibold
+                      transition-all
+                      duration-200
+                    "
+                >
 
-        Ver calendario completo
+                    Ver calendario completo
 
-    </button>
+                </button>
 
-</CardActions>
+            </CardActions>
           </CardContent>
         </Card>
 
@@ -248,6 +261,6 @@ export default function DashboardPage() {
       </div>
 
 
-    </div>
+    </Box>
     );
 }
