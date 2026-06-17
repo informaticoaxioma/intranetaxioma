@@ -20,7 +20,8 @@ import { useNavigate } from "react-router-dom";
 import { createDocument } from "../../services/api";
 
 const categorias = [
-  "Recursos Humanos",
+  "Politicas y Normativas",
+  "Contabilidad y RRHH",
   "Finanzas",
   "Corporativo",
   "Formación",

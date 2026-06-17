@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Document;
+use App\Models\Event;
+use App\Models\News;
+use App\Models\Payroll;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -125,5 +129,23 @@ class AuthController extends Controller
     public function me(Request $request)
     {
         return response()->json($request->user()->load('roles'));
+    }
+
+    public function stats()
+    {
+        return response()->json([
+
+            'documents' =>
+                Document::count(),
+
+            'events' =>
+                Event::count(),
+
+            'news' =>
+                News::count(),
+
+            'payrolls' =>
+                Payroll::count()
+        ]);
     }
 }

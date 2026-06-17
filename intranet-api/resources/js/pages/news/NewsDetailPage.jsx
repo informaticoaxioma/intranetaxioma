@@ -50,6 +50,7 @@ export default function NewsDetailPage() {
     categoria: "",
     autor: "",
     created_at: "",
+    path_imagen:"",
     });
 
     const [errors, setErrors] = useState({});
@@ -77,6 +78,7 @@ export default function NewsDetailPage() {
                 texto_noticia: data.texto_noticia || "",
                 categoria: data.categoria || "",
                 autor: data.autor || "",
+                path_imagen: data.path_imagen || "", 
             });
 
             } catch (error) {
@@ -188,8 +190,16 @@ export default function NewsDetailPage() {
             {/* Imagen */}
             <CardMedia
               component="img"
-              height="350"
-              image={formData.imagen}
+              sx={{
+                    height: 300,
+                    objectFit: "cover",
+                    borderTopLeftRadius: 8,
+                    borderTopRightRadius: 8,
+                }}
+              image={formData.path_imagen
+                      ? `http://127.0.0.1:8000/storage/${formData.path_imagen}`
+                      : "https://picsum.photos/600/300"
+              }
               alt={formData.titulo}
             />
 
@@ -317,7 +327,7 @@ export default function NewsDetailPage() {
                             handleChange("categoria", e.target.value)
                           }
                         >
-                          <MenuItem value="recursos_humanos">
+                          <MenuItem value="Recursos Humanos">
                             Recursos Humanos
                           </MenuItem>
                           <MenuItem value="Finanzas">Finanzas</MenuItem>

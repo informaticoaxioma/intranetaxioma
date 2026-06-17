@@ -22,6 +22,8 @@ return new class extends Migration
 
             $table->string('imagen')->nullable();
 
+            $table->string('path_imagen')->nullable();
+
         });
     }
 

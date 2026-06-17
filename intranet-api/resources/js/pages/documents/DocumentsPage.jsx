@@ -35,8 +35,9 @@ import {
   Button,
 } from "@mui/material"
 import { Link } from "react-router-dom"
+import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
-import { getDocuments, downloadDocument } from "../../services/api";
+import { getDocuments, downloadDocument, previewDocument } from "../../services/api";
 
 // ==========================
 // ICONOS CUSTOM
@@ -83,43 +84,25 @@ function FileIcon({ type }) {
 // ==========================
 
 const carpetas = [
-  { id: 1, nombre: "Políticas y Normativas", color: "#722F37", cantidad: 24 },
+  { id: 1, nombre: "Politicas y Normativas", color: "#722F37", cantidad: 24 },
   { id: 2, nombre: "Contabilidad y RRHH", color: "#4A1C23", cantidad: 18 },
-  { id: 3, nombre: "Manuales y Guías", color: "#8B4513", cantidad: 32 },
-  { id: 4, nombre: "Plantillas", color: "#5D6D7E", cantidad: 45 },
+  { id: 3, nombre: "Finanzas", color: "#8B4513", cantidad: 32 },
+  { id: 4, nombre: "Corporativo", color: "#5D6D7E", cantidad: 45 },
   { id: 5, nombre: "Formación", color: "#1E88E5", cantidad: 15 },
+  { id: 6, nombre: "Legal", color: "#1E88E5", cantidad: 15 },
+  { id: 7, nombre: "Tecnología", color: "#1E88E5", cantidad: 15 },
 ]
 
-const documentos = [
-  {
-    id: 1,
-    nombre: "Código de Conducta Corporativo",
-    tipo: "pdf",
-    categoria: "Políticas y Normativas",
-    tamaño: "2.4 MB",
-    ultima_modificacion: "15 Dic 2025",
-    autor: "Contabilidad y RRHH",
-    favorito: true,
-  },
-  {
-    id: 2,
-    nombre: "Manual de Onboarding 2025",
-    tipo: "pdf",
-    categoria: "Contabilidad y RRHH",
-    tamaño: "5.8 MB",
-    ultima_modificacion: "10 Dic 2025",
-    autor: "RRHH",
-    favorito: true,
-  },
-]
 
 const categorias = [
   "Todos",
-  "Políticas y Normativas",
+  "Politicas y Normativas",
   "Contabilidad y RRHH",
-  "Manuales y Guías",
-  "Plantillas",
+  "Finanzas",
+  "Corporativo",
   "Formación",
+  "Legal",
+  "Tecnología",
 ]
 
 // ==========================
@@ -129,29 +112,38 @@ const categorias = [
 export default function DocumentsPage() {
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(0)
-  const [busqueda, setBusqueda] = useState("")
-  const [vistaMode, setVistaMode] = useState("list")
+  const [busqueda, setBusqueda] = useState("");
   const [documents, setDocuments] = useState([])
-
-  const [favoritos, setFavoritos] = useState(
-    documents.filter((d) => d.favorito).map((d) => d.id)
-  )
+  const user =JSON.parse(localStorage.getItem("user"));
 
   const documentosFiltrados = documents.filter((doc) => {
-    const matchCategoria =
-      tabValue === 0 || doc.categoria === categorias[tabValue]
 
-    const matchBusqueda =
-    (doc.nombre || "")
-      .toLowerCase()
-      .includes(busqueda.toLowerCase()) ||
+      const matchCategoria =
+          tabValue === 0 ||
+          doc.categoria?.trim() ===
+          categorias[tabValue];
 
-    (doc.autor || "")
-      .toLowerCase()
-      .includes(busqueda.toLowerCase());
+      const matchBusqueda =
 
-    return matchCategoria && matchBusqueda
-  })
+          (doc.nombre || "")
+              .toLowerCase()
+              .includes(
+                  busqueda.toLowerCase()
+              )
+
+          ||
+
+          (doc.autor || "")
+              .toLowerCase()
+              .includes(
+                  busqueda.toLowerCase()
+              );
+
+      return (
+          matchCategoria &&
+          matchBusqueda
+      );
+  });
 
   const toggleFavorito = (id) => {
     setFavoritos((prev) =>
@@ -233,15 +225,18 @@ export default function DocumentsPage() {
             Accede a políticas, manuales y plantillas.
           </Typography>
         </Box>
-
+          {
+            user?.role === "admin" && (
         <Button
           variant="contained"
+          startIcon={<AddIcon />}
           className="!bg-[#6a1936] hover:!bg-[#4a1025]"
            component={Link}
             to="/dashboard/documents/crear"
         >
           Subir Documento
         </Button>
+            )}
       </Box>
 
       {/* CARPETAS */}
@@ -312,13 +307,15 @@ export default function DocumentsPage() {
             placeholder="Buscar documentos..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
-              InputProps={{
-            startAdornment: (
-            <InputAdornment position="start">
-                <Search size={18} />
-            </InputAdornment>
-            ),
-        }}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search size={18} />
+                  </InputAdornment>
+                ),
+              },
+            }}
           />
 
 
@@ -326,189 +323,120 @@ export default function DocumentsPage() {
       </Box>
 
       {/* TABLA */}
-      {vistaMode === "list" ? (
-        <TableContainer component={Paper}>
+      <TableContainer component={Paper}>
 
-          <Table>
+        <Table>
 
-            <TableHead>
-              <TableRow className="bg-gray-100">
+          <TableHead>
+            <TableRow className="bg-gray-100">
 
-                <TableCell className="!font-semibold">
-                  Nombre
+              <TableCell className="!font-semibold">
+                Nombre
+              </TableCell>
+
+              <TableCell className="!font-semibold">
+                Categoría
+              </TableCell>
+
+              <TableCell className="!font-semibold">
+                Tamaño
+              </TableCell>
+
+              <TableCell className="!font-semibold">
+                Modificado
+              </TableCell>
+
+              <TableCell className="!font-semibold">
+                Acciones
+              </TableCell>
+
+            </TableRow>
+          </TableHead>
+
+          <TableBody>
+
+            {documentosFiltrados.map((doc) => (
+              <TableRow key={doc.id} hover>
+
+                <TableCell>
+                  <Box className="flex items-center gap-3">
+
+                    <FileIcon type={getFileType(doc.path)} />
+
+                    <Box>
+                      <Typography className="font-semibold text-[#4A1C23]">
+                        {doc.nombre}
+                      </Typography>
+
+                    <Chip
+                      label={getFileType(doc.path)}
+                      size="small"
+                    />
+                    </Box>
+
+                  </Box>
                 </TableCell>
 
-                <TableCell className="!font-semibold">
-                  Categoría
+                <TableCell>
+                  {doc.categoria}
                 </TableCell>
 
-                <TableCell className="!font-semibold">
-                  Tamaño
+                <TableCell>
+                  {doc.tamano_archivo}
                 </TableCell>
 
-                <TableCell className="!font-semibold">
-                  Modificado
+                <TableCell>
+                  {doc.updated_at?.substring(0, 10)}
                 </TableCell>
 
-                <TableCell className="!font-semibold">
-                  Acciones
+                <TableCell>
+
+                  <Box className="flex items-center gap-1">
+
+                    <Tooltip title="Vista previa">
+                      <IconButton
+                          onClick={() =>
+                              previewDocument(
+                                  doc.id
+                              )
+                          }
+                      >
+                          <Eye size={18} />
+                      </IconButton>
+                    </Tooltip>
+
+                    <Tooltip title="Descargar">
+                      <IconButton
+                        onClick={() => handleDownload(doc.id, doc.archivo)}
+                      >
+                        <Download size={18} />
+                      </IconButton>
+                    </Tooltip>
+
+                    <Tooltip title="Editar">
+                        <IconButton
+                            onClick={() =>
+                                navigate(
+                                    `/dashboard/documents/editar/${doc.id}`
+                                )
+                            }
+                        >
+                            <Edit size={18} />
+                        </IconButton>
+                    </Tooltip>
+
+                  </Box>
+
                 </TableCell>
 
               </TableRow>
-            </TableHead>
+            ))}
 
-            <TableBody>
+          </TableBody>
 
-              {documents.map((doc) => (
-                <TableRow key={doc.id} hover>
+        </Table>
 
-                  <TableCell>
-                    <Box className="flex items-center gap-3">
-
-                      <FileIcon type={getFileType(doc.path)} />
-
-                      <Box>
-                        <Typography className="font-semibold text-[#4A1C23]">
-                          {doc.nombre}
-                        </Typography>
-
-                      <Chip
-                        label={getFileType(doc.path)}
-                        size="small"
-                      />
-                      </Box>
-
-                    </Box>
-                  </TableCell>
-
-                  <TableCell>
-                    {doc.categoria}
-                  </TableCell>
-
-                  <TableCell>
-                    {doc.tamano_archivo}
-                  </TableCell>
-
-                  <TableCell>
-                    {doc.updated_at?.substring(0, 10)}
-                  </TableCell>
-
-                  <TableCell>
-
-                    <Box className="flex items-center gap-1">
-
-                      <Tooltip title="Favorito">
-                        <IconButton onClick={() => toggleFavorito(doc.id)}>
-                            <Star
-                            size={18}
-                            fill={favoritos.includes(doc.id) ? "#FFB300" : "none"}
-                            color={favoritos.includes(doc.id) ? "#FFB300" : "currentColor"}
-                            />
-                        </IconButton>
-                      </Tooltip>
-
-                      <Tooltip title="Vista previa">
-                        <IconButton>
-                            <Eye size={18} />
-                        </IconButton>
-                      </Tooltip>
-
-                      <Tooltip title="Descargar">
-                        <IconButton
-                          onClick={() => handleDownload(doc.id, doc.archivo)}
-                        >
-                          <Download size={18} />
-                        </IconButton>
-                      </Tooltip>
-
-                      <Tooltip title="Editar">
-                          <IconButton
-                              onClick={() =>
-                                  navigate(
-                                      `/dashboard/documents/editar/${doc.id}`
-                                  )
-                              }
-                          >
-                              <Edit size={18} />
-                          </IconButton>
-                      </Tooltip>
-
-                    </Box>
-
-                  </TableCell>
-
-                </TableRow>
-              ))}
-
-            </TableBody>
-
-          </Table>
-
-        </TableContainer>
-      ) : (
-        <Grid container spacing={2}>
-
-          {documentosFiltrados.map((doc) => (
-            <Grid key={doc.id} size={{ xs: 12, sm: 6, md: 4, lg: 3, }} >
-
-              <Card className="hover:-translate-y-1 transition-all duration-200 h-full">
-
-                <CardContent>
-
-                  <Box className="flex justify-between items-start mb-4">
-
-                    
-                    <IconButton
-                      onClick={() => toggleFavorito(doc.id)}
-                    >
-                      <IconStar
-                        size={18}
-                        fill={
-                          favoritos.includes(doc.id)
-                            ? "#FFB300"
-                            : "none"
-                        }
-                      />
-                    </IconButton>
-
-                  </Box>
-
-                  <Typography className="font-semibold text-[#4A1C23] mb-2">
-                    {doc.nombre}
-                  </Typography>
-
-                  <Chip
-                    label={doc.categoria}
-                    size="small"
-                    className="mb-3"
-                  />
-
-                  <Box className="flex justify-between text-sm text-gray-500">
-                    <span>{doc.tamano_archivo}</span>
-                    <span>{doc.ultima_modificacion}</span>
-                  </Box>
-
-                  <Box className="flex justify-end gap-1 mt-4">
-
-                    <IconButton>
-                      <IconEye size={18} />
-                    </IconButton>
-
-                    <IconButton>
-                      <IconDownload size={18} />
-                    </IconButton>
-
-                  </Box>
-
-                </CardContent>
-
-              </Card>
-
-            </Grid>
-          ))}
-
-        </Grid>
-      )}
+      </TableContainer>
     </Box>
   )
 }

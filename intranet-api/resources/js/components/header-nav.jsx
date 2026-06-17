@@ -105,38 +105,34 @@ export function HeaderNav() {
                 {
                     !isMobile && (
 
-                        <Box
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            width: isTablet ? 250 : 380,
+                            px: 2,
+                            py: 1,
+                            borderRadius: 2,
+                            backgroundColor: "action.hover",
+                            gap: 1,
+                        }}
+                    >
+                        <SearchIcon
+                            fontSize="small"
                             sx={{
-                                position: "relative",
-                                display: "flex",
-                                alignItems: "center",
-                                width: isTablet ? 250 : 380,
-                                px: 2,
-                                py: 0.5,
-                                borderRadius: 2,
-                                backgroundColor: "action.hover",
+                                opacity: 0.7,
+                            }}
+                        />
+
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                color: "text.secondary",
                             }}
                         >
-
-                            <SearchIcon
-                                fontSize="small"
-                                sx={{
-                                    position: "absolute",
-                                    left: 8,
-                                    opacity: 0.7,
-                                }}
-                            />
-
-                            <InputBase
-                                placeholder="Buscar en la intranet…"
-                                sx={{
-                                    ml: 4,
-                                    width: "100%",
-                                    fontSize: 14,
-                                }}
-                            />
-
-                        </Box>
+                            Busca la información que necesites en tu intranet
+                        </Typography>
+                    </Box>
                     )
                 }
 

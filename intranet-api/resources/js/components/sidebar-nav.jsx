@@ -9,6 +9,7 @@ import {
     Work,
     Business,
     Logout,
+    Sunny
 } from "@mui/icons-material";
 
 import {
@@ -28,41 +29,54 @@ const navItems = [
         path: "/dashboard",
         label: "Inicio",
         icon: Home,
+        roles: ["admin", "user"],
     },
 
     {
         path: "/dashboard/profile",
         label: "Mi Perfil",
         icon: Person,
+        roles: ["admin", "user"],
     },
 
     {
         path: "/dashboard/documents",
         label: "Documentos",
         icon: Description,
+        roles: ["admin", "user"],
     },
 
     {
         path: "/dashboard/calendar",
         label: "Calendario",
         icon: CalendarMonth,
+        roles: ["admin", "user"],
     },
 
     {
         path: "/dashboard/news",
         label: "Noticias",
         icon: Group,
+        roles: ["admin", "user"],
     },
 
     {
         path: "/dashboard/users",
         label: "Usuarios",
         icon: Work,
+        roles: ["admin"],
     },
     {
         path: "/dashboard/payrolls",
         label: "Liquidaciones",
         icon: Business,
+        roles: ["admin"],
+    },
+        {
+        path: "/dashboard/vacations",
+        label: "Vacaciones",
+        icon: Sunny,
+        roles: ["admin"],
     },
 ];
 
@@ -104,6 +118,19 @@ export function SidebarNav() {
     | RENDER
     |--------------------------------------------------------------------------
     */
+
+    const user =
+    JSON.parse(
+        localStorage.getItem("user")
+    );
+
+    const filteredNavItems =
+        navItems.filter(
+            item =>
+                item.roles.includes(
+                    user?.role
+                )
+        );
 
     return (
 
@@ -204,7 +231,8 @@ export function SidebarNav() {
             >
 
                 {
-                    navItems.map((item) => {
+                    
+                    filteredNavItems.map((item) => {
 
                         const Icon = item.icon;
 

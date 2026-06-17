@@ -1,18 +1,23 @@
-import DescriptionIcon from '@mui/icons-material/Description';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import DescriptionIcon from "@mui/icons-material/Description";
+import EventIcon from "@mui/icons-material/Event";
+import CampaignIcon from "@mui/icons-material/Campaign";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import { useNavigate } from "react-router-dom";
 
 // Card
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
+import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, useStepContext } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/AuthContext";
+import { getNews, getEvents, getDashboardStats } from '../../services/api';
 
 
 const stats = [
@@ -21,27 +26,85 @@ const stats = [
 ]
 
 
-const upcomingEvents = [
-  { name: "Reunión de equipo", time: "10:00 AM", date: "Hoy" },
-  { name: "Capacitación Excel", time: "3:00 PM", date: "Mañana" },
-  { name: "Town Hall mensual", time: "11:00 AM", date: "Viernes" },
-]
-
-const corporateNews = [
-  { title: "Plan de beneficios para empleados 2026", date: "Hace 2 días" },
-  { title: "Resultados financieros Q2", date: "Hace 4 días" },
-  { title: "Actualización de sistema ERP", date: "Hace 5 días" },
-];
 
 const employee = {
   name: "Carolina Perez",
   position: "Coordinadora de Contratos",
 };
 
+
+
 export default function DashboardPage() {
     const navigate = useNavigate();
     const { user } = useAuth();
+    const [corporateNews, setCorporateNews] = useState([]);
+    const [upcomingEvents, setUpcomingEvents] = useState([]);
+    const [stats, setStats] = useState([]);
 
+    useEffect(() => {
+        const loadNews = async () => {
+            try {
+                const data =
+                    await getNews();
+                setCorporateNews(data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        loadNews();
+
+    }, []);
+
+    useEffect(() => {
+      const loadEvents = async () => {
+        try {
+          const data =
+            await getEvents();
+
+          setUpcomingEvents(data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      loadEvents();
+
+    }, []);
+
+    useEffect(() => {
+        const loadStats = async () => {
+            try {
+                const data = await getDashboardStats();
+                setStats([
+                    {
+                        label: "Documentos",
+                        value: data.documents,
+                        change: "Disponibles",
+                        icon: DescriptionIcon,
+                    },
+                    {
+                        label: "Eventos",
+                        value: data.events,
+                        change: "Programados",
+                        icon: EventIcon,
+                    },
+                    {
+                        label: "Noticias",
+                        value: data.news,
+                        change: "Publicadas",
+                        icon: CampaignIcon,
+                    }
+                ]);
+            } catch (error) {
+                console.error(
+                    "Error cargando estadísticas",
+                    error
+                );
+            }
+        };
+        loadStats();
+
+    }, []);
 
     return (
     
@@ -53,7 +116,7 @@ export default function DashboardPage() {
             variant="h4"
             className="font-bold text-[#4A1C23]"
           >
-            Intranet Axioma: {user?.name || "Usuario"}
+            Bienvenido: {user?.name || "Usuario"} {user?.apellido || "Intranet"}
           </Typography>
 
           <Typography
@@ -106,6 +169,53 @@ export default function DashboardPage() {
           )
         })}
       </div>
+      <Card
+            sx={{
+                borderRadius: 2,
+                overflow: "hidden",
+            }}
+        >
+
+            <CardHeader
+                title={
+                    <Typography
+                        variant="h4"
+                        sx={{
+                            fontWeight: "bold",
+                            color: "#4A1C23",
+                        }}
+                    >
+                        Comité Paritario
+                    </Typography>
+                }
+                subheader={
+                    <Typography
+                        sx={{
+                            mt: 1,
+                            color: "text.secondary",
+                            fontSize: "1rem",
+                        }}
+                    >
+                        Organismo encargado de velar por el cumplimiento del
+                        reglamento interno, promover buenas prácticas laborales,
+                        fomentar ambientes de trabajo seguros y colaborar en la
+                        aplicación de las políticas internas de la empresa.
+                    </Typography>
+                }
+            />
+            <CardMedia
+                component="img"
+                sx={{
+                    height: 400,
+                    objectFit: "cover",
+                    borderTopLeftRadius: 8,
+                    borderTopRightRadius: 8,
+                }}
+                image="https://picsum.photos/600/300?1"
+                alt="Comité Paritario"
+            />
+        </Card>
+      
 
       {/* Main content grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -127,55 +237,147 @@ export default function DashboardPage() {
             subheader="Últimas novedades de la empresa"
           />
           <CardContent>
-            <div className="space-y-4">
-              {corporateNews.map((news, index) => (
-                <div
-                  key={index}
-                  className="p-4 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
-                >
-                  <p className="font-medium text-foreground">{news.title}</p>
-                  <p className="text-sm text-muted-foreground">{news.date}</p>
-                </div>
-              ))}
-            </div>
+              <div className="space-y-4">
+                  {corporateNews
+                      .slice(0, 3)
+                      .map((news) => (
+
+                          <div
+                              key={news.id}
+                              onClick={() =>
+                                    navigate(
+                                        `/dashboard/news/${news.id}`
+                                    )
+                                }
+                              className="
+                                  p-4
+                                  rounded-lg
+                                  bg-secondary/50
+                                  hover:bg-secondary
+                                  transition-colors
+                              "
+                          >
+
+                              <p className="font-medium text-foreground">
+                                  {news.titulo}
+                              </p>
+
+                              <p className="text-sm text-muted-foreground">
+                                  {
+                                      news.created_at?.substring(
+                                          0,
+                                          10
+                                      )
+                                  }
+                              </p>
+                          </div>
+                  ))}
+              </div>
           </CardContent>
         </Card>
 
-                <Card  sx={{ borderRadius: 2 }} className="">
-                      <CardHeader 
-                  title={
-                    <Typography
-                      variant="h5"
-                      sx={{
-                        fontWeight: "bold",
-                        fontSize: "1.5rem",
-                        color: "var(--foreground)",
-                      }}
-                    >
-                     Próximos Eventos
-                    </Typography>
-                  }
-              subheader="Tu agenda para esta semana"
-
+        <Card  sx={{ borderRadius: 2 }} className="">
+          <CardHeader 
+            title={
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: "1.5rem",
+                  color: "var(--foreground)",
+                }}
+              >
+                Próximos Eventos
+              </Typography>
+            }
+            subheader="Tu agenda para esta semana"
             />
           <CardContent>
             <div className="space-y-4">
-              {upcomingEvents.map((event, index) => (
-                <div
-                  key={index}
-                  className="flex items-start gap-4 p-3 rounded-lg hover:bg-secondary/50 transition-colors"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
-                    <AccessTimeIcon className="w-5 h-5 text-accent" />
+              {[...upcomingEvents]
+                  .filter(
+                      (event) =>
+                          new Date(event.fecha) >= new Date()
+                  )
+
+                  .sort(
+                      (a, b) =>
+                          new Date(a.fecha) -
+                          new Date(b.fecha)
+                  ).slice(0, 3).map((event) => (
+
+                  <div
+                    key={event.id}
+                    className="
+                      flex
+                      items-start
+                      gap-4
+                      p-3
+                      rounded-lg
+                      hover:bg-secondary/50
+                      transition-colors
+                    "
+                  >
+
+                    <div
+                      className="
+                        w-10
+                        h-10
+                        rounded-lg
+                        bg-accent/10
+                        flex
+                        items-center
+                        justify-center
+                        shrink-0
+                      "
+                    >
+                      <AccessTimeIcon
+                        className="
+                          w-5
+                          h-5
+                          text-accent
+                        "
+                      />
+                    </div>
+
+                    <div>
+
+                      <p className="font-medium text-foreground">
+                        {event.titulo}
+                      </p>
+
+                      <p className="text-sm text-muted-foreground">
+
+                        {
+                          new Date(
+                            event.fecha
+                          ).toLocaleDateString(
+                            "es-CL"
+                          )
+                        }
+
+                        {" • "}
+
+                        {
+                          new Date(
+                            event.fecha
+                          ).toLocaleTimeString(
+                            "es-CL",
+                            {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }
+                          )
+                        }
+
+                      </p>
+
+                    </div>
+
                   </div>
-                  <div>
-                    <p className="font-medium text-foreground">{event.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {event.date} • {event.time}
-                    </p>
-                  </div>
-                </div>
-              ))}
+
+                ))}
+
             </div>
             <CardActions>
 

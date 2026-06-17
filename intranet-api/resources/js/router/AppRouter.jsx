@@ -23,6 +23,8 @@ import EditUsersPage from "../pages/users/EditUsersPage";
 import NewsDetailPage from "../pages/news/NewsDetailPage";
 import PayrollsPage from "../pages/payroll/PayrollsPage";
 import CreatePayrollsPage from "../pages/payroll/CreatePayrollsPage";
+import EditPayrollPage from "../pages/payroll/EditPayrollPage";
+import VacationsPage from "../pages/vacations/VacationsPage";
 
 
 import PrivateRoute from "./PrivateRoute";
@@ -96,11 +98,11 @@ export default function AppRouter() {
                     path="/dashboard/documents/crear"
 
                     element={
-                    <PrivateRoute>
+                    <AdminRoute>
                         <DashboardLayout>
                             <CreateDocumentsPage />
                         </DashboardLayout>
-                    </PrivateRoute>
+                    </AdminRoute>
                     }
                 />
 
@@ -109,11 +111,11 @@ export default function AppRouter() {
                     path="/dashboard/documents/editar/:id"
 
                     element={
-                    <PrivateRoute>
+                    <AdminRoute>
                         <DashboardLayout>
                             <EditDocumentsPage />
                         </DashboardLayout>
-                    </PrivateRoute>
+                    </AdminRoute>
                     }
                 />
 
@@ -167,11 +169,11 @@ export default function AppRouter() {
                     path="/dashboard/users"
 
                     element={
-                        <PrivateRoute>
+                        <AdminRoute>
                             <DashboardLayout>
                                 <UsersPage />
                             </DashboardLayout>
-                        </PrivateRoute>
+                        </AdminRoute>
                     }
                 />
 
@@ -180,11 +182,11 @@ export default function AppRouter() {
                     path="/dashboard/users/editar/:id"
 
                     element={
-                        <PrivateRoute>
+                        <AdminRoute>
                             <DashboardLayout>
                                 <EditUsersPage />
                             </DashboardLayout>
-                        </PrivateRoute>
+                        </AdminRoute>
                     }
                 />
 
@@ -193,24 +195,25 @@ export default function AppRouter() {
                     path="/dashboard/users/create"
 
                     element={
-                        <PrivateRoute>
+                        <AdminRoute>
                             <DashboardLayout>
                                 <CreateUsersPage />
                             </DashboardLayout>
-                        </PrivateRoute>
+                        </AdminRoute>
                     }
                 />
 
+                {/* ADMIN PAYROLLS */}
                 <Route
 
                     path="/dashboard/payrolls"
 
                     element={
-                        <PrivateRoute>
+                        <AdminRoute>
                             <DashboardLayout>
                                 <PayrollsPage/>
                             </DashboardLayout>
-                        </PrivateRoute>
+                        </AdminRoute>
                     }
                 />
 
@@ -219,11 +222,38 @@ export default function AppRouter() {
                     path="/dashboard/payrolls/crear"
 
                     element={
-                        <PrivateRoute>
+                        <AdminRoute>
                             <DashboardLayout>
                                 <CreatePayrollsPage/>
                             </DashboardLayout>
-                        </PrivateRoute>
+                        </AdminRoute>
+                    }
+                />
+
+                <Route
+
+                    path="/dashboard/payrolls/editar/:id"
+
+                    element={
+                        <AdminRoute>
+                            <DashboardLayout>
+                                <EditPayrollPage/>
+                            </DashboardLayout>
+                        </AdminRoute>
+                    }
+                />
+
+                {/* ADMIN VACACIONES */}
+                <Route
+
+                    path="/dashboard/vacations"
+
+                    element={
+                        <AdminRoute>
+                            <DashboardLayout>
+                                <VacationsPage/>
+                            </DashboardLayout>
+                        </AdminRoute>
                     }
                 />
 

@@ -28,16 +28,6 @@ import AddIcon from "@mui/icons-material/Add";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import CloseIcon from "@mui/icons-material/Close";
-import EventIcon from "@mui/icons-material/Event";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import {
-  Plus,
-  ChevronLeft,
-  ChevronRight,
-  X,
-  Calendar,
-  MapPin,
-} from "lucide-react";
 
 
 const eventTypeColors = {
@@ -56,91 +46,6 @@ const eventTypeLabels = {
   festivo: "Festivo",
 }
 
-const mockEvents = [
-  {
-    id: 1,
-    title: "Reunion de equipo semanal",
-    date: new Date(2026, 0, 21),
-    startTime: "10:00",
-    endTime: "11:00",
-    type: "reunion",
-    location: "Sala de conferencias A",
-    attendees: ["Ana Garcia", "Carlos Lopez", "Maria Rodriguez"],
-    description: "Revision de avances y planificacion de la semana",
-  },
-  {
-    id: 2,
-    title: "Capacitacion: Nuevas herramientas",
-    date: new Date(2026, 0, 22),
-    startTime: "14:00",
-    endTime: "16:00",
-    type: "capacitacion",
-    location: "Auditorio principal",
-    attendees: ["Todo el departamento"],
-    description: "Formacion sobre las nuevas herramientas de productividad",
-  },
-  {
-    id: 3,
-    title: "Entrega proyecto Q1",
-    date: new Date(2026, 0, 25),
-    startTime: "18:00",
-    endTime: "18:00",
-    type: "deadline",
-    description: "Fecha limite para entrega del proyecto del primer trimestre",
-  },
-  {
-    id: 4,
-    title: "Celebracion aniversario empresa",
-    date: new Date(2026, 0, 28),
-    startTime: "12:00",
-    endTime: "15:00",
-    type: "evento",
-    location: "Terraza corporativa",
-    attendees: ["Toda la empresa"],
-    description: "Celebracion del 15 aniversario de la empresa",
-  },
-  {
-    id: 5,
-    title: "Reunion con cliente",
-    date: new Date(2026, 0, 23),
-    startTime: "09:00",
-    endTime: "10:30",
-    type: "reunion",
-    location: "Sala de juntas B",
-    attendees: ["Director comercial", "Equipo de ventas"],
-    description: "Presentacion de propuesta comercial",
-  },
-  {
-    id: 6,
-    title: "Workshop de innovacion",
-    date: new Date(2026, 0, 29),
-    startTime: "09:00",
-    endTime: "13:00",
-    type: "capacitacion",
-    location: "Espacio colaborativo",
-    attendees: ["Equipo de producto", "Equipo de desarrollo"],
-  },
-  {
-    id: 7,
-    title: "Revision trimestral",
-    date: new Date(2026, 0, 30),
-    startTime: "11:00",
-    endTime: "12:30",
-    type: "reunion",
-    location: "Sala de conferencias principal",
-    attendees: ["Directivos", "Gerentes de area"],
-  },
-  {
-    id: 8,
-    title: "Dia festivo - San Sebastian",
-    date: new Date(2026, 0, 20),
-    startTime: "00:00",
-    endTime: "23:59",
-    type: "festivo",
-    description: "Dia festivo local",
-  },
-]
-
 const DAYS = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"]
 const MONTHS = [
   "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -156,6 +61,7 @@ const [selectedEvent, setSelectedEvent] = useState(null);
 
 const [isNewEventOpen, setIsNewEventOpen] = useState(false);
 const [eventos, setEventos] = useState([]);
+const user =JSON.parse(localStorage.getItem("user"));
 
 const [newEvent, setNewEvent] = useState({
   titulo: "",
@@ -200,10 +106,6 @@ const getEventsForDate = (day) => {
       event.date.getFullYear() === currentDate.getFullYear()
     );
   });
-
-  if (resultado.length > 0) {
-    console.log("Eventos encontrados para día", day, resultado);
-  }
 
   return resultado;
 };
@@ -253,31 +155,31 @@ const handleDayClick = (day) => {
 };
 
 const handleCreateEvent = async () => {
-
-  try {
-
-    const payload = {
-      titulo: newEvent.titulo,
-      fecha: newEvent.fecha,
-      hora_inicio: newEvent.hora_inicio,
-      hora_fin: newEvent.hora_fin,
-      tipo: newEvent.tipo,
-      ubicacion: newEvent.ubicacion,
-      descripcion: newEvent.descripcion,
-    };
-
-    const result = await createEvent(payload);
-
-    alert("Evento creado correctamente");
-
-    setIsNewEventOpen(false);
-
-  } catch (error) {
-
-    console.error(error);
-
-    alert("Error al crear evento");
-  }
+    try {
+        const payload = {
+            titulo: newEvent.titulo,
+            fecha: newEvent.fecha,
+            hora_inicio: newEvent.hora_inicio,
+            hora_fin: newEvent.hora_fin,
+            tipo: newEvent.tipo,
+            ubicacion: newEvent.ubicacion,
+            descripcion: newEvent.descripcion,
+        };
+        console.log(payload);
+        const response = await createEvent(payload);
+        console.log(response);
+        alert(
+            "Evento creado correctamente"
+        );
+        setIsNewEventOpen(false);
+        window.location.reload();
+    } catch (error) {
+        console.error(error);
+        alert(
+            error.message ||
+            "Error al crear evento"
+        );
+    }
 };
 
 const upcomingEvents = eventos
@@ -332,6 +234,8 @@ const upcomingEvents = eventos
               Gestiona tus eventos y reuniones
             </Typography>
           </Box>
+          {
+            user?.role === "admin" && (
           <Button
             variant="contained"
             startIcon={<AddIcon  className="w-5 h-5" /> }
@@ -339,8 +243,8 @@ const upcomingEvents = eventos
             className="!bg-[#6a1936] hover:!bg-[#4a1025]"
           >
             Nuevo Evento
-          </Button>
-
+          </Button>)
+          }
         </Box>
 
         <Box sx={{ display: "flex", gap: 3 }}>
@@ -524,19 +428,53 @@ const upcomingEvents = eventos
                         </Typography>
                       }
                       secondary={
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.5, maxWidth: "100%", overflow: "hidden" }}>
-                          <Typography noWrap sx={{ fontSize: "0.75rem", color: "#722F37" }}>
-                            {event.date.getDate()} {MONTHS[event.date.getMonth()].slice(0, 3)}
+                        <Box
+                          component="span"
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            mt: 0.5,
+                            maxWidth: "100%",
+                            overflow: "hidden",
+                          }}
+                        >
+                          <Typography
+                            component="span"
+                            noWrap
+                            sx={{
+                              fontSize: "0.75rem",
+                              color: "#722F37",
+                            }}
+                          >
+                            {event.date.getDate()}
+                            {" "}
+                            {MONTHS[event.date.getMonth()].slice(0, 3)}
                           </Typography>
-                          <Typography noWrap sx={{ fontSize: "0.75rem", color: "#999" }}>|</Typography>
-                          <Typography noWrap sx={{ fontSize: "0.75rem", color: "#722F37" }}>
+
+                          <Typography
+                            component="span"
+                            noWrap
+                            sx={{
+                              fontSize: "0.75rem",
+                              color: "#999",
+                            }}
+                          >
+                            |
+                          </Typography>
+
+                          <Typography
+                            component="span"
+                            noWrap
+                            sx={{
+                              fontSize: "0.75rem",
+                              color: "#722F37",
+                            }}
+                          >
                             {event.startTime}
                           </Typography>
                         </Box>
                       }
-                      secondaryTypographyProps={{
-                        component: "div",
-                      }}
                     />
                   </ListItem>
                   {index < upcomingEvents.length - 1 && <Divider />}
@@ -697,8 +635,8 @@ const upcomingEvents = eventos
               <TextField
                 label="Titulo del evento"
                 fullWidth
-                value={newEvent.tituto}
-                onChange={(e) => setNewEvent({ ...newEvent, tituto: e.target.value })}
+                value={newEvent.titulo}
+                onChange={(e) => setNewEvent({ ...newEvent, titulo: e.target.value })}
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     "&.Mui-focused fieldset": { borderColor: "#722F37" },

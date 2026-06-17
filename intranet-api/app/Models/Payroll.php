@@ -10,12 +10,18 @@ class Payroll extends Model
     use HasFactory;
 
     protected $fillable = [
+
         'titulo',
         'periodo',
         'user_id',
-        'archivo'
+        'archivo',
+        'path',
+        'tamano_archivo'
     ];
 
+    protected $casts = [
+        'periodo' => 'date',
+    ];
     /*
     |--------------------------------------------------------------------------
     | RELATIONS

@@ -15,14 +15,16 @@ import {
 } from "@mui/material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import Grid from "@mui/material/Grid";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Autocomplete from "@mui/material/Autocomplete";
 
-import { createPayroll, getUsers } from "../../services/api";
+import { updatePayroll, getPayrolltById, getUsers } from "../../services/api";
 
-export default function CreatePayrollssPage() {
+export default function EditPayrollPage() {
     const navigate = useNavigate();
     const [usuarios, setUsuarios] = useState([]);
+    const { id } = useParams();
+    
 
     const [form, setForm] = useState({
         titulo: "",
@@ -39,8 +41,35 @@ export default function CreatePayrollssPage() {
     const periodRef = useRef(null);
 
     const handleChange = (field, value) => {
-            setForm({ ...form, [field]: value });
-        };
+        setForm({ ...form, [field]: value });
+    };
+
+    useEffect(() => {
+        const cargarLiquidacion = async () => {
+
+            try {
+
+            const data = await getPayrolltById(id);
+
+            setForm({
+                titulo: data.titulo,
+                user_id: data.user_id,
+                    periodo: data.periodo
+        ? data.periodo.substring(0, 7)
+        : "",
+            });
+
+            } catch (error) {
+
+            console.error("Error cargando documento", error);
+
+            }
+
+    };
+
+    cargarLiquidacion();
+
+    }, [id]);
 
     useEffect(() => {
     const cargarUsuarios = async () => {
@@ -55,44 +84,25 @@ export default function CreatePayrollssPage() {
     cargarUsuarios();
     }, []);
 
-    const handleSave = async () => {
-        try {
-            const response =
-                await createPayroll(
-                    form
-                );
+    const handleSubmit = async () => {
+    try {
 
-            setSnackbar({
-                open: true,
-                message:
-                    "Liquidación creada correctamente",
-                severity: "success",
-            });
-            setTimeout(() => {
-                navigate(
-                    "/dashboard/payrolls/crear"
-                );
-
-            }, 1000);   
-
+        await updatePayroll(id, form);
+        alert("Liquidación actualizada");
+        navigate("/dashboard/payrolls");
         } catch (error) {
-
             console.error(error);
-
-            setSnackbar({
-                open: true,
-                message:
-                    error.message,
-                severity: "error",
-            });
+            alert("Error al actualizar");
         }
+
     };
+
   
   return (
     <Box sx={{ maxWidth: 800, mx: "auto", p: 3 }}>
       <Paper sx={{ p: 4, borderRadius: 4 }}>
         <Typography variant="h5" fontWeight="bold" mb={3} sx={{ paddingBottom: 3 }}>
-          Subir Liquidación
+          Actualizar Liquidación
         </Typography>
 
         <Grid container spacing={3}>
@@ -171,13 +181,13 @@ export default function CreatePayrollssPage() {
 
               <Button
                 variant="contained"
-                onClick={handleSave}
+                onClick={handleSubmit}
                 sx={{
                   textTransform: "none",
                   backgroundColor: "#6a1936",
                 }}
               >
-                Crear Liquidación
+                Actualizar Liquidación
               </Button>
             </Stack>
           </Grid>

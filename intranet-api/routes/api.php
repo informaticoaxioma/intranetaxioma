@@ -16,7 +16,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/me', [AuthController::class, 'me']);
-
+    Route::get('/stats', [AuthController::class, 'stats']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // Usuarios normales
@@ -29,11 +29,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/documents', [DocumentController::class, 'index']);
     Route::get('/documents/{document}', [DocumentController::class, 'show']);
     Route::get('/documents/{document}/download',[DocumentController::class, 'download']);
+    Route::get('/documents/{document}/preview',[DocumentController::class, 'preview']);
 
     Route::get('/payrolls', [PayrollController::class, 'index']);
+    Route::get('/payrolls/{payroll}', [PayrollController::class, 'show']);
+    Route::get('/payrolls/{payroll}/download',[PayrollController::class, 'download']);
+    Route::get('/payrolls/{payroll}/preview',[PayrollController::class, 'preview']);
     Route::get('/my-payrolls', [PayrollController::class, 'myPayrolls']);
 
     Route::get('/vacations', [VacationController::class, 'index']);
+    Route::post(
+    '/vacations',
+    [VacationController::class, 'store']
+);
+    Route::get('/my-vacations', [VacationController::class, 'myVacations']);
 
     // SOLO ADMIN
     Route::middleware('role:admin')->group(function () {
@@ -49,20 +58,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('documents', DocumentController::class)
             ->except(['index', 'show']);
 
-        Route::apiResource('payroll', PayrollController::class)
+        Route::apiResource('payrolls', PayrollController::class)
             ->except(['index', 'show']);
 
         Route::apiResource('vacations', VacationController::class)
-            ->except(['index', 'show']);
+            ->except(['store']);
 
         // Aprobar vacaciones
-        Route::post('/vacations/{vacation}/approve', [
+        Route::patch('/vacations/{vacation}/approve', [
             VacationController::class,
             'approve'
         ]);
 
         // Rechazar vacaciones
-        Route::post('/vacations/{vacation}/reject', [
+        Route::patch('/vacations/{vacation}/reject', [
             VacationController::class,
             'reject'
         ]);

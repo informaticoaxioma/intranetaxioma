@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { getNews } from "../../services/api";
+import { getNews, createNews } from "../../services/api";
 
 import {
   Box,
@@ -31,7 +30,6 @@ import {
 
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
-import { createNews } from "../../services/api";
 
 
 
@@ -51,6 +49,7 @@ export default function NoticiasPage() {
   const [busqueda, setBusqueda] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const [noticias, setNoticias] = useState([]);
+  const user =JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
 
@@ -140,6 +139,7 @@ export default function NoticiasPage() {
           });
 
           setOpenModal(false);
+          window.location.reload();
 
       } catch (error) {
 
@@ -168,14 +168,25 @@ export default function NoticiasPage() {
           </Typography>
         </Box>
 
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => setOpenModal(true)}
-          className="!bg-[#6a1936] hover:!bg-[#4a1025]"
-        >
-          Nueva noticia
-        </Button>
+        {
+            user?.role === "admin" && (
+
+                <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    onClick={() =>
+                        setOpenModal(true)
+                    }
+                    className="
+                        !bg-[#6a1936]
+                        hover:!bg-[#4a1025]
+                    "
+                >
+                    Nueva noticia
+                </Button>
+
+            )
+        }
 
       </Box>
 
@@ -317,7 +328,10 @@ export default function NoticiasPage() {
                 <CardMedia
                   component="img"
                   height="140"
-                  image="https://picsum.photos/600/300?1"
+                  image={noticia.path_imagen
+                                ? `http://127.0.0.1:8000/storage/${noticia.path_imagen}`
+                                : "https://picsum.photos/600/300"
+                        }
                   alt={noticia.titulo}
                 />
 

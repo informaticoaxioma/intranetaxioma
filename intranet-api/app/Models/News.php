@@ -17,7 +17,8 @@ class News extends Model
         'texto_noticia',
         'categoria',
         'autor',
-        'imagen'
+        'imagen',
+        'path_imagen'
     ];
 
     /*

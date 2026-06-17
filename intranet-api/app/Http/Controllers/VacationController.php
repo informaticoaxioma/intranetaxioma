@@ -39,9 +39,7 @@ class VacationController extends Controller
     public function myVacations(Request $request)
     {
         return response()->json(
-            $this->vacationService->getByUser(
-                $request->user()->id
-            )
+            $this->vacationService->getByUser($request->user()->id)
         );
     }
 
@@ -94,18 +92,25 @@ class VacationController extends Controller
     ) {
 
         $validated = $request->validate([
-            'fecha_inicio' => 'sometimes|date',
-            'fecha_fin' => 'sometimes|date',
-            'dias_solicitados' => 'sometimes|integer',
-            'comentario' => 'nullable|string'
+            'fecha_inicio' =>'sometimes|date',
+            'fecha_fin' =>'sometimes|date',
+            'dias_solicitados' =>'sometimes|integer',
+            'comentario' =>'nullable|string',
+            'estado' =>'sometimes|in:pendiente,aprobado,rechazado',
+            'comentario_admin' =>'nullable|string',
+            'aprobado_por' =>'nullable|exists:users,id',
+            'fecha_aprobacion' =>'nullable|date',
         ]);
 
-        $updated = $this->vacationService->update(
-            $vacation,
-            $validated
-        );
+        $updated =
+            $this->vacationService->update(
+                $vacation,
+                $validated
+            );
 
-        return response()->json($updated);
+        return response()->json(
+            $updated
+        );
     }
 
     /*

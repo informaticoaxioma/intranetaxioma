@@ -31,12 +31,33 @@ class NewsController extends Controller
             'texto_noticia' => 'required|string',
             'categoria' => 'required|string|max:255',
             'autor' => 'required|string|max:255',
-            'imagen' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'imagen' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+        /*
+        |--------------------------------------------------------------------------
+        | FILE
+        |--------------------------------------------------------------------------
+        */
+
+        $imagen = $request->file('imagen');
+        $path = $imagen->store(
+            'newsphotos',
+            'public'
+        );
+        $news = News::create([
+            'titulo' => $validated['titulo'],
+            'resumen' => $validated['resumen'],
+            'texto_noticia' => $validated['texto_noticia'],
+            'categoria' => $validated['categoria'],
+            'autor' => $validated['autor'],
+            'imagen' => $imagen,
+            'path_imagen' => $path,
         ]);
 
-        $news = $this->newsService->create($validated);
-
-        return response()->json($news, 201);
+        return response()->json([
+            'message' =>'Noticia creada correctamente',
+            'news' => $news
+        ], 201);
     }
 
     public function show($id)

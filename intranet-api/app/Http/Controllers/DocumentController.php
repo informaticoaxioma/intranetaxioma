@@ -90,6 +90,27 @@ class DocumentController extends Controller
         
     }
 
+    public function preview(Document $document)
+    {
+        $filePath = storage_path(
+            'app/public/' .
+            $document->path
+        );
+
+        if (!file_exists($filePath)) {
+
+            abort(404);
+        }
+
+        return response()->file(
+            $filePath,
+            [
+                'Content-Type' =>
+                    'application/pdf'
+            ]
+        );
+    }
+
     public function download(Document $document)
     {
 
