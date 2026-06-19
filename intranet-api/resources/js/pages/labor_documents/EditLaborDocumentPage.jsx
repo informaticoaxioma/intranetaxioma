@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
     useNavigate,
     useParams,
@@ -19,26 +19,29 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import { getDocumentById, updateDocument } from "../../services/api";
+import Autocomplete from "@mui/material/Autocomplete";
 
-const categorias = [
-    "Recursos Humanos",
-    "Finanzas",
-    "Corporativo",
-    "Formación",
-    "Legal",
-    "Tecnología",
+import { getLaborDocumentById, updateLaborDocument, getUsers } from "../../services/api";
+
+const tiposDocumento = [
+    "Contrato de Trabajo",
+    "Anexo de Contrato",
+    "Certificado Laboral",
+    "Comprobante de Vacaciones",
+    "Otro",
 ];
 
-export default function EditarDocumentoPage() {
+export default function EditLaborDocumentPage() {
     const navigate = useNavigate();
-    const params = useParams();
     const { id } = useParams();
+    const [usuarios, setUsuarios] = useState([]);
 
     const [form, setForm] = useState({
-        nombre: "",
-        categoria: "",
-        autor: "",
+        user_id: "",
+        tipo_documento: "",
+        fecha_emision: "",
+        fecha_vencimiento: "",
+        observaciones: "",
         archivo: null,
     });
 
@@ -48,34 +51,38 @@ export default function EditarDocumentoPage() {
         severity: "success",
     });
 
+    const emisionRef = useRef(null);
+    const vencimientoRef = useRef(null);
+
     useEffect(() => {
-
-        const cargarDocumento = async () => {
-
+        const cargarDatos = async () => {
             try {
+                const usersList = await getUsers();
+                setUsuarios(usersList);
 
-                const data = await getDocumentById(id);
-
+                const docData = await getLaborDocumentById(id);
                 setForm({
-                    nombre: data.nombre,
-                    autor: data.autor,
-                    categoria: data.categoria,
+                    user_id: docData.user_id || "",
+                    tipo_documento: docData.tipo_documento || "",
+                    fecha_emision: docData.fecha_emision || "",
+                    fecha_vencimiento: docData.fecha_vencimiento || "",
+                    observaciones: docData.observaciones || "",
+                    archivo: null,
                 });
-
             } catch (error) {
-
-                console.error("Error cargando documento", error);
-
+                console.error("Error al cargar datos del documento laboral", error);
+                setSnackbar({
+                    open: true,
+                    message: "Error al cargar los datos del documento",
+                    severity: "error",
+                });
             }
-
         };
 
-        cargarDocumento();
-
+        cargarDatos();
     }, [id]);
 
     const handleChange = (field, value) => {
-
         setForm((prev) => ({
             ...prev,
             [field]: value,
@@ -84,47 +91,78 @@ export default function EditarDocumentoPage() {
 
     const handleSubmit = async () => {
         try {
+            if (!form.user_id) {
+                throw new Error("El trabajador es requerido");
+            }
+            if (!form.tipo_documento) {
+                throw new Error("El tipo de documento es requerido");
+            }
 
-            await updateDocument(id, form);
-            alert("Documento actualizado");
-            navigate("/dashboard/documents");
+            await updateLaborDocument(id, form);
+            
+            setSnackbar({
+                open: true,
+                message: "Documento laboral actualizado correctamente",
+                severity: "success",
+            });
+            
+            setTimeout(() => {
+                navigate("/dashboard/labor-documents");
+            }, 1000);
         } catch (error) {
             console.error(error);
-            alert("Error al actualizar");
+            setSnackbar({
+                open: true,
+                message: error.message || "Error al actualizar documento laboral",
+                severity: "error",
+            });
         }
-
     };
+
+    // Find active user from list
+    const selectedUser = usuarios.find((u) => u.id === form.user_id) || null;
 
     return (
         <Box sx={{ maxWidth: 800, mx: "auto", p: 3 }}>
             <Paper sx={{ p: 4, borderRadius: 4 }}>
                 <Typography variant="h5" fontWeight="bold" mb={4}>
-                    Editar Documento
+                    Editar Documento Laboral
                 </Typography>
 
                 <Grid container sx={{ pt: 2 }} spacing={3}>
-                    <Grid size={{ xs: 12 }}>
-                        <TextField
-                            fullWidth
-                            label="Nombre del documento"
-                            value={form.nombre}
-                            onChange={(e) => handleChange("nombre", e.target.value)}
+                    <Grid size={{ xs: 12, md: 6 }}>
+                        <Autocomplete
+                            options={usuarios}
+                            getOptionLabel={(option) => option.name || ""}
+                            value={selectedUser}
+                            isOptionEqualToValue={(option, value) => option.id === value.id}
+                            onChange={(event, value) =>
+                                handleChange("user_id", value?.id || "")
+                            }
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Trabajador"
+                                    fullWidth
+                                    required
+                                />
+                            )}
                         />
                     </Grid>
 
                     <Grid size={{ xs: 12, md: 6 }}>
-                        <FormControl fullWidth>
-                            <InputLabel>Categoría</InputLabel>
+                        <FormControl fullWidth required>
+                            <InputLabel>Tipo de Documento</InputLabel>
                             <Select
-                                value={form.categoria}
-                                label="Categoría"
+                                value={form.tipo_documento}
+                                label="Tipo de Documento"
                                 onChange={(e) =>
-                                    handleChange("categoria", e.target.value)
+                                    handleChange("tipo_documento", e.target.value)
                                 }
                             >
-                                {categorias.map((cat) => (
-                                    <MenuItem key={cat} value={cat}>
-                                        {cat}
+                                {tiposDocumento.map((tipo) => (
+                                    <MenuItem key={tipo} value={tipo}>
+                                        {tipo}
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -134,9 +172,37 @@ export default function EditarDocumentoPage() {
                     <Grid size={{ xs: 12, md: 6 }}>
                         <TextField
                             fullWidth
-                            label="Autor"
-                            value={form.autor}
-                            onChange={(e) => handleChange("autor", e.target.value)}
+                            label="Fecha de Emisión"
+                            type="date"
+                            value={form.fecha_emision}
+                            slotProps={{ inputLabel: { shrink: true } }}
+                            inputRef={emisionRef}
+                            onClick={() => emisionRef.current?.showPicker()}
+                            onChange={(e) => handleChange("fecha_emision", e.target.value)}
+                        />
+                    </Grid>
+
+                    <Grid size={{ xs: 12, md: 6 }}>
+                        <TextField
+                            fullWidth
+                            label="Fecha de Vencimiento"
+                            type="date"
+                            value={form.fecha_vencimiento}
+                            slotProps={{ inputLabel: { shrink: true } }}
+                            inputRef={vencimientoRef}
+                            onClick={() => vencimientoRef.current?.showPicker()}
+                            onChange={(e) => handleChange("fecha_vencimiento", e.target.value)}
+                        />
+                    </Grid>
+
+                    <Grid size={{ xs: 12 }}>
+                        <TextField
+                            fullWidth
+                            label="Observaciones"
+                            multiline
+                            rows={3}
+                            value={form.observaciones}
+                            onChange={(e) => handleChange("observaciones", e.target.value)}
                         />
                     </Grid>
 
@@ -150,11 +216,9 @@ export default function EditarDocumentoPage() {
                             Reemplazar Archivo
                             <input
                                 type="file"
+                                hidden
                                 onChange={(e) =>
-                                    handleChange(
-                                        "archivo",
-                                        e.target.files[0]
-                                    )
+                                    handleChange("archivo", e.target.files[0])
                                 }
                             />
                         </Button>
@@ -167,10 +231,10 @@ export default function EditarDocumentoPage() {
                     </Grid>
 
                     <Grid size={{ xs: 12 }}>
-                        <Stack direction="row" spacing={2}>
+                        <Stack direction="row" spacing={2} justifyContent="flex-end">
                             <Button
                                 variant="outlined"
-                                onClick={() => navigate("/dashboard/documents")}
+                                onClick={() => navigate("/dashboard/labor-documents")}
                             >
                                 Cancelar
                             </Button>
@@ -181,6 +245,9 @@ export default function EditarDocumentoPage() {
                                 sx={{
                                     textTransform: "none",
                                     backgroundColor: "#6a1936",
+                                    "&:hover": {
+                                        backgroundColor: "#4a1025",
+                                    }
                                 }}
                             >
                                 Guardar Cambios
@@ -193,8 +260,9 @@ export default function EditarDocumentoPage() {
             <Snackbar
                 open={snackbar.open}
                 autoHideDuration={3000}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
             >
-                <Alert severity={snackbar.severity}>
+                <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
                     {snackbar.message}
                 </Alert>
             </Snackbar>

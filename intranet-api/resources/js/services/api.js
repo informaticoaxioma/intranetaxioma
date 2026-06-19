@@ -836,3 +836,222 @@ export const createVacation = async (vacationData) => {
 
     return data;
 };
+
+export const getLaborDocuments = async () => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+        `${API_URL}/labor-documents`,
+        {
+            method: "GET",
+            headers: {
+                Accept: "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            data.message || "Error al obtener documentos laborales"
+        );
+    }
+
+    return data;
+};
+
+export const getMyLaborDocuments = async () => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+        `${API_URL}/my-labor-documents`,
+        {
+            method: "GET",
+            headers: {
+                Accept: "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            data.message || "Error al obtener mis documentos laborales"
+        );
+    }
+
+    return data;
+};
+
+export const getLaborDocumentById = async (id) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+        `${API_URL}/labor-documents/${id}`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: "application/json",
+            },
+        }
+    );
+
+    const data = await response.json();
+    return data;
+};
+
+export const createLaborDocument = async (laborDocumentData) => {
+    const token = localStorage.getItem("token");
+    const formData = new FormData();
+    
+    formData.append("user_id", laborDocumentData.user_id);
+    formData.append("tipo_documento", laborDocumentData.tipo_documento);
+    if (laborDocumentData.fecha_emision) {
+        formData.append("fecha_emision", laborDocumentData.fecha_emision);
+    }
+    if (laborDocumentData.fecha_vencimiento) {
+        formData.append("fecha_vencimiento", laborDocumentData.fecha_vencimiento);
+    }
+    if (laborDocumentData.observaciones) {
+        formData.append("observaciones", laborDocumentData.observaciones);
+    }
+    if (laborDocumentData.archivo) {
+        formData.append("archivo", laborDocumentData.archivo);
+    }
+
+    const response = await fetch(
+        `${API_URL}/labor-documents`,
+        {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: "application/json",
+            },
+            body: formData,
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            data.message || "Error al crear documento laboral"
+        );
+    }
+
+    return data;
+};
+
+export const updateLaborDocument = async (id, laborDocumentData) => {
+    const token = localStorage.getItem("token");
+    const formData = new FormData();
+    
+    formData.append("_method", "PUT");
+    formData.append("user_id", laborDocumentData.user_id);
+    formData.append("tipo_documento", laborDocumentData.tipo_documento);
+    if (laborDocumentData.fecha_emision) {
+        formData.append("fecha_emision", laborDocumentData.fecha_emision);
+    }
+    if (laborDocumentData.fecha_vencimiento) {
+        formData.append("fecha_vencimiento", laborDocumentData.fecha_vencimiento);
+    }
+    if (laborDocumentData.observaciones) {
+        formData.append("observaciones", laborDocumentData.observaciones);
+    }
+    if (laborDocumentData.archivo) {
+        formData.append("archivo", laborDocumentData.archivo);
+    }
+
+    const response = await fetch(
+        `${API_URL}/labor-documents/${id}`,
+        {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: "application/json",
+            },
+            body: formData,
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            data.message || "Error al actualizar documento laboral"
+        );
+    }
+
+    return data;
+};
+
+export const deleteLaborDocument = async (id) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+        `${API_URL}/labor-documents/${id}`,
+        {
+            method: "DELETE",
+            headers: {
+                Accept: "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            data.message || "Error al eliminar documento laboral"
+        );
+    }
+
+    return data;
+};
+
+export const previewLaborDocument = async (id) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+        `${API_URL}/labor-documents/${id}/preview`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error("Error al visualizar documento laboral");
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    window.open(url, "_blank");
+};
+
+export const downloadLaborDocument = async (id, nombreArchivo) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+        `${API_URL}/labor-documents/${id}/download`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error("No fue posible descargar el documento laboral");
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = nombreArchivo;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+};
