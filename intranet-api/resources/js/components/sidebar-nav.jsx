@@ -72,10 +72,17 @@ const navItems = [
         icon: Business,
         roles: ["admin"],
     },
-        {
+    {
         path: "/dashboard/vacations",
         label: "Vacaciones",
         icon: Sunny,
+        roles: ["admin"],
+    },
+
+    {
+        path: "/dashboard/labor-documents",
+        label: "Documentos Laborales",
+        icon: Description,
         roles: ["admin"],
     },
 ];
@@ -120,9 +127,9 @@ export function SidebarNav() {
     */
 
     const user =
-    JSON.parse(
-        localStorage.getItem("user")
-    );
+        JSON.parse(
+            localStorage.getItem("user")
+        );
 
     const filteredNavItems =
         navItems.filter(
@@ -231,7 +238,7 @@ export function SidebarNav() {
             >
 
                 {
-                    
+
                     filteredNavItems.map((item) => {
 
                         const Icon = item.icon;
@@ -262,10 +269,9 @@ export function SidebarNav() {
                                     transition-all
                                     duration-200
 
-                                    ${
-                                        isActive
-                                            ? "bg-card/15 text-primary-foreground"
-                                            : "text-primary-foreground/70 hover:bg-card/10 hover:text-primary-foreground"
+                                    ${isActive
+                                        ? "bg-card/15 text-primary-foreground"
+                                        : "text-primary-foreground/70 hover:bg-card/10 hover:text-primary-foreground"
                                     }
                                 `}
                             >

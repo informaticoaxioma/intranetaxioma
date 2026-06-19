@@ -9,6 +9,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\VacationController;
+use App\Http\Controllers\LaborDocumentController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -37,6 +38,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/payrolls/{payroll}/preview',[PayrollController::class, 'preview']);
     Route::get('/my-payrolls', [PayrollController::class, 'myPayrolls']);
 
+    Route::get('/labor-documents', [LaborDocumentController::class, 'index']);
+    Route::get('/labor-documents/{laborDocument}', [LaborDocumentController::class, 'show']);
+    Route::get('/labor-documents/{laborDocument}/download',[LaborDocumentController::class, 'download']);
+    Route::get('/labor-documents/{laborDocument}/preview',[LaborDocumentController::class, 'preview']);
+    Route::get('/my-labor-documents', [LaborDocumentController::class, 'myLaborDocuments']);
+
     Route::get('/vacations', [VacationController::class, 'index']);
     Route::post(
     '/vacations',
@@ -59,6 +66,9 @@ Route::middleware('auth:sanctum')->group(function () {
             ->except(['index', 'show']);
 
         Route::apiResource('payrolls', PayrollController::class)
+            ->except(['index', 'show']);
+
+        Route::apiResource('labor-documents', LaborDocumentController::class)
             ->except(['index', 'show']);
 
         Route::apiResource('vacations', VacationController::class)
