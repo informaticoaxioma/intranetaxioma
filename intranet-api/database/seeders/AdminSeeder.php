@@ -18,6 +18,8 @@ class AdminSeeder extends Seeder
 
             'apellido' => 'Sistema',
 
+            'rut' => '12.345.678-9',
+
             'email' => 'admin@intranet.cl',
 
             'password' => Hash::make(

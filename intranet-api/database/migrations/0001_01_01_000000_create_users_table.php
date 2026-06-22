@@ -18,6 +18,8 @@ return new class extends Migration
 
             $table->string('apellido');
 
+            $table->string('rut')->unique()->nullable();
+
             $table->string('email')->unique();
             
             $table->string('password')->unique();

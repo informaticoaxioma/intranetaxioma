@@ -68,6 +68,7 @@ export default function CreateUsersPage() {
   const [formData, setFormData] = useState({
     name: "",
     apellido: "",
+    rut: "",
     email: "",
     telefono: "",
     direccion: "",
@@ -101,6 +102,7 @@ export default function CreateUsersPage() {
     if (step === 0) {
       if (!formData.name) newErrors.name = "El nombre es requerido"
       if (!formData.apellido) newErrors.apellido = "El apellido es requerido"
+      if (!formData.rut) newErrors.rut = "El RUT es requerido"
       if (!formData.email) {
         newErrors.email = "El email es requerido"
       } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
@@ -149,6 +151,8 @@ export default function CreateUsersPage() {
             newErrors.name = "El nombre es requerido";
         if (!formData.apellido)
             newErrors.apellido = "El apellido es requerido";
+        if (!formData.rut)
+            newErrors.rut = "El RUT es requerido";
         if (!formData.email)
             newErrors.email = "El email es requerido";
         if (!formData.departamento)
@@ -236,6 +240,23 @@ export default function CreateUsersPage() {
                 onChange={(e) => handleChange("apellido", e.target.value)}
                 error={!!errors.apellido}
                 helperText={errors.apellido}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                        <LockIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                fullWidth
+                label="RUT"
+                value={formData.rut}
+                onChange={(e) => handleChange("rut", e.target.value)}
+                error={!!errors.rut}
+                helperText={errors.rut || "Ej: 12.345.678-9"}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">

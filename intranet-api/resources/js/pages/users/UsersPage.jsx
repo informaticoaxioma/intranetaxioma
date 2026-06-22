@@ -465,7 +465,7 @@ export default function UsersPage() {
                             variant="caption"
                             color="text.secondary"
                           >
-                            {user.email}
+                            {user.email} {user.rut && `| RUT: ${user.rut}`}
                           </Typography>
                         </Box>
                       </Box>

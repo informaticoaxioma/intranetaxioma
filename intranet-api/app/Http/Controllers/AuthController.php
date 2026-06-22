@@ -23,6 +23,8 @@ class AuthController extends Controller
 
             'apellido' => 'required|string|max:255',
 
+            'rut' => 'required|string|unique:users,rut|max:20',
+
             'email' => 'required|email|unique:users,email',
 
             'password' => 'required|string|min:6',
@@ -51,6 +53,8 @@ class AuthController extends Controller
             'name' => $validated['name'],
 
             'apellido' => $validated['apellido'],
+
+            'rut' => $validated['rut'],
 
             'email' => $validated['email'],
 

@@ -35,6 +35,7 @@ class UserController extends Controller
 
             'name' => 'required|string|max:255',
             'apellido' => 'required|string|max:255',
+            'rut' => 'required|string|unique:users,rut|max:20',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
             'telefono' => 'nullable|string|max:50',
@@ -59,6 +60,8 @@ class UserController extends Controller
             'name' => $validated['name'],
 
             'apellido' => $validated['apellido'],
+
+            'rut' => $validated['rut'],
 
             'email' => $validated['email'],
 
@@ -136,6 +139,8 @@ class UserController extends Controller
 
             'apellido' => 'required|string|max:255',
 
+            'rut' => 'required|string|unique:users,rut,' . $user->id . '|max:20',
+
             'email' =>
                 'required|email|unique:users,email,' . $user->id,
 
@@ -171,6 +176,8 @@ class UserController extends Controller
             'name' => $validated['name'],
 
             'apellido' => $validated['apellido'],
+
+            'rut' => $validated['rut'],
 
             'email' => $validated['email'],
 

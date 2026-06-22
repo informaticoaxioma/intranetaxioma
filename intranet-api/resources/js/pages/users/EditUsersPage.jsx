@@ -98,6 +98,7 @@ export default function EditUsersPage() {
   const [formData, setFormData] = useState({
     name: "",
     apellido: "",
+    rut: "",
     email: "",
     telefono: "",
     direccion: "",
@@ -128,6 +129,7 @@ export default function EditUsersPage() {
 
                   name: user.name,
                   apellido: user.apellido,
+                  rut: user.rut || "",
                   email: user.email,
                   telefono: user.telefono || "",
                   direccion: user.direccion || "",
@@ -184,6 +186,10 @@ export default function EditUsersPage() {
 
       if (!formData.apellido) {
           newErrors.apellido = "El apellido es requerido";
+      }
+
+      if (!formData.rut) {
+          newErrors.rut = "El RUT es requerido";
       }
 
       if (!formData.email) {
@@ -376,6 +382,16 @@ export default function EditUsersPage() {
                     onChange={(e) => handleChange("apellido", e.target.value)}
                     error={!!errors.apellido}
                     helperText={errors.apellido}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    fullWidth
+                    label="RUT"
+                    value={formData.rut}
+                    onChange={(e) => handleChange("rut", e.target.value)}
+                    error={!!errors.rut}
+                    helperText={errors.rut || "Ej: 12.345.678-9"}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>

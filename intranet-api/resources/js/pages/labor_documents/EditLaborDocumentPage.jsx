@@ -99,13 +99,13 @@ export default function EditLaborDocumentPage() {
             }
 
             await updateLaborDocument(id, form);
-            
+
             setSnackbar({
                 open: true,
                 message: "Documento laboral actualizado correctamente",
                 severity: "success",
             });
-            
+
             setTimeout(() => {
                 navigate("/dashboard/labor-documents");
             }, 1000);
