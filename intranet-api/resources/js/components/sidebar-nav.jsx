@@ -66,18 +66,18 @@ const navItems = [
         icon: Work,
         roles: ["admin"],
     },
-    {
-        path: "/dashboard/payrolls",
-        label: "Liquidaciones",
-        icon: Business,
-        roles: ["admin"],
-    },
-    {
-        path: "/dashboard/vacations",
-        label: "Vacaciones",
-        icon: Sunny,
-        roles: ["admin"],
-    },
+    // {
+    //     path: "/dashboard/payrolls",
+    //     label: "Liquidaciones",
+    //     icon: Business,
+    //     roles: ["admin"],
+    // },
+    // {
+    //     path: "/dashboard/vacations",
+    //     label: "Vacaciones",
+    //     icon: Sunny,
+    //     roles: ["admin"],
+    // },
 
     {
         path: "/dashboard/labor-documents",

@@ -41,12 +41,30 @@ class AuthController extends Controller
 
             'fecha_ingreso' => 'nullable|date',
 
+            'contrato' => 'nullable|string|max:255',
+
+            'foto_perfil' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+
             'supervision_general' => 'nullable|string|max:255',
 
             'role' => 'required|in:admin,user',
 
             'estado_cuenta' => 'nullable|in:activo,inactivo,suspendido'
         ]);
+
+        $fotoName = null;
+        $path = null;
+
+        if ($request->hasFile('foto_perfil')) {
+
+            $foto = $request->file('foto_perfil');
+            $fotoName = $foto->getClientOriginalName();
+
+            $path = $foto->store(
+                'profilephotos',
+                'public'
+            );
+        }
 
         $user = User::create([
 
@@ -71,6 +89,12 @@ class AuthController extends Controller
             'cargo' => $validated['cargo'] ?? null,
 
             'fecha_ingreso' => $validated['fecha_ingreso'] ?? now(),
+
+            'contrato' => $validated['contrato'] ?? null,
+
+            'foto_perfil' => $fotoName,
+
+            'path_foto_perfil' => $path,
 
             'supervision_general' => $validated['supervision_general'] ?? null,
 

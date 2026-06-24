@@ -79,7 +79,7 @@ export function HeaderNav() {
     | RENDER
     |--------------------------------------------------------------------------
     */
-   const { user } = useAuth();
+    const { user } = useAuth();
 
     return (
 
@@ -105,34 +105,34 @@ export function HeaderNav() {
                 {
                     !isMobile && (
 
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            width: isTablet ? 250 : 380,
-                            px: 2,
-                            py: 1,
-                            borderRadius: 2,
-                            backgroundColor: "action.hover",
-                            gap: 1,
-                        }}
-                    >
-                        <SearchIcon
-                            fontSize="small"
+                        <Box
                             sx={{
-                                opacity: 0.7,
-                            }}
-                        />
-
-                        <Typography
-                            variant="body2"
-                            sx={{
-                                color: "text.secondary",
+                                display: "flex",
+                                alignItems: "center",
+                                width: isTablet ? 250 : 380,
+                                px: 2,
+                                py: 1,
+                                borderRadius: 2,
+                                backgroundColor: "action.hover",
+                                gap: 1,
                             }}
                         >
-                            Busca la información que necesites en tu intranet
-                        </Typography>
-                    </Box>
+                            <SearchIcon
+                                fontSize="small"
+                                sx={{
+                                    opacity: 0.7,
+                                }}
+                            />
+
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    color: "text.secondary",
+                                }}
+                            >
+                                Busca la información que necesites en tu intranet
+                            </Typography>
+                        </Box>
                     )
                 }
 
@@ -293,13 +293,18 @@ export function HeaderNav() {
                     >
 
                         <Avatar
+                            src={
+                                user?.path_foto_perfil
+                                    ? `${import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"}/storage/${user.path_foto_perfil}`
+                                    : undefined
+                            }
                             sx={{
                                 width: 32,
                                 height: 32,
                                 backgroundColor: "#7b1e3f",
                             }}
                         >
-                            JD
+                            {`${user?.name?.[0] || ""}${user?.apellido?.[0] || ""}`.toUpperCase() || "U"}
                         </Avatar>
 
                         {

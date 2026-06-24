@@ -109,10 +109,10 @@ export const getNewsById = async (id) => {
     const response = await fetch(
         `http://127.0.0.1:8000/api/news/${id}`,
         {
-        headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-        },
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: "application/json",
+            },
         }
     );
 
@@ -132,10 +132,10 @@ export const getDocumentById = async (id) => {
     const response = await fetch(
         `http://127.0.0.1:8000/api/documents/${id}`,
         {
-        headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-        },
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: "application/json",
+            },
         }
     );
 
@@ -148,7 +148,7 @@ export const getDocumentById = async (id) => {
     return data;
 };
 
-export const updateNews = async (id,newsData) => {
+export const updateNews = async (id, newsData) => {
 
     const token = localStorage.getItem("token");
 
@@ -184,7 +184,7 @@ export const updateNews = async (id,newsData) => {
     return data;
 };
 
-export const updateDocument  = async (id,documentsData) => {
+export const updateDocument = async (id, documentsData) => {
 
     const token = localStorage.getItem("token");
 
@@ -229,7 +229,7 @@ export const createEvent = async (eventData) => {
         {
             method: "POST",
             headers: {
-                Authorization:`Bearer ${token}`,
+                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
                 Accept: "application/json"
             },
@@ -249,23 +249,43 @@ export const createEvent = async (eventData) => {
 export const createUser = async (userData) => {
 
     const token = localStorage.getItem("token");
+    const formData = new FormData();
+    Object.keys(userData).forEach((key) => {
+        if (
+            userData[key] !== null &&
+            userData[key] !== ""
+        ) {
+            formData.append(
+                key,
+                userData[key]
+            );
+        }
 
+    });
     const response = await fetch(
         `${API_URL}/register`,
         {
             method: "POST",
+
             headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                Authorization: `Bearer ${token}`,
+
+                Accept: "application/json",
+
+                Authorization: `Bearer ${token}`
+
             },
-            body: JSON.stringify(userData),
+            body: formData
         }
     );
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(
+            data.message ||
+            "Error al crear usuario"
+        );
+    }
 
-    const text = await response.text();
-
-    return text;
+    return data;
 };
 
 export const deleteUser = async (userId) => {
@@ -296,17 +316,28 @@ export const deleteUser = async (userId) => {
 export const updateUser = async (id, userData) => {
 
     const token = localStorage.getItem("token");
+    const formData = new FormData();
+
+    formData.append("_method", "PUT");
+
+    Object.keys(userData).forEach((key) => {
+        if (userData[key] !== null && userData[key] !== undefined) {
+            if (key === "foto_perfil" && !(userData[key] instanceof File)) {
+                return;
+            }
+            formData.append(key, userData[key]);
+        }
+    });
 
     const response = await fetch(
         `${API_URL}/users/${id}`,
         {
-            method: "PUT",
+            method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
+                Accept: "application/json",
                 Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(userData),
+            body: formData,
         }
     );
 
@@ -422,7 +453,7 @@ export const previewDocument = async (id) => {
 };
 
 export const getEvents = async () => {
-  const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
     const response = await fetch(
         `${API_URL}/events`,
@@ -528,14 +559,14 @@ export async function myPayrolls() {
 }
 
 export const createPayroll = async (payrollData) => {
-    
+
     const token = localStorage.getItem("token");
     const formData = new FormData();
-    
+
     formData.append("titulo", payrollData.titulo);
     formData.append("periodo", payrollData.periodo);
     formData.append("user_id", payrollData.user_id);
-    
+
     if (payrollData.archivo) {
         formData.append(
             "archivo",
@@ -662,7 +693,7 @@ export const getDashboardStats = async () => {
     return data;
 };
 
-export const updatePayroll  = async (id,payrollData) => {
+export const updatePayroll = async (id, payrollData) => {
 
     const token = localStorage.getItem("token");
 
@@ -704,10 +735,10 @@ export const getPayrolltById = async (id) => {
     const response = await fetch(
         `http://127.0.0.1:8000/api/payrolls/${id}`,
         {
-        headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-        },
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: "application/json",
+            },
         }
     );
 
@@ -759,37 +790,37 @@ export const rejectVacation = async (id) => {
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-            `${API_URL}/vacations/${id}/reject`,
-            {
-                method: "PATCH",
-                headers: {
-                    Authorization:
-                        `Bearer ${token}`,
-                },
-            }
-        );
+        `${API_URL}/vacations/${id}/reject`,
+        {
+            method: "PATCH",
+            headers: {
+                Authorization:
+                    `Bearer ${token}`,
+            },
+        }
+    );
 
     return await response.json();
 };
 
 export const getMyVacations = async () => {
 
-    const token =localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
     const response = await fetch(
-            `${API_URL}/my-vacations`,
-            {
-                headers: {
-                    Authorization:
-                        `Bearer ${token}`,
-                    Accept:
-                        "application/json",
-                },
-            }
-        );
+        `${API_URL}/my-vacations`,
+        {
+            headers: {
+                Authorization:
+                    `Bearer ${token}`,
+                Accept:
+                    "application/json",
+            },
+        }
+    );
 
     const data = await response.json();
-    console.log("Traer vacaciones desde API",data);
+    console.log("Traer vacaciones desde API", data);
 
     if (!response.ok) {
 
@@ -807,21 +838,21 @@ export const createVacation = async (vacationData) => {
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-            `${API_URL}/vacations`,
-            {
-                method: "POST",
-                headers: {
-                    Authorization:`Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    fecha_inicio:vacationData.fecha_inicio,
-                    fecha_fin: vacationData.fecha_fin,
-                    dias_solicitados: vacationData.dias_solicitados,
-                    comentario: vacationData.comentario,
-                }),
-            }
-        );
+        `${API_URL}/vacations`,
+        {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                fecha_inicio: vacationData.fecha_inicio,
+                fecha_fin: vacationData.fecha_fin,
+                dias_solicitados: vacationData.dias_solicitados,
+                comentario: vacationData.comentario,
+            }),
+        }
+    );
 
     const data =
         await response.json();
@@ -904,7 +935,7 @@ export const getLaborDocumentById = async (id) => {
 export const createLaborDocument = async (laborDocumentData) => {
     const token = localStorage.getItem("token");
     const formData = new FormData();
-    
+
     formData.append("user_id", laborDocumentData.user_id);
     formData.append("tipo_documento", laborDocumentData.tipo_documento);
     if (laborDocumentData.fecha_emision) {
@@ -946,7 +977,7 @@ export const createLaborDocument = async (laborDocumentData) => {
 export const updateLaborDocument = async (id, laborDocumentData) => {
     const token = localStorage.getItem("token");
     const formData = new FormData();
-    
+
     formData.append("_method", "PUT");
     formData.append("user_id", laborDocumentData.user_id);
     formData.append("tipo_documento", laborDocumentData.tipo_documento);

@@ -29,6 +29,7 @@ import {
 } from "@mui/material"
 import Grid from "@mui/material/Grid";
 import { updateUser, getUser } from "../../services/api";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -111,144 +112,151 @@ export default function EditUsersPage() {
     estado_cuenta: "activo",
     newPassword: "",
     confirmPassword: "",
+    foto_perfil: null,
+    path_foto_perfil: "",
+    contrato: "",
   })
 
   const [errors, setErrors] = useState({});
+  const [avatarPreview, setAvatarPreview] = useState("");
 
 
-    useEffect(() => {
+  useEffect(() => {
 
-      const loadUser = async () => {
+    const loadUser = async () => {
 
-          try {
+      try {
 
-              const user =
-                  await getUser(id);
+        const user =
+          await getUser(id);
 
-              setFormData({
+        setFormData({
 
-                  name: user.name,
-                  apellido: user.apellido,
-                  rut: user.rut || "",
-                  email: user.email,
-                  telefono: user.telefono || "",
-                  direccion: user.direccion || "",
-                  fecha_nacimiento:
-                      user.fecha_nacimiento?.substring(0, 10) || "",
-                  departamento:
-                      user.departamento || "",
-                  cargo:
-                      user.cargo || "",
-                  fecha_ingreso:
-                      user.fecha_ingreso?.substring(0, 10) || "",
-                  supervision_general:
-                      user.supervision_general || "",
-                  role:
-                      user.role || "",
-                  estado_cuenta:
-                      user.estado_cuenta || "activo",
+          name: user.name,
+          apellido: user.apellido,
+          rut: user.rut || "",
+          email: user.email,
+          telefono: user.telefono || "",
+          direccion: user.direccion || "",
+          fecha_nacimiento:
+            user.fecha_nacimiento?.substring(0, 10) || "",
+          departamento:
+            user.departamento || "",
+          cargo:
+            user.cargo || "",
+          fecha_ingreso:
+            user.fecha_ingreso?.substring(0, 10) || "",
+          supervision_general:
+            user.supervision_general || "",
+          role:
+            user.role || "",
+          estado_cuenta:
+            user.estado_cuenta || "activo",
+          foto_perfil: null,
+          path_foto_perfil: user.path_foto_perfil || "",
+          contrato: user.contrato || "",
 
-              });
+        });
 
-          } catch (error) {
+      } catch (error) {
 
-              console.error(error);
+        console.error(error);
 
-          }
+      }
 
-      };
+    };
 
-      loadUser();
+    loadUser();
 
   }, [id]);
 
   const handleChange = (field, value) => {
-  setFormData({
+    setFormData({
       ...formData,
       [field]: value,
-  });
+    });
 
-  if (errors[field]) {
+    if (errors[field]) {
       setErrors({
-      ...errors,
-      [field]: "",
+        ...errors,
+        [field]: "",
       });
-  }
+    }
   };
 
   const handleSave = async () => {
 
-      const newErrors = {};
+    const newErrors = {};
 
-      if (!formData.name) {
-          newErrors.name = "El nombre es requerido";
-      }
+    if (!formData.name) {
+      newErrors.name = "El nombre es requerido";
+    }
 
-      if (!formData.apellido) {
-          newErrors.apellido = "El apellido es requerido";
-      }
+    if (!formData.apellido) {
+      newErrors.apellido = "El apellido es requerido";
+    }
 
-      if (!formData.rut) {
-          newErrors.rut = "El RUT es requerido";
-      }
+    if (!formData.rut) {
+      newErrors.rut = "El RUT es requerido";
+    }
 
-      if (!formData.email) {
-          newErrors.email = "El email es requerido";
-      }
+    if (!formData.email) {
+      newErrors.email = "El email es requerido";
+    }
 
-      if (!formData.departamento) {
-          newErrors.departamento = "El departamento es requerido";
-      }
+    if (!formData.departamento) {
+      newErrors.departamento = "El departamento es requerido";
+    }
 
-      if (!formData.cargo) {
-          newErrors.cargo = "El cargo es requerido";
-      }
+    if (!formData.cargo) {
+      newErrors.cargo = "El cargo es requerido";
+    }
 
-      if (Object.keys(newErrors).length > 0) {
+    if (Object.keys(newErrors).length > 0) {
 
-          setErrors(newErrors);
+      setErrors(newErrors);
 
-          setSnackbar({
-              open: true,
-              message: "Por favor complete los campos requeridos",
-              severity: "error",
-          });
+      setSnackbar({
+        open: true,
+        message: "Por favor complete los campos requeridos",
+        severity: "error",
+      });
 
-          return;
-      }
+      return;
+    }
 
-      try {
+    try {
 
-          await updateUser(
-              params.id,
-              formData
-          );
+      await updateUser(
+        params.id,
+        formData
+      );
 
-          setSnackbar({
-              open: true,
-              message: "Usuario actualizado correctamente",
-              severity: "success",
-          });
+      setSnackbar({
+        open: true,
+        message: "Usuario actualizado correctamente",
+        severity: "success",
+      });
 
-          setTimeout(() => {
-              navigate("/dashboard/users");
-          }, 1500);
+      setTimeout(() => {
+        navigate("/dashboard/users");
+      }, 1500);
 
-      } catch (error) {
+    } catch (error) {
 
-          console.error(error);
+      console.error(error);
 
-          setSnackbar({
-              open: true,
-              message:
-                  error.message ||
-                  "Error al actualizar usuario",
-              severity: "error",
-          });
-      }
+      setSnackbar({
+        open: true,
+        message:
+          error.message ||
+          "Error al actualizar usuario",
+        severity: "error",
+      });
+    }
   };
 
-  const handleChangePassword = () => {
+  const handleChangePassword = async () => {
     if (!formData.newPassword) {
       setErrors({ ...errors, newPassword: "La contraseña es requerida" })
       return
@@ -262,371 +270,455 @@ export default function EditUsersPage() {
       return
     }
 
-    setSnackbar({ open: true, message: "Contraseña actualizada correctamente", severity: "success" })
-    setFormData({ ...formData, newPassword: "", confirmPassword: "" })
+    try {
+      await updateUser(params.id, {
+        ...formData,
+        password: formData.newPassword
+      });
+
+      setSnackbar({ open: true, message: "Contraseña actualizada correctamente", severity: "success" })
+      setFormData({ ...formData, newPassword: "", confirmPassword: "" })
+    } catch (error) {
+      console.error(error);
+      setSnackbar({
+        open: true,
+        message: error.message || "Error al actualizar contraseña",
+        severity: "error"
+      });
+    }
   }
 
   return (
-      <Box sx={{ p: 3 }}>
-        {/* Breadcrumbs */}
-        <Breadcrumbs sx={{ mb: 3 }}>
-          <Link to="/dashboard" style={{ color: "#722F37", textDecoration: "none" }}>
-            Dashboard
-          </Link>
-          <Link to="/dashboard/users" style={{ color: "#722F37", textDecoration: "none" }}>
-            Usuarios
-          </Link>
-          <Typography color="text.primary">Editar Usuario</Typography>
-        </Breadcrumbs>
+    <Box sx={{ p: 3 }}>
+      {/* Breadcrumbs */}
+      <Breadcrumbs sx={{ mb: 3 }}>
+        <Link to="/dashboard" style={{ color: "#722F37", textDecoration: "none" }}>
+          Dashboard
+        </Link>
+        <Link to="/dashboard/users" style={{ color: "#722F37", textDecoration: "none" }}>
+          Usuarios
+        </Link>
+        <Typography color="text.primary">Editar Usuario</Typography>
+      </Breadcrumbs>
 
-        {/* Header */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4 }}>
-          <IconButton component={Link} to="/dashboard/users" sx={{ border: 1, borderColor: "divider" }}>
-            
-          </IconButton>
-          <Box sx={{ flex: 1 }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <Typography variant="h4" fontWeight="bold" color="primary">
-                Editar Usuario
-              </Typography>
-              <Chip
-                label={formData.estado_cuenta === "activo" ? "Activo" : formData.estado_cuenta === "inactivo" ? "Inactivo" : "Pendiente"}
-                color={formData.estado_cuenta === "activo" ? "success" : formData.estado_cuenta === "inactivo" ? "error" : "warning"}
-                size="small"
-              />
-            </Box>
-            <Typography variant="body2" color="text.secondary">
-              ID de Usuario: {params.id} | Creado: {mockUser.fechaCreacion}
+      {/* Header */}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4 }}>
+        <IconButton component={Link} to="/dashboard/users" sx={{ border: 1, borderColor: "divider" }}>
+
+        </IconButton>
+        <Box sx={{ flex: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Typography variant="h4" fontWeight="bold" color="primary">
+              Editar Usuario
             </Typography>
-          </Box>
-          <Button variant="outlined" color="error">
-            Eliminar
-          </Button>
-        </Box>
-
-        {/* User Header Card */}
-        <Paper sx={{ p: 3, mb: 3, display: "flex", alignItems: "center", gap: 3 }}>
-          <Box sx={{ position: "relative" }}>
-            <Avatar sx={{ width: 100, height: 100 }}>
-            {(formData.name?.charAt(0) || "")}
-            {(formData.apellido?.charAt(0) || "")}
-            </Avatar>
-            <IconButton
-              sx={{
-                position: "absolute",
-                bottom: 0,
-                right: 0,
-                bgcolor: "#4A1C23",
-                color: "white",
-                "&:hover": { bgcolor: "#722F37" },
-              }}
+            <Chip
+              label={formData.estado_cuenta === "activo" ? "Activo" : formData.estado_cuenta === "inactivo" ? "Inactivo" : "Pendiente"}
+              color={formData.estado_cuenta === "activo" ? "success" : formData.estado_cuenta === "inactivo" ? "error" : "warning"}
               size="small"
-            >
-              
-            </IconButton>
+            />
           </Box>
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="h5" fontWeight="bold">
-              {formData.name} {formData.apellido}
+          <Typography variant="body2" color="text.secondary">
+            ID de Usuario: {params.id} | Creado: {mockUser.fechaCreacion}
+          </Typography>
+        </Box>
+        <Button variant="outlined" color="error">
+          Eliminar
+        </Button>
+      </Box>
+
+      {/* User Header Card */}
+      <Paper sx={{ p: 3, mb: 3, display: "flex", alignItems: "center", gap: 3 }}>
+        <Box sx={{ position: "relative" }}>
+          <input
+            type="file"
+            id="foto-perfil-edit-input"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={(e) => {
+              if (e.target.files && e.target.files[0]) {
+                const file = e.target.files[0];
+                handleChange("foto_perfil", file);
+                setAvatarPreview(URL.createObjectURL(file));
+              }
+            }}
+          />
+          <Avatar
+            src={
+              avatarPreview
+                ? avatarPreview
+                : formData.path_foto_perfil
+                  ? `${import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"}/storage/${formData.path_foto_perfil}`
+                  : undefined
+            }
+            sx={{ width: 100, height: 100 }}
+          >
+            {!avatarPreview && !formData.path_foto_perfil && (
+              <>
+                {(formData.name?.charAt(0) || "")}
+                {(formData.apellido?.charAt(0) || "")}
+              </>
+            )}
+          </Avatar>
+          <IconButton
+            sx={{
+              position: "absolute",
+              bottom: 0,
+              right: 0,
+              bgcolor: "#4A1C23",
+              color: "white",
+              "&:hover": { bgcolor: "#722F37" },
+            }}
+            size="small"
+            onClick={() => document.getElementById("foto-perfil-edit-input").click()}
+          >
+            <PhotoCameraIcon fontSize="small" />
+          </IconButton>
+        </Box>
+        <Box sx={{ flex: 1 }}>
+          <Typography variant="h5" fontWeight="bold">
+            {formData.name} {formData.apellido}
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            {formData.cargo} - {formData.departamento}
+          </Typography>
+          <Box sx={{ display: "flex", gap: 3, mt: 1 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+              {formData.email}
             </Typography>
-            <Typography variant="body1" color="text.secondary">
-              {formData.cargo} - {formData.departamento}
+            <Typography variant="body2" color="text.secondary" sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+              {formData.telefono}
             </Typography>
-            <Box sx={{ display: "flex", gap: 3, mt: 1 }}>
-              <Typography variant="body2" color="text.secondary" sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                {formData.email}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                {formData.telefono}
-              </Typography>
-            </Box>
           </Box>
-          <Box sx={{ textAlign: "right" }}>
-            <Typography variant="caption" color="text.secondary">
-              Último acceso
+        </Box>
+        <Box sx={{ textAlign: "right" }}>
+          <Typography variant="caption" color="text.secondary">
+            Último acceso
+          </Typography>
+          <Typography variant="body2">{mockUser.ultimoAcceso}</Typography>
+        </Box>
+      </Paper>
+
+      {/* Tabs */}
+      <Paper sx={{ mb: 3 }}>
+        <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)} sx={{ borderBottom: 1, borderColor: "divider", px: 2 }}>
+          <Tab iconPosition="start" label="Información Personal" />
+          <Tab iconPosition="start" label="Seguridad" />
+
+        </Tabs>
+
+        {/* Tab 0: Información Personal */}
+        <TabPanel value={tabValue} index={0}>
+          <Box sx={{ px: 3 }}>
+            <Typography variant="h6" fontWeight={600} gutterBottom>
+              Datos Personales
             </Typography>
-            <Typography variant="body2">{mockUser.ultimoAcceso}</Typography>
-          </Box>
-        </Paper>
-
-        {/* Tabs */}
-        <Paper sx={{ mb: 3 }}>
-          <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)} sx={{ borderBottom: 1, borderColor: "divider", px: 2 }}>
-            <Tab  iconPosition="start" label="Información Personal" />
-            <Tab  iconPosition="start" label="Seguridad" />
-
-          </Tabs>
-
-          {/* Tab 0: Información Personal */}
-          <TabPanel value={tabValue} index={0}>
-            <Box sx={{ px: 3 }}>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
-                Datos Personales
-              </Typography>
-              <Grid container spacing={3}>
-                <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Nombre"
-                    value={formData.name}
-                    onChange={(e) => handleChange("name", e.target.value)}
-                    error={!!errors.name}
-                    helperText={errors.name}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Apellido"
-                    value={formData.apellido}
-                    onChange={(e) => handleChange("apellido", e.target.value)}
-                    error={!!errors.apellido}
-                    helperText={errors.apellido}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="RUT"
-                    value={formData.rut}
-                    onChange={(e) => handleChange("rut", e.target.value)}
-                    error={!!errors.rut}
-                    helperText={errors.rut || "Ej: 12.345.678-9"}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Correo Electrónico"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => handleChange("email", e.target.value)}
-                    error={!!errors.email}
-                    helperText={errors.email}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Teléfono"
-                    value={formData.telefono}
-                    onChange={(e) => handleChange("telefono", e.target.value)}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12}}>
-                  <TextField
-                    fullWidth
-                    label="Dirección"
-                    value={formData.direccion}
-                    onChange={(e) => handleChange("direccion", e.target.value)}
-                    multiline
-                    rows={2}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Fecha de Nacimiento"
-                    type="date"
-                    value={formData.fecha_nacimiento}
-                    onChange={(e) => handleChange("fecha_nacimiento", e.target.value)}
-                    slotProps={{
-                        inputLabel: {
-                          shrink: true,
-                        },
-                      }}
-                  />
-                </Grid>
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  fullWidth
+                  label="Nombre"
+                  value={formData.name}
+                  onChange={(e) => handleChange("name", e.target.value)}
+                  error={!!errors.name}
+                  helperText={errors.name}
+                />
               </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  fullWidth
+                  label="Apellido"
+                  value={formData.apellido}
+                  onChange={(e) => handleChange("apellido", e.target.value)}
+                  error={!!errors.apellido}
+                  helperText={errors.apellido}
+                />
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  fullWidth
+                  label="RUT"
+                  value={formData.rut}
+                  onChange={(e) => handleChange("rut", e.target.value)}
+                  error={!!errors.rut}
+                  helperText={errors.rut || "Ej: 12.345.678-9"}
+                />
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  fullWidth
+                  label="Correo Electrónico"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => handleChange("email", e.target.value)}
+                  error={!!errors.email}
+                  helperText={errors.email}
+                />
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  fullWidth
+                  label="Teléfono"
+                  value={formData.telefono}
+                  onChange={(e) => handleChange("telefono", e.target.value)}
+                />
+              </Grid>
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  fullWidth
+                  label="Dirección"
+                  value={formData.direccion}
+                  onChange={(e) => handleChange("direccion", e.target.value)}
+                  multiline
+                  rows={2}
+                />
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  fullWidth
+                  label="Fecha de Nacimiento"
+                  type="date"
+                  value={formData.fecha_nacimiento}
+                  onChange={(e) => handleChange("fecha_nacimiento", e.target.value)}
+                  slotProps={{
+                    inputLabel: {
+                      shrink: true,
+                    },
+                  }}
+                />
+              </Grid>
+            </Grid>
 
-              <Divider sx={{ my: 4 }} />
+            <Divider sx={{ my: 4 }} />
 
-              <Typography variant="h6" fontWeight={600} gutterBottom>
-                Información Laboral
-              </Typography>
-              <Grid container spacing={3}>
-                <Grid size={{ xs: 12, md: 6 }}>
-                  <FormControl fullWidth error={!!errors.departamento}>
-                    <InputLabel>Departamento</InputLabel>
-                    <Select
+            <Typography variant="h6" fontWeight={600} gutterBottom>
+              Información Laboral
+            </Typography>
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <FormControl fullWidth error={!!errors.departamento}>
+                  <InputLabel>Departamento</InputLabel>
+                  <Select
                     value={formData.departamento || ""}
                     label="Departamento"
                     onChange={(e) => {
-                        console.log("Departamento seleccionado:", e.target.value);
+                      console.log("Departamento seleccionado:", e.target.value);
 
-                        handleChange("departamento", e.target.value);
-                        handleChange("cargo", "");
+                      handleChange("departamento", e.target.value);
+                      handleChange("cargo", "");
                     }}
-                    >
-                      {departamentos.map((dep) => (
-                        <MenuItem key={dep} value={dep}>
-                          {dep}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    {errors.departamento && (
-                      <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 2 }}>
-                        {errors.departamento}
-                      </Typography>
-                    )}
-                  </FormControl>
-                </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <FormControl fullWidth error={!!errors.cargo}>
-                    <InputLabel>Cargo</InputLabel>
-
-                    <Select
-                        value={formData.cargo || ""}
-                        label="Cargo"
-                        onChange={(e) => handleChange("cargo", e.target.value)}
-                        disabled={!formData.departamento}
-                    >
-                        {(cargos[formData.departamento] || []).map((cargo) => (
-                        <MenuItem key={cargo} value={cargo}>
-                            {cargo}
-                        </MenuItem>
-                        ))}
-                    </Select>
-
-                    </FormControl>
-                </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Fecha de Ingreso"
-                    type="date"
-                    value={formData.fecha_ingreso}
-                    onChange={(e) => handleChange("fecha_ingreso", e.target.value)}
-                    slotProps={{
-                        inputLabel: {
-                          shrink: true,
-                        },
-                      }}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Supervision Directo"
-                    value={formData.supervision_general}
-                    onChange={(e) => handleChange("supervision_general", e.target.value)}
-                  />
-                </Grid>
+                  >
+                    {departamentos.map((dep) => (
+                      <MenuItem key={dep} value={dep}>
+                        {dep}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {errors.departamento && (
+                    <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 2 }}>
+                      {errors.departamento}
+                    </Typography>
+                  )}
+                </FormControl>
               </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <FormControl fullWidth error={!!errors.cargo}>
+                  <InputLabel>Cargo</InputLabel>
 
-              <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 4, gap: 2 }}>
-                <Button component={Link} to="/dashboard/users" variant="outlined" color="inherit">
-                  Cancelar
-                </Button>
-                <Button variant="contained" onClick={handleSave} >
-                  Guardar Cambios
-                </Button>
-              </Box>
+                  <Select
+                    value={formData.cargo || ""}
+                    label="Cargo"
+                    onChange={(e) => handleChange("cargo", e.target.value)}
+                    disabled={!formData.departamento}
+                  >
+                    {(cargos[formData.departamento] || []).map((cargo) => (
+                      <MenuItem key={cargo} value={cargo}>
+                        {cargo}
+                      </MenuItem>
+                    ))}
+                  </Select>
+
+                </FormControl>
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  fullWidth
+                  label="Fecha de Ingreso"
+                  type="date"
+                  value={formData.fecha_ingreso}
+                  onChange={(e) => handleChange("fecha_ingreso", e.target.value)}
+                  slotProps={{
+                    inputLabel: {
+                      shrink: true,
+                    },
+                  }}
+                />
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  fullWidth
+                  label="Supervision Directo"
+                  value={formData.supervision_general}
+                  onChange={(e) => handleChange("supervision_general", e.target.value)}
+                />
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <FormControl fullWidth>
+                  <InputLabel>Contrato</InputLabel>
+                  <Select
+                    value={formData.contrato || ""}
+                    label="Contrato"
+                    onChange={(e) => handleChange("contrato", e.target.value)}
+                  >
+                    <MenuItem value="Terbu">Terbu</MenuItem>
+                    <MenuItem value="Calceles VI">Calceles VI</MenuItem>
+                    <MenuItem value="Buin Paine">Buin Paine</MenuItem>
+                    <MenuItem value="Red Bio Bio">Red Bio Bio</MenuItem>
+                    <MenuItem value="CHICO ll">CHICO ll</MenuItem>
+                    <MenuItem value="ÑIQUEN">ÑIQUEN</MenuItem>
+                    <MenuItem value="INSTITUTO NACIONAL DEL CÁNCER">INSTITUTO NACIONAL DEL CÁNCER</MenuItem>
+                    <MenuItem value="SUSI V">SUSI V</MenuItem>
+                    <MenuItem value="AEROPUERTO DE LA SERENA">AEROPUERTO DE LA SERENA</MenuItem>
+                    <MenuItem value="Centro Oriente">Centro Oriente</MenuItem>
+                    <MenuItem value="ZONA NORTE 1">ZONA NORTE 1</MenuItem>
+                    <MenuItem value="ANCO">ANCO</MenuItem>
+                    <MenuItem value="ZONA NORTE 2">ZONA NORTE 2</MenuItem>
+                    <MenuItem value="AEROPORTUARIA ZN2">AEROPORTUARIA ZN2</MenuItem>
+                    <MenuItem value="CENTRO COSTA 3">CENTRO COSTA 3</MenuItem>
+                    <MenuItem value="SATA 3">SATA 3</MenuItem>
+                    <MenuItem value="LOS VILOS - LA SERENA">LOS VILOS - LA SERENA</MenuItem>
+                    <MenuItem value="CHILLAN COLLIPULLI 2">CHILLAN COLLIPULLI 2</MenuItem>
+                    <MenuItem value="VESPUCIO SUR V">VESPUCIO SUR V</MenuItem>
+                    <MenuItem value="ORBITAL SUR">ORBITAL SUR</MenuItem>
+                    <MenuItem value="ELQUI">ELQUI</MenuItem>
+                    <MenuItem value="PUTAGÁN">PUTAGÁN</MenuItem>
+                    <MenuItem value="ITATA NORTE">ITATA NORTE</MenuItem>
+                    <MenuItem value="CHIGUAYANTE">CHIGUAYANTE</MenuItem>
+                    <MenuItem value="COCHAMÓ">COCHAMÓ</MenuItem>
+                    <MenuItem value="LIMARÍ">LIMARÍ</MenuItem>
+                    <MenuItem value="HUALAÑE">HUALAÑE</MenuItem>
+                    <MenuItem value="ITATA COSTA SUR">ITATA COSTA SUR</MenuItem>
+                    <MenuItem value="GLOBAL CAUQUENES">GLOBAL CAUQUENES</MenuItem>
+                    <MenuItem value="SECANO">SECANO</MenuItem>
+                    <MenuItem value="PATILLOS">PATILLOS</MenuItem>
+                    <MenuItem value="CUESTA CHADA">CUESTA CHADA</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+
+            <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 4, gap: 2 }}>
+              <Button component={Link} to="/dashboard/users" variant="outlined" color="inherit">
+                Cancelar
+              </Button>
+              <Button variant="contained" onClick={handleSave} >
+                Guardar Cambios
+              </Button>
             </Box>
-          </TabPanel>
+          </Box>
+        </TabPanel>
 
-          {/* Tab 1: Seguridad */}
-          <TabPanel value={tabValue} index={1}>
-            <Box sx={{ px: 3 }}>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
-                Cambiar Contraseña
-              </Typography>
-              <Grid container spacing={3} sx={{ maxWidth: 600 }}>
-                <Grid size={{ xs: 12}}>
-                  <TextField
-                    fullWidth
-                    label="Nueva Contraseña"
-                    type={showPassword ? "text" : "password"}
-                    value={formData.newPassword}
-                    onChange={(e) => handleChange("newPassword", e.target.value)}
-                    error={!!errors.newPassword}
-                    helperText={errors.newPassword || "Mínimo 8 caracteres"}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          
-                        </InputAdornment>
-                      ),
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                            
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12 }}>
-                  <TextField
-                    fullWidth
-                    label="Confirmar Contraseña"
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={formData.confirmPassword}
-                    onChange={(e) => handleChange("confirmPassword", e.target.value)}
-                    error={!!errors.confirmPassword}
-                    helperText={errors.confirmPassword}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          
-                        </InputAdornment>
-                      ),
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end">
-                            
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12 }}>
-                  <Button variant="contained" onClick={handleChangePassword}>
-                    Actualizar Contraseña
-                  </Button>
-                </Grid>
+        {/* Tab 1: Seguridad */}
+        <TabPanel value={tabValue} index={1}>
+          <Box sx={{ px: 3 }}>
+            <Typography variant="h6" fontWeight={600} gutterBottom>
+              Cambiar Contraseña
+            </Typography>
+            <Grid container spacing={3} sx={{ maxWidth: 600 }}>
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  fullWidth
+                  label="Nueva Contraseña"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.newPassword}
+                  onChange={(e) => handleChange("newPassword", e.target.value)}
+                  error={!!errors.newPassword}
+                  helperText={errors.newPassword || "Mínimo 8 caracteres"}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
               </Grid>
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  fullWidth
+                  label="Confirmar Contraseña"
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={formData.confirmPassword}
+                  onChange={(e) => handleChange("confirmPassword", e.target.value)}
+                  error={!!errors.confirmPassword}
+                  helperText={errors.confirmPassword}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
 
-              <Divider sx={{ my: 4 }} />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end">
 
-              <Typography variant="h6" fontWeight={600} gutterBottom>
-                Rol y Permisos
-              </Typography>
-              <Grid container spacing={3} sx={{ maxWidth: 600 }}>
-                <Grid size={{ xs: 12 }}>
-                  <FormControl fullWidth>
-                    <InputLabel>Rol de Usuario</InputLabel>
-                    <Select value={formData.role} label="Rol de Usuario" onChange={(e) => handleChange("role", e.target.value)}>
-                      <MenuItem value="admin">Administrador</MenuItem>
-                      <MenuItem value="usuario">Usuario</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid size={{ xs: 12 }}>
-                  <FormControl fullWidth>
-                    <InputLabel>Estado de la Cuenta</InputLabel>
-                    <Select value={formData.estado_cuenta} label="Estado de la Cuenta" onChange={(e) => handleChange("estado_cuenta", e.target.value)}>
-                      <MenuItem value="activo">Activo</MenuItem>
-                      <MenuItem value="inactivo">Inactivo</MenuItem>
-                      <MenuItem value="pendiente">Pendiente</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
               </Grid>
-            </Box>
-          </TabPanel>
+              <Grid size={{ xs: 12 }}>
+                <Button variant="contained" onClick={handleChangePassword}>
+                  Actualizar Contraseña
+                </Button>
+              </Grid>
+            </Grid>
+
+            <Divider sx={{ my: 4 }} />
+
+            <Typography variant="h6" fontWeight={600} gutterBottom>
+              Rol y Permisos
+            </Typography>
+            <Grid container spacing={3} sx={{ maxWidth: 600 }}>
+              <Grid size={{ xs: 12 }}>
+                <FormControl fullWidth>
+                  <InputLabel>Rol de Usuario</InputLabel>
+                  <Select value={formData.role} label="Rol de Usuario" onChange={(e) => handleChange("role", e.target.value)}>
+                    <MenuItem value="admin">Administrador</MenuItem>
+                    <MenuItem value="usuario">Usuario</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid size={{ xs: 12 }}>
+                <FormControl fullWidth>
+                  <InputLabel>Estado de la Cuenta</InputLabel>
+                  <Select value={formData.estado_cuenta} label="Estado de la Cuenta" onChange={(e) => handleChange("estado_cuenta", e.target.value)}>
+                    <MenuItem value="activo">Activo</MenuItem>
+                    <MenuItem value="inactivo">Inactivo</MenuItem>
+                    <MenuItem value="pendiente">Pendiente</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+          </Box>
+        </TabPanel>
 
 
-        </Paper>
+      </Paper>
 
-        {/* Snackbar */}
-        <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
-          <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
-            {snackbar.message}
-          </Alert>
-        </Snackbar>
-      </Box>
+      {/* Snackbar */}
+      <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+        <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </Box>
   )
 }

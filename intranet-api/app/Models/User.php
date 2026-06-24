@@ -42,6 +42,12 @@ class User extends Authenticatable
 
     'fecha_ingreso',
 
+    'contrato',
+
+    'foto_perfil',
+
+    'path_foto_perfil',
+
     'supervision_general',
 
     'role',

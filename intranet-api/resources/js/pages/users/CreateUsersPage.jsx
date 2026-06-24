@@ -63,7 +63,7 @@ export default function CreateUsersPage() {
     open: false,
     message: "",
     severity: "success"
-    });
+  });
 
   const [formData, setFormData] = useState({
     name: "",
@@ -76,6 +76,7 @@ export default function CreateUsersPage() {
     departamento: "",
     cargo: "",
     fecha_ingreso: "",
+    contrato: "",
     supervision_general: "",
     role: "user",
     password: "",
@@ -83,18 +84,19 @@ export default function CreateUsersPage() {
     enviarCredenciales: true,
     requiereCambioPassword: true,
     estado_cuenta: "activo",
+    foto_perfil: null
   })
 
   const [errors, setErrors] = useState({});
 
-    const handleChange = (field, value) => {
-        console.log(field, value);
+  const handleChange = (field, value) => {
+    console.log(field, value);
 
-        setFormData((prev) => ({
-            ...prev,
-            [field]: value,
-        }));
-    };
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
   const validateStep = (step) => {
     const newErrors = {};
@@ -146,55 +148,55 @@ export default function CreateUsersPage() {
   }
 
   const handleSave = async () => {
-        const newErrors = {};
-        if (!formData.name)
-            newErrors.name = "El nombre es requerido";
-        if (!formData.apellido)
-            newErrors.apellido = "El apellido es requerido";
-        if (!formData.rut)
-            newErrors.rut = "El RUT es requerido";
-        if (!formData.email)
-            newErrors.email = "El email es requerido";
-        if (!formData.departamento)
-            newErrors.departamento = "El departamento es requerido";
-        if (!formData.cargo)
-            newErrors.cargo = "El cargo es requerido";
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            return;
-        }
+    const newErrors = {};
+    if (!formData.name)
+      newErrors.name = "El nombre es requerido";
+    if (!formData.apellido)
+      newErrors.apellido = "El apellido es requerido";
+    if (!formData.rut)
+      newErrors.rut = "El RUT es requerido";
+    if (!formData.email)
+      newErrors.email = "El email es requerido";
+    if (!formData.departamento)
+      newErrors.departamento = "El departamento es requerido";
+    if (!formData.cargo)
+      newErrors.cargo = "El cargo es requerido";
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
-        console.log("Datos enviados:", formData);
+    console.log("Datos enviados:", formData);
 
-        try {
-            const response =
-                await createUser(formData);
-            console.log(response);
-            setSnackbar({
-                open: true,
-                message:
-                    "Usuario creado correctamente",
-                severity: "success",
-            });
-            setTimeout(() => {
-                navigate("/dashboard/users");
-            }, 1500);
-        } catch (error) {
-            console.error(error);
-            setSnackbar({
-                open: true,
-                message: error.message,
-                severity: "error",
-            });
-        }
-    };
+    try {
+      const response =
+        await createUser(formData);
+      console.log(response);
+      setSnackbar({
+        open: true,
+        message:
+          "Usuario creado correctamente",
+        severity: "success",
+      });
+      setTimeout(() => {
+        navigate("/dashboard/users");
+      }, 1500);
+    } catch (error) {
+      console.error(error);
+      setSnackbar({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
+    }
+  };
 
   const renderStepContent = (step) => {
     switch (step) {
       case 0:
         return (
           <Grid container spacing={3}>
-            <Grid  xs={12} sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+            <Grid xs={12} sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
               <Box sx={{ position: "relative" }}>
                 <Avatar sx={{ width: 120, height: 120, bgcolor: "#722F37", fontSize: "2.5rem" }}>
                   {formData.name ? formData.name[0] : ""}
@@ -211,7 +213,7 @@ export default function CreateUsersPage() {
                   }}
                   size="small"
                 >
-                  
+
                 </IconButton>
               </Box>
             </Grid>
@@ -226,7 +228,7 @@ export default function CreateUsersPage() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                        <LockIcon />
+                      <LockIcon />
                     </InputAdornment>
                   ),
                 }}
@@ -243,7 +245,7 @@ export default function CreateUsersPage() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                        <LockIcon />
+                      <LockIcon />
                     </InputAdornment>
                   ),
                 }}
@@ -260,7 +262,7 @@ export default function CreateUsersPage() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                        <LockIcon />
+                      <LockIcon />
                     </InputAdornment>
                   ),
                 }}
@@ -278,7 +280,7 @@ export default function CreateUsersPage() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                        <LockIcon />
+                      <LockIcon />
                     </InputAdornment>
                   ),
                 }}
@@ -293,7 +295,7 @@ export default function CreateUsersPage() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                        <LockIcon />
+                      <LockIcon />
                     </InputAdornment>
                   ),
                 }}
@@ -317,10 +319,10 @@ export default function CreateUsersPage() {
                 value={formData.fecha_nacimiento}
                 onChange={(e) => handleChange("fecha_nacimiento", e.target.value)}
                 slotProps={{
-                    inputLabel: {
-                        shrink: true,
-                    },
-                    }}
+                  inputLabel: {
+                    shrink: true,
+                  },
+                }}
               />
             </Grid>
           </Grid>
@@ -332,14 +334,14 @@ export default function CreateUsersPage() {
               <FormControl fullWidth error={!!errors.departamento}>
                 <InputLabel>Departamento</InputLabel>
                 <Select
-                value={formData.departamento || ""}
-                label="Departamento"
-                onChange={(e) => {
+                  value={formData.departamento || ""}
+                  label="Departamento"
+                  onChange={(e) => {
                     console.log("Departamento seleccionado:", e.target.value);
 
                     handleChange("departamento", e.target.value);
                     handleChange("cargo", "");
-                }}
+                  }}
                 >
                   {departamentos.map((dep) => (
                     <MenuItem key={dep} value={dep}>
@@ -355,23 +357,23 @@ export default function CreateUsersPage() {
               </FormControl>
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
-                <FormControl fullWidth error={!!errors.cargo}>
+              <FormControl fullWidth error={!!errors.cargo}>
                 <InputLabel>Cargo</InputLabel>
 
                 <Select
-                    value={formData.cargo || ""}
-                    label="Cargo"
-                    onChange={(e) => handleChange("cargo", e.target.value)}
-                    disabled={!formData.departamento}
+                  value={formData.cargo || ""}
+                  label="Cargo"
+                  onChange={(e) => handleChange("cargo", e.target.value)}
+                  disabled={!formData.departamento}
                 >
-                    {(cargos[formData.departamento] || []).map((cargo) => (
+                  {(cargos[formData.departamento] || []).map((cargo) => (
                     <MenuItem key={cargo} value={cargo}>
-                        {cargo}
+                      {cargo}
                     </MenuItem>
-                    ))}
+                  ))}
                 </Select>
 
-                </FormControl>
+              </FormControl>
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
@@ -381,20 +383,77 @@ export default function CreateUsersPage() {
                 value={formData.fecha_ingreso}
                 onChange={(e) => handleChange("fecha_ingreso", e.target.value)}
                 slotProps={{
-                    inputLabel: {
-                        shrink: true,
-                    },
-                    }}
+                  inputLabel: {
+                    shrink: true,
+                  },
+                }}
               />
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 fullWidth
-                label="supervisor Directo"
+                label="Supervisor Directo"
                 value={formData.supervision_general}
                 onChange={(e) => handleChange("supervision_general", e.target.value)}
                 placeholder="Nombre del Supervisor"
               />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <FormControl fullWidth>
+                <InputLabel>Contrato</InputLabel>
+                <Select
+                  value={formData.contrato || ""}
+                  label="Contrato"
+                  onChange={(e) => handleChange("contrato", e.target.value)}
+                >
+                  <MenuItem value="Terbu">Terbu</MenuItem>
+                  <MenuItem value="Calceles VI">Calceles VI</MenuItem>
+                  <MenuItem value="Buin Paine">Buin Paine</MenuItem>
+                  <MenuItem value="Red Bio Bio">Red Bio Bio</MenuItem>
+                  <MenuItem value="CHICO ll">CHICO ll</MenuItem>
+                  <MenuItem value="ÑIQUEN">ÑIQUEN</MenuItem>
+                  <MenuItem value="INSTITUTO NACIONAL DEL CÁNCER">INSTITUTO NACIONAL DEL CÁNCER</MenuItem>
+                  <MenuItem value="SUSI V">SUSI V</MenuItem>
+                  <MenuItem value="AEROPUERTO DE LA SERENA">AEROPUERTO DE LA SERENA</MenuItem>
+                  <MenuItem value="Centro Oriente">Centro Oriente</MenuItem>
+                  <MenuItem value="ZONA NORTE 1">ZONA NORTE 1</MenuItem>
+                  <MenuItem value="ANCO">ANCO</MenuItem>
+                  <MenuItem value="ZONA NORTE 2">ZONA NORTE 2</MenuItem>
+                  <MenuItem value="AEROPORTUARIA ZN2">AEROPORTUARIA ZN2</MenuItem>
+                  <MenuItem value="CENTRO COSTA 3">CENTRO COSTA 3</MenuItem>
+                  <MenuItem value="SATA 3">SATA 3</MenuItem>
+                  <MenuItem value="LOS VILOS - LA SERENA">LOS VILOS - LA SERENA</MenuItem>
+                  <MenuItem value="CHILLAN COLLIPULLI 2">CHILLAN COLLIPULLI 2</MenuItem>
+                  <MenuItem value="VESPUCIO SUR V">VESPUCIO SUR V</MenuItem>
+                  <MenuItem value="ORBITAL SUR">ORBITAL SUR</MenuItem>
+                  <MenuItem value="ELQUI">ELQUI</MenuItem>
+                  <MenuItem value="PUTAGÁN">PUTAGÁN</MenuItem>
+                  <MenuItem value="ITATA NORTE">ITATA NORTE</MenuItem>
+                  <MenuItem value="CHIGUAYANTE">CHIGUAYANTE</MenuItem>
+                  <MenuItem value="COCHAMÓ">COCHAMÓ</MenuItem>
+                  <MenuItem value="LIMARÍ">LIMARÍ</MenuItem>
+                  <MenuItem value="HUALAÑE">HUALAÑE</MenuItem>
+                  <MenuItem value="ITATA COSTA SUR">ITATA COSTA SUR</MenuItem>
+                  <MenuItem value="GLOBAL CAUQUENES">GLOBAL CAUQUENES</MenuItem>
+                  <MenuItem value="SECANO">SECANO</MenuItem>
+                  <MenuItem value="PATILLOS">PATILLOS</MenuItem>
+                  <MenuItem value="CUESTA CHADA">CUESTA CHADA</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }} sx={{ display: "flex", alignItems: "center" }}>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    foto_perfil:
+                      e.target.files[0]
+                  })
+                }
+              />
+
             </Grid>
           </Grid>
         )
@@ -425,7 +484,7 @@ export default function CreateUsersPage() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid size={{ xs: 12}}>
+            <Grid size={{ xs: 12 }}>
               <Divider sx={{ my: 2 }} />
               <Typography variant="subtitle1" fontWeight={600} gutterBottom>
                 Credenciales de Acceso
@@ -443,13 +502,13 @@ export default function CreateUsersPage() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                        <LockIcon />
+                      <LockIcon />
                     </InputAdornment>
                   ),
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                        
+
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -468,26 +527,26 @@ export default function CreateUsersPage() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                        <LockIcon />
+                      <LockIcon />
                     </InputAdornment>
                   ),
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end">
-                        
+
                       </IconButton>
                     </InputAdornment>
                   ),
                 }}
               />
             </Grid>
-            <Grid size={{ xs: 12}}>
+            <Grid size={{ xs: 12 }}>
               <Divider sx={{ my: 2 }} />
               <Typography variant="subtitle1" fontWeight={600} gutterBottom>
                 Opciones Adicionales
               </Typography>
             </Grid>
-            <Grid size={{ xs: 12}}>
+            <Grid size={{ xs: 12 }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -499,7 +558,7 @@ export default function CreateUsersPage() {
                 label="Enviar credenciales por correo electrónico"
               />
             </Grid>
-            <Grid size={{ xs: 12}}>
+            <Grid size={{ xs: 12 }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -519,75 +578,75 @@ export default function CreateUsersPage() {
   }
 
   return (
-      <Box sx={{ p: 3 }}>
-        {/* Breadcrumbs */}
-        <Breadcrumbs sx={{ mb: 3 }}>
-          <Link to="/dashboard" style={{ color: "#722F37", textDecoration: "none" }}>
-            Dashboard
-          </Link>
-          <Link to="/dashboard/users" style={{ color: "#722F37", textDecoration: "none" }}>
-            Usuarios
-          </Link>
-          <Typography color="text.primary">Crear Usuario</Typography>
-        </Breadcrumbs>
+    <Box sx={{ p: 3 }}>
+      {/* Breadcrumbs */}
+      <Breadcrumbs sx={{ mb: 3 }}>
+        <Link to="/dashboard" style={{ color: "#722F37", textDecoration: "none" }}>
+          Dashboard
+        </Link>
+        <Link to="/dashboard/users" style={{ color: "#722F37", textDecoration: "none" }}>
+          Usuarios
+        </Link>
+        <Typography color="text.primary">Crear Usuario</Typography>
+      </Breadcrumbs>
 
-        {/* Header */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4 }}>
-          <IconButton component={Link} to="/dashboard/users" sx={{ border: 1, borderColor: "divider" }}>
-            
-          </IconButton>
-          <Box>
-            <Typography variant="h4" fontWeight="bold" color="primary">
-              Crear Nuevo Usuario
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Complete la información para registrar un nuevo usuario en el sistema
-            </Typography>
+      {/* Header */}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4 }}>
+        <IconButton component={Link} to="/dashboard/users" sx={{ border: 1, borderColor: "divider" }}>
+
+        </IconButton>
+        <Box>
+          <Typography variant="h4" fontWeight="bold" color="primary">
+            Crear Nuevo Usuario
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Complete la información para registrar un nuevo usuario en el sistema
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* Stepper */}
+      <Paper sx={{ p: 3, mb: 3 }}>
+        <Stepper activeStep={activeStep} alternativeLabel>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+      </Paper>
+
+      {/* Form Content */}
+      <Paper sx={{ p: 4 }}>
+        {renderStepContent(activeStep)}
+
+        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4, pt: 3, borderTop: 1, borderColor: "divider" }}>
+          <Button disabled={activeStep === 0} onClick={handleBack} variant="outlined">
+            Anterior
+          </Button>
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Button component={Link} to="/dashboard/users" variant="outlined" color="inherit">
+              Cancelar
+            </Button>
+            {activeStep === steps.length - 1 ? (
+              <Button onClick={handleSave} variant="contained" >
+                Crear Usuario
+              </Button>
+            ) : (
+              <Button onClick={handleNext} variant="contained">
+                Siguiente
+              </Button>
+            )}
           </Box>
         </Box>
+      </Paper>
 
-        {/* Stepper */}
-        <Paper sx={{ p: 3, mb: 3 }}>
-          <Stepper activeStep={activeStep} alternativeLabel>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-        </Paper>
-
-        {/* Form Content */}
-        <Paper sx={{ p: 4 }}>
-          {renderStepContent(activeStep)}
-
-          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4, pt: 3, borderTop: 1, borderColor: "divider" }}>
-            <Button disabled={activeStep === 0} onClick={handleBack} variant="outlined">
-              Anterior
-            </Button>
-            <Box sx={{ display: "flex", gap: 2 }}>
-              <Button component={Link} to="/dashboard/users" variant="outlined" color="inherit">
-                Cancelar
-              </Button>
-              {activeStep === steps.length - 1 ? (
-                <Button onClick={handleSave} variant="contained" >
-                  Crear Usuario
-                </Button>
-              ) : (
-                <Button onClick={handleNext} variant="contained">
-                  Siguiente
-                </Button>
-              )}
-            </Box>
-          </Box>
-        </Paper>
-
-        {/* Snackbar */}
-        <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
-          <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
-            {snackbar.message}
-          </Alert>
-        </Snackbar>
-      </Box>
+      {/* Snackbar */}
+      <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+        <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </Box>
   )
 }

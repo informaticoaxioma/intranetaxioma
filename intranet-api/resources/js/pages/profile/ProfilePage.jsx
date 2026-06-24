@@ -13,7 +13,7 @@ import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import { useAuth } from "../../hooks/AuthContext";
 import { downloadPayroll, previewPayroll, myPayrolls, getMyVacations, createVacation } from "../../services/api";
-import { Eye, Download, Edit} from "lucide-react"
+import { Eye, Download, Edit } from "lucide-react"
 
 
 // UI
@@ -43,6 +43,7 @@ import {
   Grid,
   Paper,
   Tooltip,
+  Avatar
 } from "@mui/material";
 
 function FileIcon({ type }) {
@@ -85,222 +86,222 @@ export default function ProfilePage() {
     useState(false);
 
   const [vacationForm, setVacationForm] =
-      useState({
-          fecha_inicio: "",
-          fecha_fin: "",
-          dias_solicitados: 0,
-          comentario: "",
-      });
+    useState({
+      fecha_inicio: "",
+      fecha_fin: "",
+      dias_solicitados: 0,
+      comentario: "",
+    });
 
   const feriados = [
-      "2026-01-01",
-      "2026-05-01",
-      "2026-09-18",
-      "2026-09-19",
-      "2026-12-25",
+    "2026-01-01",
+    "2026-05-01",
+    "2026-09-18",
+    "2026-09-19",
+    "2026-12-25",
   ];
   const calcularDiasHabiles = (fechaInicio, fechaFin) => {
-        if (
-            !fechaInicio ||
-            !fechaFin
-        ) {
-            return 0;
-        }
+    if (
+      !fechaInicio ||
+      !fechaFin
+    ) {
+      return 0;
+    }
 
-        let contador = 0;
+    let contador = 0;
 
-        let actual =
-            new Date(fechaInicio);
+    let actual =
+      new Date(fechaInicio);
 
-        const fin =
-            new Date(fechaFin);
+    const fin =
+      new Date(fechaFin);
 
-        while (actual <= fin) {
+    while (actual <= fin) {
 
-            const diaSemana =
-                actual.getDay();
+      const diaSemana =
+        actual.getDay();
 
-            const fechaStr =
-                actual
-                    .toISOString()
-                    .split("T")[0];
+      const fechaStr =
+        actual
+          .toISOString()
+          .split("T")[0];
 
-            const esFinDeSemana =
-                diaSemana === 0 ||
-                diaSemana === 6;
+      const esFinDeSemana =
+        diaSemana === 0 ||
+        diaSemana === 6;
 
-            const esFeriado =
-                feriados.includes(
-                    fechaStr
-                );
+      const esFeriado =
+        feriados.includes(
+          fechaStr
+        );
 
-            if (
-                !esFinDeSemana &&
-                !esFeriado
-            ) {
-                contador++;
-            }
+      if (
+        !esFinDeSemana &&
+        !esFeriado
+      ) {
+        contador++;
+      }
 
-            actual.setDate(
-                actual.getDate() + 1
-            );
-        }
+      actual.setDate(
+        actual.getDate() + 1
+      );
+    }
 
-        return contador;
-    };
+    return contador;
+  };
 
   const payrollsFiltrados = payrolls.filter((payroll) => {
-        return (
+    return (
 
-            payroll.titulo
-                ?.toLowerCase()
-                .includes(
-                    busqueda.toLowerCase()
-                )
+      payroll.titulo
+        ?.toLowerCase()
+        .includes(
+          busqueda.toLowerCase()
+        )
 
-            ||
+      ||
 
-            payroll.user?.name
-                ?.toLowerCase()
-                .includes(
-                    busqueda.toLowerCase()
-                )
-        );
-    });
-    
-const vacationsFiltrados =
+      payroll.user?.name
+        ?.toLowerCase()
+        .includes(
+          busqueda.toLowerCase()
+        )
+    );
+  });
+
+  const vacationsFiltrados =
     vacations.filter((vacation) => {
 
-        const textoBusqueda =
-            busqueda.toLowerCase();
+      const textoBusqueda =
+        busqueda.toLowerCase();
 
-        return (
+      return (
 
-            vacation.user?.name
-                ?.toLowerCase()
-                .includes(textoBusqueda)
+        vacation.user?.name
+          ?.toLowerCase()
+          .includes(textoBusqueda)
 
-            ||
+        ||
 
-            vacation.estado
-                ?.toLowerCase()
-                .includes(textoBusqueda)
+        vacation.estado
+          ?.toLowerCase()
+          .includes(textoBusqueda)
 
-            ||
+        ||
 
-            vacation.comentario
-                ?.toLowerCase()
-                .includes(textoBusqueda)
+        vacation.comentario
+          ?.toLowerCase()
+          .includes(textoBusqueda)
 
-            ||
+        ||
 
-            vacation.comentario_admin
-                ?.toLowerCase()
-                .includes(textoBusqueda)
+        vacation.comentario_admin
+          ?.toLowerCase()
+          .includes(textoBusqueda)
 
-            ||
+        ||
 
-            vacation.fecha_inicio
-                ?.includes(textoBusqueda)
+        vacation.fecha_inicio
+          ?.includes(textoBusqueda)
 
-            ||
+        ||
 
-            vacation.fecha_fin
-                ?.includes(textoBusqueda)
+        vacation.fecha_fin
+          ?.includes(textoBusqueda)
 
-        );
+      );
     });
 
   const { user } = useAuth();
 
-  const handleDownload = async (id,archivo) => {
-      try {
-          await downloadPayroll(id, archivo);
-      } catch (error) {
-          console.error(error);
-          setSnackbar({
-              open: true,
-              message:
-                  "Error al descargar la liquidación",
-              severity: "error",
-          });
-      }
+  const handleDownload = async (id, archivo) => {
+    try {
+      await downloadPayroll(id, archivo);
+    } catch (error) {
+      console.error(error);
+      setSnackbar({
+        open: true,
+        message:
+          "Error al descargar la liquidación",
+        severity: "error",
+      });
+    }
   };
   const handleCreateVacation = async () => {
-      try {
-          await createVacation(vacationForm);
-          alert("Solicitud de vacaciones enviada correctamente");
-          setOpenVacationModal(false);
-          window.location.reload();
-      } catch (error) {
-          console.error(error);
-          alert("Error al crear solicitud");
-      }
+    try {
+      await createVacation(vacationForm);
+      alert("Solicitud de vacaciones enviada correctamente");
+      setOpenVacationModal(false);
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+      alert("Error al crear solicitud");
+    }
   };
   useEffect(() => {
-      const loadPayrolls = async () => {
+    const loadPayrolls = async () => {
 
-          try {
+      try {
 
-              const data =
-                  await myPayrolls();
+        const data =
+          await myPayrolls();
 
-              setPayrolls(data);
+        setPayrolls(data);
 
-          } catch (error) {
+      } catch (error) {
 
-              console.error(error);
-          }
-      };
+        console.error(error);
+      }
+    };
 
-      loadPayrolls();
-
-  }, []);
-
-  useEffect(() => {
-
-      const loadVacations = async () => {
-
-          const data =
-              await getMyVacations();
-
-          console.log(
-              "Respuesta API:",
-              data
-          );
-
-          setVacations(data);
-      };
-
-      loadVacations();
+    loadPayrolls();
 
   }, []);
 
   useEffect(() => {
+
+    const loadVacations = async () => {
+
+      const data =
+        await getMyVacations();
 
       console.log(
-          "Estado vacations:",
-          vacations
+        "Respuesta API:",
+        data
       );
+
+      setVacations(data);
+    };
+
+    loadVacations();
+
+  }, []);
+
+  useEffect(() => {
+
+    console.log(
+      "Estado vacations:",
+      vacations
+    );
 
   }, [vacations]);
 
   useEffect(() => {
-      const dias =
-          calcularDiasHabiles(
-              vacationForm.fecha_inicio,
-              vacationForm.fecha_fin
-          );
-
-      setVacationForm((prev) => ({
-          ...prev,
-          dias_solicitados: dias,
-      }));
-
-    }, [
+    const dias =
+      calcularDiasHabiles(
         vacationForm.fecha_inicio,
-        vacationForm.fecha_fin,
-    ]);
+        vacationForm.fecha_fin
+      );
+
+    setVacationForm((prev) => ({
+      ...prev,
+      dias_solicitados: dias,
+    }));
+
+  }, [
+    vacationForm.fecha_inicio,
+    vacationForm.fecha_fin,
+  ]);
 
   return (
     <Box className="max-w-[1600px] mx-auto p-6">
@@ -322,153 +323,119 @@ const vacationsFiltrados =
           </Typography>
         </Box>
 
-        <Button
-          variant={isEditing ? "contained" : "outlined"}
-          startIcon={<EditIcon />}
-          onClick={() => setIsEditing(!isEditing)}
-          sx={{
-            textTransform: "none",
-            borderRadius: 1,
-
-            ...( !isEditing && {
-              borderColor: "#7B1E3A",
-              color: "#4A0E1B",
-
-              "&:hover": {
-                backgroundColor: "#7B1E3A",
-                color: "#fff",
-                borderColor: "#7B1E3A",
-              },
-            }),
-
-            ...( isEditing && {
-              backgroundColor: "#7B1E3A",
-              color: "#fff",
-
-              "&:hover": {
-                backgroundColor: "#4A0E1B",
-              },
-            }),
-          }}
-        >
-          {isEditing ? "Guardar Cambios" : "Editar Perfil"}
-        </Button>
       </div>
 
       {/* CARD PERFIL */}
-        <Card
+      <Card
         sx={{
-            overflow: "hidden",
-            borderRadius: 2,
-            marginTop:1,
-            boxShadow: 2,
+          overflow: "hidden",
+          borderRadius: 2,
+          marginTop: 1,
+          boxShadow: 2,
         }}
-        >
+      >
         {/* CABECERA BURDEO */}
         <Box
-            sx={{
+          sx={{
             bgcolor: "#6b1426",
             height: 130,
             px: 4,
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            }}
+          }}
         >
-            <Typography
+          <Typography
             variant="h4"
             className="font-bold text-white"
-            >
+          >
             {user?.name} {user?.apellido}
+          </Typography>
+
+          <Box >
+            <Typography
+              variant="body2"
+              className="font-bold text-white"
+            >
+              ID Empleado
             </Typography>
 
-            <Box >
             <Typography
-            variant="body2"
-            className="font-bold text-white"
+              variant="h7"
+              className="font-semibold text-white"
             >
-                ID Empleado
+              {user?.id}
             </Typography>
-
-            <Typography
-                variant="h7"
-                className="font-semibold text-white"
-            >
-                {user?.id}
-            </Typography>
-            </Box>
+          </Box>
         </Box>
 
         {/* CUERPO BLANCO */}
         <CardContent
-            sx={{
+          sx={{
             bgcolor: "white",
             py: 4,
             px: 4,
-            }}
+          }}
         >
-            <Stack
+          <Stack
             direction={{ xs: "column", md: "row" }}
             spacing={3}
-            >
+          >
             {/* AVATAR */}
-            <Box
-                sx={{
+            <Avatar
+              src={
+                user?.path_foto_perfil
+                  ? `${import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"}/storage/${user.path_foto_perfil}`
+                  : undefined
+              }
+              sx={{
                 width: 120,
                 height: 120,
                 borderRadius: 3,
                 bgcolor: "#E5E5E5",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
                 fontWeight: "bold",
                 fontSize: 40,
                 flexShrink: 0,
                 mt: -10,
                 border: "4px solid white",
                 boxShadow: 2,
-                }}
+              }}
             >
-                {user?.name
-                .split(" ")
-                .map((n) => n[0])
-                .slice(0, 2)
-                .join("")}{user?.apellido
-                .split(" ")
-                .map((n) => n[0])
-                .slice(0, 2)
-                .join("")}
-            </Box>
+              {
+                `${user?.name?.[0] || ""}${user?.apellido?.[0] || ""}`
+                  .toUpperCase()
+              }
+            </Avatar>
 
             {/* INFORMACIÓN */}
             <Box>
-                <Typography
+              <Typography
                 variant="h6"
                 fontWeight="600"
                 color="#222"
-                >
+              >
                 {user?.cargo}
-                </Typography>
+              </Typography>
 
-                <Typography
+              <Typography
                 variant="body1"
                 color="text.secondary"
                 sx={{ mt: 1 }}
-                >
+              >
                 {user?.departamento}
-                </Typography>
+              </Typography>
             </Box>
-            </Stack>
+          </Stack>
         </CardContent>
-        </Card>
+      </Card>
 
       {/* TABS */}
       <Tabs
         value={tab}
         onChange={(e, v) => setTab(v)}
         sx={{
-          marginTop:2,
-          marginBottom:2,
+          marginTop: 2,
+          marginBottom: 2,
           backgroundColor: "#f4ede4",
           p: 1,
           borderRadius: 2,
@@ -480,7 +447,7 @@ const vacationsFiltrados =
       >
         <Tab label="Información" value="info" />
         <Tab label="Liquidaciones" value="payrolls" />
-        <Tab label="Vacaciones" value="vacations" />
+        {/* <Tab label="Vacaciones" value="vacations" /> */}
       </Tabs>
 
       {/* INFO */}
@@ -592,201 +559,201 @@ const vacationsFiltrados =
 
           <CardContent>
             <Stack >
-            {/* FILTROS */}
-                  <Box className="flex flex-col lg:flex-row justify-between gap-4 mb-6">
+              {/* FILTROS */}
+              <Box className="flex flex-col lg:flex-row justify-between gap-4 mb-6">
 
 
-                    <Box className="flex items-center gap-3">
+                <Box className="flex items-center gap-3">
 
-                      <TextField
-                        size="small"
-                        placeholder="Buscar liquidaciones..."
-                        value={busqueda}
-                        onChange={(e) => setBusqueda(e.target.value)}
-                      />
-
-
-                    </Box>
-                  </Box>
-
-                  {/* TABLA */}
-                  {vistaMode === "list" ? (
-                    <TableContainer component={Paper}>
-
-                      <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                    Liquidación
-                                </TableCell>
-
-                                <TableCell>
-                                    Colaborador
-                                </TableCell>
-
-                                <TableCell>
-                                    Período
-                                </TableCell>
-
-                                <TableCell>
-                                    Tamaño
-                                </TableCell>
-
-                                <TableCell>
-                                    Fecha Modificación
-                                </TableCell>
-
-                                <TableCell align="center">
-                                    Acciones
-                                </TableCell>
-
-                            </TableRow>
-                        </TableHead>
-
-                        <TableBody>
-                          {payrollsFiltrados.map((payroll) => (
-                            <TableRow
-                                key={payroll.id}
-                            >
-                                <TableCell>
-                                    <Box className="flex items-center gap-3">
-                                        <FileIcon type="PDF" />
-                                        <Box>
-                                            <Typography
-                                                className="font-semibold text-[#4A1C23]"
-                                            >
-                                                {payroll.titulo}
-                                            </Typography>
-
-                                            <Chip
-                                                label="PDF"
-                                                size="small"
-                                            />
-                                        </Box>
-                                    </Box>
-                                </TableCell>
-                                <TableCell>
-                                    {payroll.user?.name}
-                                </TableCell>
-                                <TableCell>
-                                    {
-                                        payroll.periodo
-                                            ?.substring(0, 7)
-                                    }
-                                </TableCell>
-                                <TableCell>
-                                    {
-                                        (
-                                            payroll.tamano_archivo /
-                                            1024
-                                        ).toFixed(1)
-                                    } KB
-                                </TableCell>
-                                <TableCell>
-                                    {
-                                        payroll.updated_at
-                                            ?.substring(0, 10)
-                                    }
-                                </TableCell>
-                              <TableCell>
-                                <Box className="flex items-center gap-1">
-
-                                <Tooltip title="Vista previa">
-                                  <IconButton
-                                      onClick={() =>
-                                          previewPayroll(
-                                              payroll.id
-                                          )
-                                      }
-                                  >
-                                      <Eye size={18} />
-                                  </IconButton>
-                                </Tooltip>
-
-                                  <Tooltip title="Descargar">
-                                    <IconButton
-                                        onClick={() =>
-                                            handleDownload(
-                                                payroll.id,
-                                                payroll.archivo
-                                            )
-                                        }
-                                    >
-                                        <Download size={18} />
-                                    </IconButton>
-                                  </Tooltip>
-
-                                  <Tooltip title="Editar">
-                                      <IconButton
-                                          onClick={() =>
-                                              navigate(
-                                                  `/dashboard/payrolls/editar/${payroll.id}`
-                                              )
-                                          }
-                                      >
-                                          <Edit size={18} />
-                                      </IconButton>
-                                  </Tooltip>
-
-                                </Box>
-
-                              </TableCell>
-
-                            </TableRow>
-                          ))}
-
-                        </TableBody>
-
-                      </Table>
-
-                    </TableContainer>
-                  ) : (
-                    <Grid container spacing={2}>
-
-                      {documentosFiltrados.map((doc) => (
-                        <Grid key={doc.id} size={{ xs: 12, sm: 6, md: 4, lg: 3, }} >
-
-                          <Card className="hover:-translate-y-1 transition-all duration-200 h-full">
-
-                            <CardContent>
+                  <TextField
+                    size="small"
+                    placeholder="Buscar liquidaciones..."
+                    value={busqueda}
+                    onChange={(e) => setBusqueda(e.target.value)}
+                  />
 
 
-                              <Typography className="font-semibold text-[#4A1C23] mb-2">
-                                {doc.nombre}
-                              </Typography>
+                </Box>
+              </Box>
 
-                              <Chip
-                                label={doc.categoria}
-                                size="small"
-                                className="mb-3"
-                              />
+              {/* TABLA */}
+              {vistaMode === "list" ? (
+                <TableContainer component={Paper}>
 
-                              <Box className="flex justify-between text-sm text-gray-500">
-                                <span>{doc.tamano_archivo}</span>
-                                <span>{doc.updated_at}</span>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>
+                          Liquidación
+                        </TableCell>
+
+                        <TableCell>
+                          Colaborador
+                        </TableCell>
+
+                        <TableCell>
+                          Período
+                        </TableCell>
+
+                        <TableCell>
+                          Tamaño
+                        </TableCell>
+
+                        <TableCell>
+                          Fecha Modificación
+                        </TableCell>
+
+                        <TableCell align="center">
+                          Acciones
+                        </TableCell>
+
+                      </TableRow>
+                    </TableHead>
+
+                    <TableBody>
+                      {payrollsFiltrados.map((payroll) => (
+                        <TableRow
+                          key={payroll.id}
+                        >
+                          <TableCell>
+                            <Box className="flex items-center gap-3">
+                              <FileIcon type="PDF" />
+                              <Box>
+                                <Typography
+                                  className="font-semibold text-[#4A1C23]"
+                                >
+                                  {payroll.titulo}
+                                </Typography>
+
+                                <Chip
+                                  label="PDF"
+                                  size="small"
+                                />
                               </Box>
+                            </Box>
+                          </TableCell>
+                          <TableCell>
+                            {payroll.user?.name}
+                          </TableCell>
+                          <TableCell>
+                            {
+                              payroll.periodo
+                                ?.substring(0, 7)
+                            }
+                          </TableCell>
+                          <TableCell>
+                            {
+                              (
+                                payroll.tamano_archivo /
+                                1024
+                              ).toFixed(1)
+                            } KB
+                          </TableCell>
+                          <TableCell>
+                            {
+                              payroll.updated_at
+                                ?.substring(0, 10)
+                            }
+                          </TableCell>
+                          <TableCell>
+                            <Box className="flex items-center gap-1">
 
-                              <Box className="flex justify-end gap-1 mt-4">
-
-                                <IconButton>
-                                  <IconEye size={18} />
+                              <Tooltip title="Vista previa">
+                                <IconButton
+                                  onClick={() =>
+                                    previewPayroll(
+                                      payroll.id
+                                    )
+                                  }
+                                >
+                                  <Eye size={18} />
                                 </IconButton>
+                              </Tooltip>
 
-                                <IconButton>
-                                  <IconDownload size={18} />
+                              <Tooltip title="Descargar">
+                                <IconButton
+                                  onClick={() =>
+                                    handleDownload(
+                                      payroll.id,
+                                      payroll.archivo
+                                    )
+                                  }
+                                >
+                                  <Download size={18} />
                                 </IconButton>
+                              </Tooltip>
 
-                              </Box>
+                              <Tooltip title="Editar">
+                                <IconButton
+                                  onClick={() =>
+                                    navigate(
+                                      `/dashboard/payrolls/editar/${payroll.id}`
+                                    )
+                                  }
+                                >
+                                  <Edit size={18} />
+                                </IconButton>
+                              </Tooltip>
 
-                            </CardContent>
+                            </Box>
 
-                          </Card>
+                          </TableCell>
 
-                        </Grid>
+                        </TableRow>
                       ))}
 
+                    </TableBody>
+
+                  </Table>
+
+                </TableContainer>
+              ) : (
+                <Grid container spacing={2}>
+
+                  {documentosFiltrados.map((doc) => (
+                    <Grid key={doc.id} size={{ xs: 12, sm: 6, md: 4, lg: 3, }} >
+
+                      <Card className="hover:-translate-y-1 transition-all duration-200 h-full">
+
+                        <CardContent>
+
+
+                          <Typography className="font-semibold text-[#4A1C23] mb-2">
+                            {doc.nombre}
+                          </Typography>
+
+                          <Chip
+                            label={doc.categoria}
+                            size="small"
+                            className="mb-3"
+                          />
+
+                          <Box className="flex justify-between text-sm text-gray-500">
+                            <span>{doc.tamano_archivo}</span>
+                            <span>{doc.updated_at}</span>
+                          </Box>
+
+                          <Box className="flex justify-end gap-1 mt-4">
+
+                            <IconButton>
+                              <IconEye size={18} />
+                            </IconButton>
+
+                            <IconButton>
+                              <IconDownload size={18} />
+                            </IconButton>
+
+                          </Box>
+
+                        </CardContent>
+
+                      </Card>
+
                     </Grid>
-                  )}
+                  ))}
+
+                </Grid>
+              )}
             </Stack>
           </CardContent>
         </Card>
@@ -795,318 +762,318 @@ const vacationsFiltrados =
       {/* VACACIONES */}
       {tab === "vacations" && (
         <Card sx={{ borderRadius: 2 }}>
-        <CardHeader
+          <CardHeader
 
             title={
-                <Typography
-                    sx={{
-                        fontWeight: "bold",
-                        fontSize: "1.5rem",
-                        color: "#4A1C23",
-                    }}
-                >
-                    Mis Vacaciones
-                </Typography>
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: "1.5rem",
+                  color: "#4A1C23",
+                }}
+              >
+                Mis Vacaciones
+              </Typography>
             }
 
             action={
 
-                <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    onClick={() =>
-                        setOpenVacationModal(true)
-                    }
-                    sx={{
-                        backgroundColor: "#6a1936",
-                        textTransform: "none",
-                        marginRight:2,
-                        mt: 1,
-                        "&:hover": {
-                            backgroundColor: "#4a1025",
-                        },
-                    }}
-                >
-                    Solicitar Vacaciones
-                </Button>
-                
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={() =>
+                  setOpenVacationModal(true)
+                }
+                sx={{
+                  backgroundColor: "#6a1936",
+                  textTransform: "none",
+                  marginRight: 2,
+                  mt: 1,
+                  "&:hover": {
+                    backgroundColor: "#4a1025",
+                  },
+                }}
+              >
+                Solicitar Vacaciones
+              </Button>
+
 
             }
-        />
-        <Dialog
-        open={openVacationModal}
-        onClose={() =>
-            setOpenVacationModal(false)
-        }
-        maxWidth="sm"
-        fullWidth
-    >
+          />
+          <Dialog
+            open={openVacationModal}
+            onClose={() =>
+              setOpenVacationModal(false)
+            }
+            maxWidth="sm"
+            fullWidth
+          >
 
-        <DialogTitle>
-            Solicitar Vacaciones
-        </DialogTitle>
+            <DialogTitle>
+              Solicitar Vacaciones
+            </DialogTitle>
 
-        <DialogContent>
+            <DialogContent>
 
-            <Grid
+              <Grid
                 container
                 spacing={2}
                 sx={{ mt: 1 }}
-            >
+              >
 
                 <Grid size={{ xs: 12 }}>
 
-                    <TextField
-                        slotProps={{
-                            inputLabel: {
-                                shrink: true,
-                            },
-                        }}
-                        fullWidth
-                        type="date"
-                        label="Fecha Inicio"
-                        value={
-                            vacationForm.fecha_inicio
-                        }
-                        onChange={(e) =>
-                            setVacationForm({
-                                ...vacationForm,
-                                fecha_inicio:
-                                    e.target.value,
-                            })
-                        }
-                    />
+                  <TextField
+                    slotProps={{
+                      inputLabel: {
+                        shrink: true,
+                      },
+                    }}
+                    fullWidth
+                    type="date"
+                    label="Fecha Inicio"
+                    value={
+                      vacationForm.fecha_inicio
+                    }
+                    onChange={(e) =>
+                      setVacationForm({
+                        ...vacationForm,
+                        fecha_inicio:
+                          e.target.value,
+                      })
+                    }
+                  />
 
                 </Grid>
 
                 <Grid size={{ xs: 12 }}>
 
-                    <TextField
-                        slotProps={{
-                            inputLabel: {
-                                shrink: true,
-                            },
-                        }}
-                        fullWidth
-                        type="date"
-                        label="Fecha Fin"
-                        value={
-                            vacationForm.fecha_fin
-                        }
-                        onChange={(e) =>
-                            setVacationForm({
-                                ...vacationForm,
-                                fecha_fin:
-                                    e.target.value,
-                            })
-                        }
-                    />
+                  <TextField
+                    slotProps={{
+                      inputLabel: {
+                        shrink: true,
+                      },
+                    }}
+                    fullWidth
+                    type="date"
+                    label="Fecha Fin"
+                    value={
+                      vacationForm.fecha_fin
+                    }
+                    onChange={(e) =>
+                      setVacationForm({
+                        ...vacationForm,
+                        fecha_fin:
+                          e.target.value,
+                      })
+                    }
+                  />
 
                 </Grid>
 
                 <Grid size={{ xs: 12 }}>
 
-                    <TextField
-                        fullWidth
-                        label="Días Solicitados"
-                        value={
-                            vacationForm.dias_solicitados
-                        }
-                        disabled
-                    />
+                  <TextField
+                    fullWidth
+                    label="Días Solicitados"
+                    value={
+                      vacationForm.dias_solicitados
+                    }
+                    disabled
+                  />
 
                 </Grid>
 
                 <Grid size={{ xs: 12 }}>
 
-                    <TextField
-                        fullWidth
-                        multiline
-                        rows={4}
-                        label="Comentario"
-                        value={
-                            vacationForm.comentario
-                        }
-                        onChange={(e) =>
-                            setVacationForm({
-                                ...vacationForm,
-                                comentario:
-                                    e.target.value,
-                            })
-                        }
-                    />
+                  <TextField
+                    fullWidth
+                    multiline
+                    rows={4}
+                    label="Comentario"
+                    value={
+                      vacationForm.comentario
+                    }
+                    onChange={(e) =>
+                      setVacationForm({
+                        ...vacationForm,
+                        comentario:
+                          e.target.value,
+                      })
+                    }
+                  />
 
                 </Grid>
 
                 <Grid size={{ xs: 12 }}>
 
-                    <Typography
-                        variant="body2"
-                        color="text.secondary"
-                    >
-                        Los días se calculan
-                        automáticamente excluyendo
-                        fines de semana y
-                        feriados.
-                    </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                  >
+                    Los días se calculan
+                    automáticamente excluyendo
+                    fines de semana y
+                    feriados.
+                  </Typography>
 
                 </Grid>
 
-            </Grid>
+              </Grid>
 
-        </DialogContent>
+            </DialogContent>
 
-        <DialogActions>
+            <DialogActions>
 
-            <Button
+              <Button
                 onClick={() =>
-                    setOpenVacationModal(false)
+                  setOpenVacationModal(false)
                 }
-            >
+              >
                 Cancelar
-            </Button>
+              </Button>
 
-            <Button
+              <Button
                 variant="contained"
                 sx={{
+                  backgroundColor:
+                    "#6a1936",
+                  "&:hover": {
                     backgroundColor:
-                        "#6a1936",
-                    "&:hover": {
-                        backgroundColor:
-                            "#4a1025",
-                    },
+                      "#4a1025",
+                  },
                 }}
                 onClick={
-                    handleCreateVacation
+                  handleCreateVacation
                 }
-            >
+              >
                 Enviar Solicitud
-            </Button>
+              </Button>
 
-        </DialogActions>
+            </DialogActions>
 
-    </Dialog>
+          </Dialog>
 
 
           <CardContent>
-            
+
             <Stack >
-            {/* FILTROS */}
-                  <Box className="flex flex-col lg:flex-row justify-between gap-4 mb-6">
+              {/* FILTROS */}
+              <Box className="flex flex-col lg:flex-row justify-between gap-4 mb-6">
 
 
-                    <Box className="flex items-center gap-3">
+                <Box className="flex items-center gap-3">
 
-                      <TextField
-                        size="small"
-                        placeholder="Buscar Vacaciones..."
-                        value={busqueda}
-                        onChange={(e) => setBusqueda(e.target.value)}
-                      />
-
-
-                    </Box>
-                  </Box>
-
-                  {/* TABLA */}
-                  <TableContainer component={Paper}>
-                      <Table>
-
-                          <TableHead>
-                              <TableRow>
-
-                                  <TableCell>
-                                      Fecha Inicio
-                                  </TableCell>
-
-                                  <TableCell>
-                                      Fecha Fin
-                                  </TableCell>
-
-                                  <TableCell>
-                                      Días
-                                  </TableCell>
-
-                                  <TableCell>
-                                      Comentario
-                                  </TableCell>
-
-                                  <TableCell>
-                                      Estado
-                                  </TableCell>
-
-                                  <TableCell>
-                                      Aprobado Por
-                                  </TableCell>
-
-                                  <TableCell>
-                                      Comentario Administrador
-                                  </TableCell>
+                  <TextField
+                    size="small"
+                    placeholder="Buscar Vacaciones..."
+                    value={busqueda}
+                    onChange={(e) => setBusqueda(e.target.value)}
+                  />
 
 
-                              </TableRow>
-                          </TableHead>
+                </Box>
+              </Box>
 
-                          <TableBody>
+              {/* TABLA */}
+              <TableContainer component={Paper}>
+                <Table>
 
-                              {vacationsFiltrados.map((vacation) => (
+                  <TableHead>
+                    <TableRow>
 
-                                  <TableRow key={vacation.id} hover>
+                      <TableCell>
+                        Fecha Inicio
+                      </TableCell>
 
-                                      <TableCell>
-                                          {vacation.fecha_inicio}
-                                      </TableCell>
+                      <TableCell>
+                        Fecha Fin
+                      </TableCell>
 
-                                      <TableCell>
-                                          {vacation.fecha_fin}
-                                      </TableCell>
+                      <TableCell>
+                        Días
+                      </TableCell>
 
-                                      <TableCell>
-                                          {vacation.dias_solicitados}
-                                      </TableCell>
+                      <TableCell>
+                        Comentario
+                      </TableCell>
 
-                                      <TableCell>
-                                          {vacation.comentario}
-                                      </TableCell>
+                      <TableCell>
+                        Estado
+                      </TableCell>
 
-                                      <TableCell>
+                      <TableCell>
+                        Aprobado Por
+                      </TableCell>
 
-                                          <Chip
-                                              label={vacation.estado}
-                                              color={
-                                                  vacation.estado === "aprobado"
-                                                      ? "success"
-                                                      : vacation.estado === "rechazado"
-                                                      ? "error"
-                                                      : "warning"
-                                              }
-                                              size="small"
-                                          />
+                      <TableCell>
+                        Comentario Administrador
+                      </TableCell>
 
-                                      </TableCell>
 
-                                      <TableCell>
-                                          {vacation.aprobado_por || "-"}
-                                      </TableCell>
+                    </TableRow>
+                  </TableHead>
 
-                                      <TableCell>
-                                          {vacation.comentario_admin || "-"}
-                                      </TableCell>
+                  <TableBody>
 
-                                  </TableRow>
+                    {vacationsFiltrados.map((vacation) => (
 
-                              ))}
+                      <TableRow key={vacation.id} hover>
 
-                          </TableBody>
+                        <TableCell>
+                          {vacation.fecha_inicio}
+                        </TableCell>
 
-                      </Table>
-                  </TableContainer>
+                        <TableCell>
+                          {vacation.fecha_fin}
+                        </TableCell>
+
+                        <TableCell>
+                          {vacation.dias_solicitados}
+                        </TableCell>
+
+                        <TableCell>
+                          {vacation.comentario}
+                        </TableCell>
+
+                        <TableCell>
+
+                          <Chip
+                            label={vacation.estado}
+                            color={
+                              vacation.estado === "aprobado"
+                                ? "success"
+                                : vacation.estado === "rechazado"
+                                  ? "error"
+                                  : "warning"
+                            }
+                            size="small"
+                          />
+
+                        </TableCell>
+
+                        <TableCell>
+                          {vacation.aprobado_por || "-"}
+                        </TableCell>
+
+                        <TableCell>
+                          {vacation.comentario_admin || "-"}
+                        </TableCell>
+
+                      </TableRow>
+
+                    ))}
+
+                  </TableBody>
+
+                </Table>
+              </TableContainer>
             </Stack>
           </CardContent>
         </Card>
       )}
     </Box>
-    
+
   );
 }
 

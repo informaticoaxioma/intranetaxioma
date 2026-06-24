@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -30,7 +31,6 @@ class UserController extends Controller
     public function store(Request $request)
     {
         try {
-        dd($request->all());
         $validated = $request->validate([
 
             'name' => 'required|string|max:255',
@@ -158,6 +158,10 @@ class UserController extends Controller
 
             'fecha_ingreso' => 'nullable|date',
 
+            'contrato' => 'nullable|string|max:255',
+
+            'foto_perfil' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+
             'supervision_general' => 'nullable|string|max:255',
 
             'role' => 'required|in:admin,user',
@@ -170,6 +174,20 @@ class UserController extends Controller
         | UPDATE USER
         |--------------------------------------------------------------------------
         */
+
+        $fotoName = $user->foto_perfil;
+        $path = $user->path_foto_perfil;
+
+        if ($request->hasFile('foto_perfil')) {
+
+            if ($user->path_foto_perfil) {
+                Storage::disk('public')->delete($user->path_foto_perfil);
+            }
+
+            $foto = $request->file('foto_perfil');
+            $fotoName = $foto->getClientOriginalName();
+            $path = $foto->store('profilephotos', 'public');
+        }
 
         $user->update([
 
@@ -196,6 +214,12 @@ class UserController extends Controller
 
             'fecha_ingreso' =>
                 $validated['fecha_ingreso'] ?? null,
+
+            'contrato' => $validated['contrato'] ?? null,
+
+            'foto_perfil' => $fotoName,
+
+            'path_foto_perfil' => $path,
 
             'supervision_general' =>
                 $validated['supervision_general'] ?? null,
