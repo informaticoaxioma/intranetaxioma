@@ -38,6 +38,12 @@ import {
     reactToWallPost,
 } from "../../services/api";
 
+const isVideoUrl = (url) => {
+    if (!url) return false;
+    const videoExtensions = ['.mp4', '.mov', '.avi', '.webm', '.ogg', '.ogv'];
+    return videoExtensions.some(ext => url.toLowerCase().endsWith(ext));
+};
+
 export default function WallPage() {
     const user = JSON.parse(localStorage.getItem("user"));
     const [posts, setPosts] = useState([]);
@@ -74,16 +80,18 @@ export default function WallPage() {
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
+            if (imagePreview) {
+                URL.revokeObjectURL(imagePreview);
+            }
             setSelectedImage(file);
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result);
-            };
-            reader.readAsDataURL(file);
+            setImagePreview(URL.createObjectURL(file));
         }
     };
 
     const handleClearImage = () => {
+        if (imagePreview) {
+            URL.revokeObjectURL(imagePreview);
+        }
         setSelectedImage(null);
         setImagePreview(null);
     };
@@ -267,18 +275,26 @@ export default function WallPage() {
                                 }}
                             />
 
-                            {/* Image Preview */}
+                            {/* Media Preview */}
                             {imagePreview && (
-                                <Box className="relative inline-block mt-2 max-w-[200px] border rounded-xl overflow-hidden shadow-md bg-gray-50">
-                                    <img
-                                        src={imagePreview}
-                                        alt="Preview"
-                                        className="w-full h-auto object-cover max-h-[150px]"
-                                    />
+                                <Box className="relative inline-block mt-2 max-w-[250px] border rounded-xl overflow-hidden shadow-md bg-gray-50">
+                                    {selectedImage?.type?.startsWith("video/") ? (
+                                        <video
+                                            src={imagePreview}
+                                            controls
+                                            className="w-full h-auto object-cover max-h-[180px]"
+                                        />
+                                    ) : (
+                                        <img
+                                            src={imagePreview}
+                                            alt="Preview"
+                                            className="w-full h-auto object-cover max-h-[180px]"
+                                        />
+                                    )}
                                     <IconButton
                                         size="small"
                                         onClick={handleClearImage}
-                                        className="absolute top-1 right-1 !bg-black/60 hover:!bg-black/80 !text-white"
+                                        className="absolute top-1 right-1 !bg-black/60 hover:!bg-black/80 !text-white z-10"
                                     >
                                         <CloseIcon fontSize="small" />
                                     </IconButton>
@@ -303,11 +319,11 @@ export default function WallPage() {
                                         },
                                     }}
                                 >
-                                    Subir Imagen
+                                    Subir Foto / Video / GIF
                                     <input
                                         type="file"
                                         hidden
-                                        accept="image/*"
+                                        accept="image/*,video/*"
                                         onChange={handleImageChange}
                                     />
                                 </Button>
@@ -390,14 +406,22 @@ export default function WallPage() {
                                         {post.contenido}
                                     </Typography>
 
-                                    {/* Post Image */}
+                                    {/* Post Media (Image/GIF/Video) */}
                                     {post.imagen_url && (
                                         <Box className="mt-3 rounded-xl overflow-hidden border border-gray-100 bg-gray-50">
-                                            <img
-                                                src={post.imagen_url}
-                                                alt="Publicación"
-                                                className="w-full h-auto object-contain max-h-[450px]"
-                                            />
+                                            {isVideoUrl(post.imagen_url) ? (
+                                                <video
+                                                    src={post.imagen_url}
+                                                    controls
+                                                    className="w-full h-auto object-contain max-h-[450px]"
+                                                />
+                                            ) : (
+                                                <img
+                                                    src={post.imagen_url}
+                                                    alt="Publicación"
+                                                    className="w-full h-auto object-contain max-h-[450px]"
+                                                />
+                                            )}
                                         </Box>
                                     )}
 

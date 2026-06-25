@@ -18,6 +18,8 @@ import {
     useLocation,
 } from "react-router-dom";
 
+import { useAuth } from "../hooks/AuthContext";
+
 /*
 |--------------------------------------------------------------------------
 | NAV ITEMS
@@ -101,7 +103,7 @@ const navItems = [
 |--------------------------------------------------------------------------
 */
 
-export function SidebarNav() {
+export function SidebarNav({ open, onClose }) {
 
     /*
     |--------------------------------------------------------------------------
@@ -125,6 +127,8 @@ export function SidebarNav() {
 
         localStorage.removeItem("user");
 
+        if (onClose) onClose();
+
         navigate("/");
     };
 
@@ -134,10 +138,7 @@ export function SidebarNav() {
     |--------------------------------------------------------------------------
     */
 
-    const user =
-        JSON.parse(
-            localStorage.getItem("user")
-        );
+    const { user } = useAuth();
 
     const filteredNavItems =
         navItems.filter(
@@ -148,21 +149,32 @@ export function SidebarNav() {
         );
 
     return (
-
-        <aside
-            className="
-                fixed
-                left-0
-                top-0
-                z-40
-                h-screen
-                w-64
-                bg-primary
-                text-primary-foreground
-                flex
-                flex-col
-            "
-        >
+        <>
+            {/* Backdrop overlay for mobile screen viewports */}
+            {open && (
+                <div
+                    className="fixed inset-0 z-30 bg-black/50 md:hidden animate-fade-in"
+                    onClick={onClose}
+                />
+            )}
+            <aside
+                className={`
+                    fixed
+                    left-0
+                    top-0
+                    z-40
+                    h-screen
+                    w-64
+                    bg-primary
+                    text-primary-foreground
+                    flex
+                    flex-col
+                    transition-transform
+                    duration-300
+                    ease-in-out
+                    ${open ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+                `}
+            >
 
             {/* LOGO */}
 
@@ -176,9 +188,10 @@ export function SidebarNav() {
 
                 <button
 
-                    onClick={() =>
-                        navigate("/dashboard")
-                    }
+                    onClick={() => {
+                        navigate("/dashboard");
+                        if (onClose) onClose();
+                    }}
 
                     className="
                         flex
@@ -260,9 +273,10 @@ export function SidebarNav() {
 
                                 key={item.path}
 
-                                onClick={() =>
-                                    navigate(item.path)
-                                }
+                                onClick={() => {
+                                    navigate(item.path);
+                                    if (onClose) onClose();
+                                }}
 
                                 className={`
                                     w-full
@@ -341,5 +355,6 @@ export function SidebarNav() {
             </div>
 
         </aside>
+        </>
     );
 }

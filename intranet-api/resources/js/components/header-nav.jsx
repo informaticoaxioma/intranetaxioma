@@ -19,11 +19,12 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SearchIcon from "@mui/icons-material/Search";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import MenuIcon from "@mui/icons-material/Menu";
 
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/AuthContext";
 
-export function HeaderNav() {
+export function HeaderNav({ onMenuClick }) {
 
     /*
     |--------------------------------------------------------------------------
@@ -99,6 +100,16 @@ export function HeaderNav() {
                     gap: 2,
                 }}
             >
+                {/* BURGER MENU FOR MOBILE */}
+                <IconButton
+                    color="inherit"
+                    aria-label="open drawer"
+                    edge="start"
+                    onClick={onMenuClick}
+                    sx={{ mr: 1, display: { md: "none" }, color: "text.primary" }}
+                >
+                    <MenuIcon />
+                </IconButton>
 
                 {/* SEARCH */}
 

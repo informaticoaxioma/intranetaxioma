@@ -49,7 +49,7 @@ export default function NoticiasPage() {
   const [busqueda, setBusqueda] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const [noticias, setNoticias] = useState([]);
-  const user =JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
 
@@ -73,7 +73,7 @@ export default function NoticiasPage() {
     loadNews();
 
   }, []);
-  
+
 
   const [form, setForm] = useState({
     titulo: "",
@@ -106,47 +106,47 @@ export default function NoticiasPage() {
 
   const handleCreateNews = async () => {
 
-      try {
+    try {
 
-          const formData = new FormData();
+      const formData = new FormData();
 
-          formData.append("titulo", form.titulo);
-          formData.append("resumen", form.resumen);
+      formData.append("titulo", form.titulo);
+      formData.append("resumen", form.resumen);
 
-          // Debe coincidir con el nombre de tu columna Laravel
-          formData.append("texto_noticia", form.texto);
+      // Debe coincidir con el nombre de tu columna Laravel
+      formData.append("texto_noticia", form.texto);
 
-          formData.append("categoria", form.categoria);
-          formData.append("autor", form.autor);
+      formData.append("categoria", form.categoria);
+      formData.append("autor", form.autor);
 
-          if (form.imagen) {
-              formData.append("imagen", form.imagen);
-          }
-
-          const response = await createNews(formData);
-
-          console.log("Noticia creada:", response);
-
-          alert("Noticia creada correctamente");
-
-          setForm({
-              titulo: "",
-              resumen: "",
-              texto: "",
-              categoria: "",
-              autor: "",
-              imagen: null,
-          });
-
-          setOpenModal(false);
-          window.location.reload();
-
-      } catch (error) {
-
-          console.error("Error creando noticia:", error);
-
-          alert(error.message || "Error al crear noticia");
+      if (form.imagen) {
+        formData.append("imagen", form.imagen);
       }
+
+      const response = await createNews(formData);
+
+      console.log("Noticia creada:", response);
+
+      alert("Noticia creada correctamente");
+
+      setForm({
+        titulo: "",
+        resumen: "",
+        texto: "",
+        categoria: "",
+        autor: "",
+        imagen: null,
+      });
+
+      setOpenModal(false);
+      window.location.reload();
+
+    } catch (error) {
+
+      console.error("Error creando noticia:", error);
+
+      alert(error.message || "Error al crear noticia");
+    }
   };
 
   return (
@@ -169,23 +169,23 @@ export default function NoticiasPage() {
         </Box>
 
         {
-            user?.role === "admin" && (
+          user?.role === "admin" && (
 
-                <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    onClick={() =>
-                        setOpenModal(true)
-                    }
-                    className="
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() =>
+                setOpenModal(true)
+              }
+              className="
                         !bg-[#6a1936]
                         hover:!bg-[#4a1025]
                     "
-                >
-                    Nueva noticia
-                </Button>
+            >
+              Nueva noticia
+            </Button>
 
-            )
+          )
         }
 
       </Box>
@@ -271,48 +271,48 @@ export default function NoticiasPage() {
         </Grid>
       </Box>
 
-    <Box
-    sx={{
-        display: "flex",
-        gap: 2,
-        flexDirection: { xs: "column", md: "row" },
-        alignItems: "center",
-        marginTop:4,
-    }}
-    >
-    <Box sx={{ flex: 3 }}>
-        <Tabs
-        value={tabValue}
-        onChange={(_, value) => setTabValue(value)}
-        variant="scrollable"
-        scrollButtons="auto"
-        >
-        {categorias.map((cat) => (
-            <Tab key={cat} label={cat} />
-        ))}
-        </Tabs>
-    </Box>
-
-    <Box sx={{ flex: 1 }}>
-        <TextField
-        fullWidth
-        size="small"
-        placeholder="Buscar noticias..."
-        value={busqueda}
-        onChange={(e) => setBusqueda(e.target.value)}
-        InputProps={{
-            startAdornment: (
-            <InputAdornment position="start">
-                <SearchIcon />
-            </InputAdornment>
-            ),
+      <Box
+        sx={{
+          display: "flex",
+          gap: 2,
+          flexDirection: { xs: "column", md: "row" },
+          alignItems: "center",
+          marginTop: 4,
         }}
-        />
-    </Box>
-    </Box>
+      >
+        <Box sx={{ flex: 3 }}>
+          <Tabs
+            value={tabValue}
+            onChange={(_, value) => setTabValue(value)}
+            variant="scrollable"
+            scrollButtons="auto"
+          >
+            {categorias.map((cat) => (
+              <Tab key={cat} label={cat} />
+            ))}
+          </Tabs>
+        </Box>
+
+        <Box sx={{ flex: 1 }}>
+          <TextField
+            fullWidth
+            size="small"
+            placeholder="Buscar noticias..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Box>
+      </Box>
 
       {/* LISTA */}
-      <Grid container spacing={3} >
+      <Grid container spacing={3} sx={{ marginTop: 3 }} >
 
         {noticiasFiltradas.map((noticia) => (
 
@@ -321,17 +321,17 @@ export default function NoticiasPage() {
             <Card className="h-full">
 
               <CardActionArea
-                  onClick={() => navigate(`/dashboard/news/${noticia.id}`)}
-                  className="h-full flex flex-col items-stretch"
+                onClick={() => navigate(`/dashboard/news/${noticia.id}`)}
+                className="h-full flex flex-col items-stretch"
               >
 
                 <CardMedia
                   component="img"
                   height="140"
                   image={noticia.path_imagen
-                                ? `http://127.0.0.1:8000/storage/${noticia.path_imagen}`
-                                : "https://picsum.photos/600/300"
-                        }
+                    ? `http://127.0.0.1:8000/storage/${noticia.path_imagen}`
+                    : "https://picsum.photos/600/300"
+                  }
                   alt={noticia.titulo}
                 />
 

@@ -41,7 +41,7 @@ class WallController extends Controller
 
         $validated = $request->validate([
             'contenido' => 'required|string',
-            'imagen' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:4096',
+            'imagen' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,mp4,mov,avi,webm,ogg,ogv|max:51200',
         ]);
 
         $path = null;
