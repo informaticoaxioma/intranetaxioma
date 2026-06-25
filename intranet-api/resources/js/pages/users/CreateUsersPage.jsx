@@ -406,16 +406,17 @@ export default function CreateUsersPage() {
                   label="Contrato"
                   onChange={(e) => handleChange("contrato", e.target.value)}
                 >
-                  <MenuItem value="Terbu">Terbu</MenuItem>
-                  <MenuItem value="Calceles VI">Calceles VI</MenuItem>
-                  <MenuItem value="Buin Paine">Buin Paine</MenuItem>
-                  <MenuItem value="Red Bio Bio">Red Bio Bio</MenuItem>
-                  <MenuItem value="CHICO ll">CHICO ll</MenuItem>
-                  <MenuItem value="ÑIQUEN">ÑIQUEN</MenuItem>
+                  <MenuItem value="OFICINA CENTRAL">OFICINA CENTRAL</MenuItem>
+                  <MenuItem value="TERBU">TERBU</MenuItem>
+                  <MenuItem value="CARCELES VI">CARCELES VI</MenuItem>
+                  <MenuItem value="BUIN PAINE">BUIN PAINE</MenuItem>
+                  <MenuItem value="RED BIO BIO">RED BIO BIO</MenuItem>
+                  <MenuItem value="CHICO II">CHICO II</MenuItem>
+                  <MenuItem value="NIQUEN">NIQUEN</MenuItem>
                   <MenuItem value="INSTITUTO NACIONAL DEL CÁNCER">INSTITUTO NACIONAL DEL CÁNCER</MenuItem>
                   <MenuItem value="SUSI V">SUSI V</MenuItem>
                   <MenuItem value="AEROPUERTO DE LA SERENA">AEROPUERTO DE LA SERENA</MenuItem>
-                  <MenuItem value="Centro Oriente">Centro Oriente</MenuItem>
+                  <MenuItem value="CENTRO ORIENTE">CENTRO ORIENTE</MenuItem>
                   <MenuItem value="ZONA NORTE 1">ZONA NORTE 1</MenuItem>
                   <MenuItem value="ANCO">ANCO</MenuItem>
                   <MenuItem value="ZONA NORTE 2">ZONA NORTE 2</MenuItem>
@@ -423,7 +424,6 @@ export default function CreateUsersPage() {
                   <MenuItem value="CENTRO COSTA 3">CENTRO COSTA 3</MenuItem>
                   <MenuItem value="SATA 3">SATA 3</MenuItem>
                   <MenuItem value="LOS VILOS - LA SERENA">LOS VILOS - LA SERENA</MenuItem>
-                  <MenuItem value="CHILLAN COLLIPULLI 2">CHILLAN COLLIPULLI 2</MenuItem>
                   <MenuItem value="VESPUCIO SUR V">VESPUCIO SUR V</MenuItem>
                   <MenuItem value="ORBITAL SUR">ORBITAL SUR</MenuItem>
                   <MenuItem value="ELQUI">ELQUI</MenuItem>

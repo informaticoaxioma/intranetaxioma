@@ -10,6 +10,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\VacationController;
 use App\Http\Controllers\LaborDocumentController;
+use App\Http\Controllers\WallController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -45,11 +46,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/my-labor-documents', [LaborDocumentController::class, 'myLaborDocuments']);
 
     Route::get('/vacations', [VacationController::class, 'index']);
-    Route::post(
-    '/vacations',
-    [VacationController::class, 'store']
-);
+    Route::post('/vacations', [VacationController::class, 'store']);
     Route::get('/my-vacations', [VacationController::class, 'myVacations']);
+
+    // MURO (WALL)
+    Route::get('/wall', [WallController::class, 'index']);
+    Route::post('/wall/posts', [WallController::class, 'storePost']);
+    Route::delete('/wall/posts/{id}', [WallController::class, 'destroyPost']);
+    Route::post('/wall/posts/{id}/comments', [WallController::class, 'storeComment']);
+    Route::delete('/wall/comments/{id}', [WallController::class, 'destroyComment']);
+    Route::post('/wall/posts/{id}/react', [WallController::class, 'react']);
 
     // SOLO ADMIN
     Route::middleware('role:admin')->group(function () {

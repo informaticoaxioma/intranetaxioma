@@ -9,7 +9,8 @@ import {
     Work,
     Business,
     Logout,
-    Sunny
+    Sunny,
+    Forum
 } from "@mui/icons-material";
 
 import {
@@ -57,6 +58,13 @@ const navItems = [
         path: "/dashboard/news",
         label: "Noticias",
         icon: Group,
+        roles: ["admin", "user"],
+    },
+
+    {
+        path: "/dashboard/wall",
+        label: "Muro",
+        icon: Forum,
         roles: ["admin", "user"],
     },
 

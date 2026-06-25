@@ -28,6 +28,7 @@ import VacationsPage from "../pages/vacations/VacationsPage";
 import LaborDocumentsPage from "../pages/labor_documents/LaborDocumentsPage";
 import CreateLaborDocumentPage from "../pages/labor_documents/CreateLaborDocumentPage";
 import EditLaborDocumentPage from "../pages/labor_documents/EditLaborDocumentPage";
+import WallPage from "../pages/wall/WallPage";
 
 
 
@@ -144,6 +145,18 @@ export default function AppRouter() {
                         <PrivateRoute>
                             <DashboardLayout>
                                 <NewsDetailPage />
+                            </DashboardLayout>
+                        </PrivateRoute>
+                    }
+                />
+
+                {/* MURO */}
+                <Route
+                    path="/dashboard/wall"
+                    element={
+                        <PrivateRoute>
+                            <DashboardLayout>
+                                <WallPage />
                             </DashboardLayout>
                         </PrivateRoute>
                     }

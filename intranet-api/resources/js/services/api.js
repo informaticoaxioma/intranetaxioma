@@ -1086,3 +1086,103 @@ export const downloadLaborDocument = async (id, nombreArchivo) => {
     a.remove();
     window.URL.revokeObjectURL(url);
 };
+
+export const getWallPosts = async () => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/wall`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+        },
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || "Error al obtener publicaciones");
+    }
+    return data;
+};
+
+export const createWallPost = async (formData) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/wall/posts`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+        },
+        body: formData,
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || "Error al crear publicación");
+    }
+    return data;
+};
+
+export const deleteWallPost = async (id) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/wall/posts/${id}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+        },
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || "Error al eliminar publicación");
+    }
+    return data;
+};
+
+export const createWallComment = async (postId, contentData) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/wall/posts/${postId}/comments`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+        },
+        body: JSON.stringify(contentData),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || "Error al agregar comentario");
+    }
+    return data;
+};
+
+export const deleteWallComment = async (commentId) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/wall/comments/${commentId}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+        },
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || "Error al eliminar comentario");
+    }
+    return data;
+};
+
+export const reactToWallPost = async (postId, reactionData) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/wall/posts/${postId}/react`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+        },
+        body: JSON.stringify(reactionData),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || "Error al reaccionar a la publicación");
+    }
+    return data;
+};
