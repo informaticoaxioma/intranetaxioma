@@ -107,7 +107,7 @@ export const getNewsById = async (id) => {
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-        `http://127.0.0.1:8000/api/news/${id}`,
+        `${API_URL}/api/news/${id}`,
         {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -130,7 +130,7 @@ export const getDocumentById = async (id) => {
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-        `http://127.0.0.1:8000/api/documents/${id}`,
+        `${API_URL}/api/documents/${id}`,
         {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -733,7 +733,7 @@ export const getPayrolltById = async (id) => {
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-        `http://127.0.0.1:8000/api/payrolls/${id}`,
+        `${API_URL}/api/payrolls/${id}`,
         {
             headers: {
                 Authorization: `Bearer ${token}`,
