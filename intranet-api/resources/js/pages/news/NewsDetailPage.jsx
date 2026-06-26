@@ -32,111 +32,111 @@ function ArrowLeftIcon() {
 
 
 export default function NewsDetailPage() {
-    const navigate = useNavigate();
-    const params = useParams();
-    console.log("Params:", params);
-    console.log("ID:", params);
-    
+  const navigate = useNavigate();
+  const params = useParams();
+  console.log("Params:", params);
+  console.log("ID:", params);
 
-    
-    const [noticia, setNoticia] = useState(null);
 
-    const [isEditing, setIsEditing] = useState(false);
 
-    const [formData, setFormData] = useState({
+  const [noticia, setNoticia] = useState(null);
+
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [formData, setFormData] = useState({
     titulo: "",
     resumen: "",
     texto_noticia: "",
     categoria: "",
     autor: "",
     created_at: "",
-    path_imagen:"",
-    });
+    path_imagen: "",
+  });
 
-    const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({});
 
-    const [snackbar, setSnackbar] = useState({
+  const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
-    });
+  });
 
-    const id = params.id
-    
-    useEffect(() => {
-        if (!id) return;
-        const loadNews = async () => {
-            try {
-            console.log("Consultando noticia:", id);
-            const data = await getNewsById(id);
-            console.log("Noticia obtenida:", data);
-            setNoticia(data);
+  const id = params.id
 
-            setFormData({
-                titulo: data.titulo || "",
-                resumen: data.resumen || "",
-                texto_noticia: data.texto_noticia || "",
-                categoria: data.categoria || "",
-                autor: data.autor || "",
-                path_imagen: data.path_imagen || "", 
-            });
-
-            } catch (error) {
-
-            console.error("Error cargando noticia:", error);
-
-            }
-
-        };
-
-        loadNews();
-
-    }, [id]);
-
-    const handleSave = async () => {
-
+  useEffect(() => {
+    if (!id) return;
+    const loadNews = async () => {
       try {
-          const response =
-              await updateNews(
-                  noticia.id,
-                  formData
-              );
+        console.log("Consultando noticia:", id);
+        const data = await getNewsById(id);
+        console.log("Noticia obtenida:", data);
+        setNoticia(data);
 
-          console.log("RESPUESTA: ",response);
-          setFormData(
-              response
-          );
-          setIsEditing(false);
-          setSnackbar({
-              open: true,
-              message:
-                  "Noticia actualizada correctamente",
-              severity: "success",
-          });
+        setFormData({
+          titulo: data.titulo || "",
+          resumen: data.resumen || "",
+          texto_noticia: data.texto_noticia || "",
+          categoria: data.categoria || "",
+          autor: data.autor || "",
+          path_imagen: data.path_imagen || "",
+        });
 
       } catch (error) {
-          console.error(error);
-          setSnackbar({
-              open: true,
-              message:
-                  error.message,
-              severity: "error",
-          });
+
+        console.error("Error cargando noticia:", error);
+
       }
+
+    };
+
+    loadNews();
+
+  }, [id]);
+
+  const handleSave = async () => {
+
+    try {
+      const response =
+        await updateNews(
+          noticia.id,
+          formData
+        );
+
+      console.log("RESPUESTA: ", response);
+      setFormData(
+        response
+      );
+      setIsEditing(false);
+      setSnackbar({
+        open: true,
+        message:
+          "Noticia actualizada correctamente",
+        severity: "success",
+      });
+
+    } catch (error) {
+      console.error(error);
+      setSnackbar({
+        open: true,
+        message:
+          error.message,
+        severity: "error",
+      });
+    }
   };
 
 
-    const handleChange = (field, value) => {
+  const handleChange = (field, value) => {
     setFormData((prev) => ({
-        ...prev,
-        [field]: value,
+      ...prev,
+      [field]: value,
     }));
 
     setErrors((prev) => ({
-        ...prev,
-        [field]: "",
+      ...prev,
+      [field]: "",
     }));
-    };
+  };
 
 
 
@@ -145,9 +145,9 @@ export default function NewsDetailPage() {
       {/* Navegación */}
       <Box sx={{ mb: 3 }}>
         <Button
-            onClick={() => navigate("/dashboard/news")}
-            startIcon={<ArrowLeftIcon />}
-            sx={{ color: "primary.main" }}
+          onClick={() => navigate("/dashboard/news")}
+          startIcon={<ArrowLeftIcon />}
+          sx={{ color: "primary.main" }}
         >
           Volver a noticias
         </Button>
@@ -191,14 +191,14 @@ export default function NewsDetailPage() {
             <CardMedia
               component="img"
               sx={{
-                    height: 300,
-                    objectFit: "cover",
-                    borderTopLeftRadius: 8,
-                    borderTopRightRadius: 8,
-                }}
+                height: 300,
+                objectFit: "cover",
+                borderTopLeftRadius: 8,
+                borderTopRightRadius: 8,
+              }}
               image={formData.path_imagen
-                      ? `http://127.0.0.1:8000/storage/${formData.path_imagen}`
-                      : "https://picsum.photos/600/300"
+                ? `http://127.0.0.1:8000/storage/${formData.path_imagen}`
+                : "https://picsum.photos/600/300"
               }
               alt={formData.titulo}
             />
@@ -258,20 +258,20 @@ export default function NewsDetailPage() {
                   {/* Contenido */}
                   <Box>
                     {formData.texto_noticia
-                    ?.split("\n")
-                    .filter((p) => p.trim() !== "")
-                    .map((p, i) => (
-                      <Typography
-                        key={i}
-                        sx={{
-                          mb: 2,
-                          lineHeight: 1.8,
-                          color: "text.primary",
-                        }}
-                      >
-                        {p}
-                      </Typography>
-                    ))}
+                      ?.split("\n")
+                      .filter((p) => p.trim() !== "")
+                      .map((p, i) => (
+                        <Typography
+                          key={i}
+                          sx={{
+                            mb: 2,
+                            lineHeight: 1.8,
+                            color: "text.primary",
+                          }}
+                        >
+                          {p}
+                        </Typography>
+                      ))}
                   </Box>
                 </>
               ) : (

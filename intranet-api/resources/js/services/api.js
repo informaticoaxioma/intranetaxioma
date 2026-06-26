@@ -107,7 +107,7 @@ export const getNewsById = async (id) => {
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-        `${API_URL}/api/news/${id}`,
+        `${API_URL}/news/${id}`,
         {
             headers: {
                 Authorization: `Bearer ${token}`,

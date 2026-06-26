@@ -11,6 +11,9 @@ use App\Models\Payroll;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserCredentialsMail;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -104,6 +107,12 @@ class AuthController extends Controller
         ]);
 
         $user->assignRole($validated['role']);
+
+        try {
+            Mail::to($user->email)->send(new UserCredentialsMail($user, $validated['password']));
+        } catch (\Exception $e) {
+            Log::error("Failed to send user credentials email: " . $e->getMessage());
+        }
 
         $token = $user->createToken(
             'auth_token'

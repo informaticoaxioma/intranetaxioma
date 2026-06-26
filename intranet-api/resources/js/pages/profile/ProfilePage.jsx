@@ -12,8 +12,9 @@ import AddIcon from "@mui/icons-material/Add";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import { useAuth } from "../../hooks/AuthContext";
-import { downloadPayroll, previewPayroll, myPayrolls, getMyVacations, createVacation } from "../../services/api";
+import { downloadPayroll, previewPayroll, myPayrolls, getMyVacations, createVacation, getMyLaborDocuments, previewLaborDocument, downloadLaborDocument } from "../../services/api";
 import { Eye, Download, Edit } from "lucide-react"
+import { useNavigate } from "react-router-dom";
 
 
 // UI
@@ -81,7 +82,9 @@ export default function ProfilePage() {
   const [busqueda, setBusqueda] = useState("")
   const [vistaMode, setVistaMode] = useState("list")
   const [payrolls, setPayrolls] = useState([]);
+  const [laborDocuments, setLaborDocuments] = useState([]);
   const [vacations, setVacations] = useState([]);
+  const navigate = useNavigate();
   const [openVacationModal, setOpenVacationModal] =
     useState(false);
 
@@ -150,22 +153,12 @@ export default function ProfilePage() {
     return contador;
   };
 
-  const payrollsFiltrados = payrolls.filter((payroll) => {
+  const documentsFiltrados = laborDocuments.filter((doc) => {
+    const query = busqueda.toLowerCase();
     return (
-
-      payroll.titulo
-        ?.toLowerCase()
-        .includes(
-          busqueda.toLowerCase()
-        )
-
-      ||
-
-      payroll.user?.name
-        ?.toLowerCase()
-        .includes(
-          busqueda.toLowerCase()
-        )
+      doc.tipo_documento?.toLowerCase().includes(query) ||
+      doc.archivo?.toLowerCase().includes(query) ||
+      doc.observaciones?.toLowerCase().includes(query)
     );
   });
 
@@ -227,6 +220,19 @@ export default function ProfilePage() {
       });
     }
   };
+
+  const handleDownloadLaborDocument = async (id, archivo) => {
+    try {
+      await downloadLaborDocument(id, archivo);
+    } catch (error) {
+      console.error(error);
+      setSnackbar({
+        open: true,
+        message: "Error al descargar el documento laboral",
+        severity: "error",
+      });
+    }
+  };
   const handleCreateVacation = async () => {
     try {
       await createVacation(vacationForm);
@@ -254,7 +260,17 @@ export default function ProfilePage() {
       }
     };
 
+    const loadLaborDocuments = async () => {
+      try {
+        const data = await getMyLaborDocuments();
+        setLaborDocuments(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     loadPayrolls();
+    loadLaborDocuments();
 
   }, []);
 
@@ -446,7 +462,7 @@ export default function ProfilePage() {
         }}
       >
         <Tab label="Información" value="info" />
-        <Tab label="Liquidaciones" value="payrolls" />
+        <Tab label="Documentos Laborales" value="documents" />
         {/* <Tab label="Vacaciones" value="vacations" /> */}
       </Tabs>
 
@@ -487,6 +503,12 @@ export default function ProfilePage() {
                   icon={<LocationOnIcon fontSize="small" />}
                   label="Ubicación"
                   value={user?.direccion}
+                />
+
+                <InfoRow
+                  icon={<LocationOnIcon fontSize="small" />}
+                  label="Contrato"
+                  value={user?.contrato}
                 />
               </Stack>
             </CardContent>
@@ -540,8 +562,8 @@ export default function ProfilePage() {
       )}
 
 
-      {/* LIQUIDACIONES */}
-      {tab === "payrolls" && (
+      {/* DOCUMENTOS LABORALES */}
+      {tab === "documents" && (
         <Card sx={{ borderRadius: 2 }}>
           <CardHeader
             title={
@@ -552,7 +574,7 @@ export default function ProfilePage() {
                   color: "#4A1C23",
                 }}
               >
-                Mis Liquidaciones
+                Mis Documentos
               </Typography>
             }
           />
@@ -567,7 +589,7 @@ export default function ProfilePage() {
 
                   <TextField
                     size="small"
-                    placeholder="Buscar liquidaciones..."
+                    placeholder="Buscar documentos..."
                     value={busqueda}
                     onChange={(e) => setBusqueda(e.target.value)}
                   />
@@ -584,15 +606,15 @@ export default function ProfilePage() {
                     <TableHead>
                       <TableRow>
                         <TableCell>
-                          Liquidación
+                          Documento
                         </TableCell>
 
                         <TableCell>
-                          Colaborador
+                          Tipo Documento
                         </TableCell>
 
                         <TableCell>
-                          Período
+                          Fecha Emisión
                         </TableCell>
 
                         <TableCell>
@@ -600,7 +622,7 @@ export default function ProfilePage() {
                         </TableCell>
 
                         <TableCell>
-                          Fecha Modificación
+                          Fecha Vencimiento
                         </TableCell>
 
                         <TableCell align="center">
@@ -611,49 +633,38 @@ export default function ProfilePage() {
                     </TableHead>
 
                     <TableBody>
-                      {payrollsFiltrados.map((payroll) => (
+                      {documentsFiltrados.map((document) => (
                         <TableRow
-                          key={payroll.id}
+                          key={document.id}
                         >
                           <TableCell>
                             <Box className="flex items-center gap-3">
-                              <FileIcon type="PDF" />
+                              <FileIcon type="pdf" />
                               <Box>
                                 <Typography
                                   className="font-semibold text-[#4A1C23]"
                                 >
-                                  {payroll.titulo}
+                                  {document.tipo_documento}
                                 </Typography>
 
                                 <Chip
-                                  label="PDF"
+                                  label={document.archivo}
                                   size="small"
                                 />
                               </Box>
                             </Box>
                           </TableCell>
                           <TableCell>
-                            {payroll.user?.name}
+                            {document.tipo_documento}
                           </TableCell>
                           <TableCell>
-                            {
-                              payroll.periodo
-                                ?.substring(0, 7)
-                            }
+                            {document.fecha_emision || "-"}
                           </TableCell>
                           <TableCell>
-                            {
-                              (
-                                payroll.tamano_archivo /
-                                1024
-                              ).toFixed(1)
-                            } KB
+                            -
                           </TableCell>
                           <TableCell>
-                            {
-                              payroll.updated_at
-                                ?.substring(0, 10)
-                            }
+                            {document.fecha_vencimiento || "-"}
                           </TableCell>
                           <TableCell>
                             <Box className="flex items-center gap-1">
@@ -661,8 +672,8 @@ export default function ProfilePage() {
                               <Tooltip title="Vista previa">
                                 <IconButton
                                   onClick={() =>
-                                    previewPayroll(
-                                      payroll.id
+                                    previewLaborDocument(
+                                      document.id
                                     )
                                   }
                                 >
@@ -673,9 +684,9 @@ export default function ProfilePage() {
                               <Tooltip title="Descargar">
                                 <IconButton
                                   onClick={() =>
-                                    handleDownload(
-                                      payroll.id,
-                                      payroll.archivo
+                                    handleDownloadLaborDocument(
+                                      document.id,
+                                      document.archivo
                                     )
                                   }
                                 >
@@ -683,17 +694,19 @@ export default function ProfilePage() {
                                 </IconButton>
                               </Tooltip>
 
-                              <Tooltip title="Editar">
-                                <IconButton
-                                  onClick={() =>
-                                    navigate(
-                                      `/dashboard/payrolls/editar/${payroll.id}`
-                                    )
-                                  }
-                                >
-                                  <Edit size={18} />
-                                </IconButton>
-                              </Tooltip>
+                              {user?.role === "admin" && (
+                                <Tooltip title="Editar">
+                                  <IconButton
+                                    onClick={() =>
+                                      navigate(
+                                        `/dashboard/labor-documents/editar/${document.id}`
+                                      )
+                                    }
+                                  >
+                                    <Edit size={18} />
+                                  </IconButton>
+                                </Tooltip>
+                              )}
 
                             </Box>
 
@@ -710,7 +723,7 @@ export default function ProfilePage() {
               ) : (
                 <Grid container spacing={2}>
 
-                  {documentosFiltrados.map((doc) => (
+                  {documentsFiltrados.map((doc) => (
                     <Grid key={doc.id} size={{ xs: 12, sm: 6, md: 4, lg: 3, }} >
 
                       <Card className="hover:-translate-y-1 transition-all duration-200 h-full">
@@ -719,29 +732,35 @@ export default function ProfilePage() {
 
 
                           <Typography className="font-semibold text-[#4A1C23] mb-2">
-                            {doc.nombre}
+                            {doc.tipo_documento}
                           </Typography>
 
                           <Chip
-                            label={doc.categoria}
+                            label={doc.archivo}
                             size="small"
                             className="mb-3"
                           />
 
                           <Box className="flex justify-between text-sm text-gray-500">
-                            <span>{doc.tamano_archivo}</span>
-                            <span>{doc.updated_at}</span>
+                            <span>Emisión: {doc.fecha_emision || "-"}</span>
+                            <span>Vence: {doc.fecha_vencimiento || "-"}</span>
                           </Box>
 
                           <Box className="flex justify-end gap-1 mt-4">
 
-                            <IconButton>
-                              <IconEye size={18} />
+                            <IconButton onClick={() => previewLaborDocument(doc.id)}>
+                              <Eye size={18} />
                             </IconButton>
 
-                            <IconButton>
-                              <IconDownload size={18} />
+                            <IconButton onClick={() => handleDownloadLaborDocument(doc.id, doc.archivo)}>
+                              <Download size={18} />
                             </IconButton>
+
+                            {user?.role === "admin" && (
+                              <IconButton onClick={() => navigate(`/dashboard/labor-documents/editar/${doc.id}`)}>
+                                <Edit size={18} />
+                              </IconButton>
+                            )}
 
                           </Box>
 

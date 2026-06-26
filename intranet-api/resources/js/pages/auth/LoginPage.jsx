@@ -14,46 +14,52 @@ import Mail from "@mui/icons-material/Mail";
 import Business from "@mui/icons-material/Business";
 
 import { login } from "../../services/api";
+import { useAuth } from "../../hooks/AuthContext";
 
 export default function LoginPage() {
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("");
 
-    const [password, setPassword] = useState("");
+  const [password, setPassword] = useState("");
 
-    const [rememberMe, setRememberMe] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
-    const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-    const [showPassword, setShowPassword] =
-        useState(false);
+  const [showPassword, setShowPassword] =
+    useState(false);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const { setUser } = useAuth();
 
-        setIsLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        try {
-            const data = await login(email, password);
+    setIsLoading(true);
 
-            console.log(data);
+    try {
+      const data = await login(email, password);
 
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("user", JSON.stringify(data.user));
+      console.log(data);
 
-            navigate("/dashboard");
+      localStorage.setItem("token", data.token);
 
-        } catch (error) {
-            console.error(error);
-            alert("Credenciales incorrectas");
-        } finally {
-            setIsLoading(false);
-        }
-    };
+      localStorage.setItem("user", JSON.stringify(data.user));
 
-    return (
+      // Actualiza el contexto inmediatamente
+      setUser(data.user);
+      navigate("/dashboard");
+
+    } catch (error) {
+      console.error(error);
+      alert("Credenciales incorrectas");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
 
     <div className="min-h-screen flex">
       {/* Panel izquierdo - Branding */}
@@ -62,9 +68,9 @@ export default function LoginPage() {
         <div className="relative z-10 flex flex-col justify-between p-12 text-primary-foreground">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-card/10 backdrop-blur flex items-center justify-center">
-                <div className="w-12 h-12 rounded-xl bg-card/10 backdrop-blur flex items-center justify-center">
-                    <Business className="w-7 h-7" />
-                </div>
+              <div className="w-12 h-12 rounded-xl bg-card/10 backdrop-blur flex items-center justify-center">
+                <Business className="w-7 h-7" />
+              </div>
             </div>
             <div>
               <h2 className="text-xl font-bold tracking-tight">Axioma</h2>
@@ -111,7 +117,7 @@ export default function LoginPage() {
           {/* Logo móvil */}
           <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
             <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
-                 <Business className="w-7 h-7 text-primary-foreground" />
+              <Business className="w-7 h-7 text-primary-foreground" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-foreground">Axioma</h2>
@@ -131,35 +137,35 @@ export default function LoginPage() {
               </FormLabel>
               <div className="relative">
                 <TextField
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                fullWidth
-                required
-                placeholder="Correo Electrónico"
-                variant="outlined"
-                InputProps={{
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  fullWidth
+                  required
+                  placeholder="Correo Electrónico"
+                  variant="outlined"
+                  InputProps={{
                     startAdornment: (
-                        <TextField  position="start">
-                            <Mail />
-                        </TextField >
+                      <TextField position="start">
+                        <Mail />
+                      </TextField >
                     )
-                }}
-                sx={{
+                  }}
+                  sx={{
                     "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px", // bordes redondeados
-                    backgroundColor: "lab(95.3886% .58049 3.77289)", // color de fondo similar a tu imagen
-                    "& fieldset": {
+                      borderRadius: "8px", // bordes redondeados
+                      backgroundColor: "lab(95.3886% .58049 3.77289)", // color de fondo similar a tu imagen
+                      "& fieldset": {
                         borderColor: "#gray", // borde normal
-                    },
-                    "&:hover fieldset": {
+                      },
+                      "&:hover fieldset": {
                         borderColor: "#70363a", // borde al hover
-                    },
-                    "&.Mui-focused fieldset": {
+                      },
+                      "&.Mui-focused fieldset": {
                         borderColor: "#70363a", // borde al foco
+                      },
                     },
-                    },
-                }}
+                  }}
                 />
               </div>
             </div>
@@ -180,12 +186,12 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   InputProps={{
                     startAdornment: (
-                      <TextField  position="start">
+                      <TextField position="start">
                         <Lock />
                       </TextField >
                     ),
                     endAdornment: (
-                      <TextField  position="end">
+                      <TextField position="end">
 
                       </TextField >
                     ),
@@ -215,30 +221,30 @@ export default function LoginPage() {
                 >
                   {showPassword ? <VisibilityOff className="w-5 h-5" /> : <Visibility className="w-5 h-5" />}
                 </button>
-                
+
               </div>
             </div>
 
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-              <Checkbox
-                id="remember"
-                checked={rememberMe}
-                onChange={(event, checked) => setRememberMe(checked)}
-                sx={{
-                  color: "#70363a",
-                  "&.Mui-checked": {
+                <Checkbox
+                  id="remember"
+                  checked={rememberMe}
+                  onChange={(event, checked) => setRememberMe(checked)}
+                  sx={{
                     color: "#70363a",
-                  },
-                }}
-              />
+                    "&.Mui-checked": {
+                      color: "#70363a",
+                    },
+                  }}
+                />
 
-              <FormLabel
-                htmlFor="remember"
-                className="ml-2 text-sm text-gray-700"
-              >
-                Recuérdame
-              </FormLabel>
+                <FormLabel
+                  htmlFor="remember"
+                  className="ml-2 text-sm text-gray-700"
+                >
+                  Recuérdame
+                </FormLabel>
               </div>
               <a href="/auth/forgot-password" className="text-sm text-primary hover:text-accent transition-colors font-medium">
                 ¿Olvidaste tu contraseña?
@@ -268,20 +274,20 @@ export default function LoginPage() {
               disabled={isLoading}
             >
               {isLoading ? (
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--primary-foreground)" }}>
-                <div
-                  style={{
-                    width: "20px",
-                    height: "20px",
-                    borderRadius: "50%",
-                    border: "2px solid rgba(255,255,255,.30)",
-                    borderTopColor: "var(--primary-foreground)",
-                    animation: "spin 1s linear infinite",
-                  }}
-                  
-                />
-                Ingresando...
-              </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--primary-foreground)" }}>
+                  <div
+                    style={{
+                      width: "20px",
+                      height: "20px",
+                      borderRadius: "50%",
+                      border: "2px solid rgba(255,255,255,.30)",
+                      borderTopColor: "var(--primary-foreground)",
+                      animation: "spin 1s linear infinite",
+                    }}
+
+                  />
+                  Ingresando...
+                </div>
               ) : (
                 "Ingresar"
               )}
@@ -315,5 +321,5 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-    );
+  );
 }

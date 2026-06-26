@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\News;
 use App\Services\NewsService;
 use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NewsPublishedMail;
+use Illuminate\Support\Facades\Log;
 
 class NewsController extends Controller
 {
@@ -52,7 +56,17 @@ class NewsController extends Controller
             'autor' => $validated['autor'],
             'imagen' => $imagen,
             'path_imagen' => $path,
+            'fecha' => now()->toDateString(),
         ]);
+
+        $users = User::all();
+        foreach ($users as $user) {
+            try {
+                Mail::to($user->email)->send(new NewsPublishedMail($news));
+            } catch (\Exception $e) {
+                Log::error("Failed to send news notification email to {$user->email}: " . $e->getMessage());
+            }
+        }
 
         return response()->json([
             'message' =>'Noticia creada correctamente',

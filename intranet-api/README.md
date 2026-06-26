@@ -19,15 +19,15 @@ Incluye:
 - Noticias
 - Eventos
 - Documentos
-- Liquidaciones
-- Vacaciones
+- Documentos Laborales
+- Muro Contrato
 - API RESTful para integración con React / Next.js
 
 ---
 
 # Tecnologías
 
-- PHP 8+
+- PHP 8.3
 - Laravel 12
 - Sanctum
 - Spatie Roles & Permissions
@@ -38,59 +38,45 @@ Incluye:
 
 # Instalación del proyecto
 
-## 1. Clonar repositorio
-
 ```bash
-git clone https://github.com/tu-repo/intranet-api.git
-```
-
-Entrar al proyecto:
-
-```bash
+# Descargar el proyecto
+git clone REPOSITORIO
 cd intranet-api
-```
 
----
-
-# 2. Instalar dependencias
-
-```bash
+# 1. Instalar dependencias de backend
 composer install
-```
 
----
-
-# 3. Crear archivo .env
-
-```bash
+# 2. Crear variables de entorno
 cp .env.example .env
-```
+# Editar .env con tus credenciales
 
----
-
-# 4. Generar APP_KEY
-
-```bash
+# 3. Generar APP_KEY
 php artisan key:generate
+
+# 4. Migrar la base de datos
+php artisan migrate
+
+# 5. Crear roles y usuario administrador
+php artisan db:seed
+
+# 6. Instalar dependencias de frontend
+npm install
+
+# 7. Levantar servidor de desarrollo
+npm run dev
+php artisan serve
 ```
 
+Esto:
+
+- recrea tablas
+- recrea roles
+- recrea usuario admin
 ---
 
 # Configuración Base de Datos
 
 ## Opción SQLite (Recomendada para desarrollo)
-
-Crear archivo:
-
-```bash
-touch database/database.sqlite
-```
-
-En Windows:
-
-```powershell
-New-Item database/database.sqlite
-```
 
 Configurar `.env`:
 
@@ -135,48 +121,6 @@ Publicar configuración:
 
 ```bash
 php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
-```
-
----
-
-# Instalar Roles y Permisos
-
-```bash
-composer require spatie/laravel-permission
-```
-
-Publicar configuración:
-
-```bash
-php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
-```
-
----
-
-# Ejecutar Migraciones
-
-```bash
-php artisan migrate
-```
-
----
-
-# Ejecutar Seeders
-
-## Crear roles y usuario administrador
-
-```bash
-php artisan db:seed --class=RoleSeeder
-```
-
-```bash
-php artisan db:seed --class=AdminSeeder
-```
-
-O ejecutar todos:
-
-```bash
-php artisan db:seed
 ```
 
 ---
@@ -417,39 +361,6 @@ touch app/Services/ExampleService.php
 
 ---
 
-# Crear Requests
-
-```bash
-php artisan make:request StoreExampleRequest
-php artisan make:request UpdateExampleRequest
-```
-
----
-
-# Crear Resources
-
-```bash
-php artisan make:resource ExampleResource
-```
-
----
-
-# Crear Policies
-
-```bash
-php artisan make:policy ExamplePolicy --model=Example
-```
-
----
-
-# Crear Middleware
-
-```bash
-php artisan make:middleware RoleMiddleware
-```
-
----
-
 # Limpiar Caché
 
 ```bash
@@ -466,24 +377,7 @@ php artisan route:list
 
 ---
 
-# Reiniciar Base de Datos
-
-⚠️ SOLO DESARROLLO
-
-```bash
-php artisan migrate:fresh --seed
-```
-
-Esto:
-
-- elimina tablas
-- recrea tablas
-- recrea roles
-- recrea usuario admin
-
----
-
-# Integración Frontend React / Next.js
+#   Integración Frontend React / Next.js
 
 ## Login
 
@@ -588,151 +482,3 @@ php artisan optimize:clear
 # Autor
 
 Proyecto Backend Intranet desarrollado con Laravel 12.
-
-# Router
-
-Acá están todas las rutas del proyecto
-
-```text
-resources/js/
-
-├── app.jsx
-│
-├── router/
-│   ├── AppRouter.jsx
-│   ├── PrivateRoute.jsx
-│   └── AdminRoute.jsx
-│
-├── layouts/
-│   ├── RootLayout.jsx
-│   ├── AuthLayout.jsx
-│   ├── DashboardLayout.jsx
-│   └── AdminLayout.jsx
-│
-├── pages/
-│
-│   ├── auth/
-│   │   ├── LoginPage.jsx
-│   │   └── ForgotPasswordPage.jsx
-│   │
-│   ├── dashboard/
-│   │   ├── DashboardPage.jsx
-│   │   ├── DashboardStats.jsx
-│   │   └── DashboardHome.jsx
-│   │
-│   ├── news/
-│   │   ├── NewsPage.jsx
-│   │   ├── NewsCreatePage.jsx
-│   │   ├── NewsEditPage.jsx
-│   │   └── NewsDetailPage.jsx
-│   │
-│   ├── documents/
-│   │   ├── DocumentsPage.jsx
-│   │   ├── DocumentUploadPage.jsx
-│   │   └── DocumentDetailPage.jsx
-│   │
-│   ├── calendar/
-│   │   ├── CalendarPage.jsx
-│   │   ├── EventsPage.jsx
-│   │   └── EventCreatePage.jsx
-│   │
-│   ├── payroll/
-│   │   ├── PayrollPage.jsx
-│   │   └── PayrollDetailPage.jsx
-│   │
-│   ├── vacations/
-│   │   ├── VacationPage.jsx
-│   │   ├── VacationRequestPage.jsx
-│   │   └── VacationAdminPage.jsx
-│   │
-│   ├── profile/
-│   │   ├── ProfilePage.jsx
-│   │   ├── ProfileEditPage.jsx
-│   │   └── ChangePasswordPage.jsx
-│   │
-│   ├── users/
-│   │   ├── UsersPage.jsx
-│   │   ├── UserCreatePage.jsx
-│   │   ├── UserEditPage.jsx
-│   │   └── UserDetailPage.jsx
-│   │
-│   └── errors/
-│       ├── NotFoundPage.jsx
-│       └── UnauthorizedPage.jsx
-│
-├── components/
-│
-│   ├── ui/
-│   │   ├── AppButton.jsx
-│   │   ├── AppCard.jsx
-│   │   ├── AppInput.jsx
-│   │   ├── LoadingSpinner.jsx
-│   │   └── ConfirmDialog.jsx
-│   │
-│   ├── navbar/
-│   │   ├── Navbar.jsx
-│   │   ├── UserMenu.jsx
-│   │   └── NotificationsMenu.jsx
-│   │
-│   ├── sidebar/
-│   │   ├── Sidebar.jsx
-│   │   ├── SidebarItem.jsx
-│   │   └── SidebarGroup.jsx
-│   │
-│   ├── dashboard/
-│   │   ├── StatsCard.jsx
-│   │   ├── NewsWidget.jsx
-│   │   └── CalendarWidget.jsx
-│   │
-│   ├── tables/
-│   │   ├── UsersTable.jsx
-│   │   ├── NewsTable.jsx
-│   │   └── DocumentsTable.jsx
-│   │
-│   └── forms/
-│       ├── LoginForm.jsx
-│       ├── UserForm.jsx
-│       ├── NewsForm.jsx
-│       └── VacationForm.jsx
-│
-├── services/
-│   ├── api.js
-│   ├── authService.js
-│   ├── userService.js
-│   ├── newsService.js
-│   ├── documentService.js
-│   ├── eventService.js
-│   ├── payrollService.js
-│   └── vacationService.js
-│
-├── hooks/
-│   ├── useAuth.js
-│   ├── useUsers.js
-│   ├── useNews.js
-│   └── useVacations.js
-│
-├── store/
-│   ├── authStore.js
-│   ├── userStore.js
-│   └── notificationStore.js
-│
-├── context/
-│   ├── AuthContext.jsx
-│   └── ThemeContext.jsx
-│
-├── lib/
-│   ├── theme.js
-│   ├── axios.js
-│   ├── permissions.js
-│   ├── constants.js
-│   └── helpers.js
-│
-├── assets/
-│   ├── images/
-│   ├── icons/
-│   └── logos/
-│
-└── styles/
-    ├── globals.css
-    └── theme.css
-```

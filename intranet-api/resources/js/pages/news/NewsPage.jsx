@@ -244,7 +244,7 @@ export default function NoticiasPage() {
                       {noticia.titulo}
                     </Typography>
 
-                    <Typography className="text-gray-500 mb-4">
+                    <Typography>
                       {noticia.resumen}
                     </Typography>
 
@@ -353,7 +353,14 @@ export default function NoticiasPage() {
                     {noticia.titulo}
                   </Typography>
 
-                  <Typography className="text-gray-500 flex-1">
+                  <Typography className="text-gray-500 flex-1"
+                    sx={{
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: 3,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}>
                     {noticia.resumen}
                   </Typography>
 
@@ -364,7 +371,7 @@ export default function NoticiasPage() {
                     </Typography>
 
                     <Typography variant="caption">
-                      {noticia.fecha}
+                      {noticia.fecha?.split("T")[0] ?? ""}
                     </Typography>
 
                   </Box>

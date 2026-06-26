@@ -18,7 +18,12 @@ class News extends Model
         'categoria',
         'autor',
         'imagen',
-        'path_imagen'
+        'path_imagen',
+        'fecha'
+    ];
+
+    protected $casts = [
+        'fecha' => 'date',
     ];
 
     /*

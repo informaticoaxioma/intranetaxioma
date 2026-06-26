@@ -8,6 +8,10 @@ use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserCredentialsMail;
+use App\Mail\PasswordChangedMail;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -103,6 +107,12 @@ class UserController extends Controller
         $user->assignRole(
             $validated['role']
         );
+
+        try {
+            Mail::to($user->email)->send(new UserCredentialsMail($user, $validated['password']));
+        } catch (\Exception $e) {
+            Log::error("Failed to send user credentials email: " . $e->getMessage());
+        }
 
         return response()->json([
 
@@ -243,6 +253,12 @@ class UserController extends Controller
                     $validated['password']
                 )
             ]);
+
+            try {
+                Mail::to($user->email)->send(new PasswordChangedMail($user, $validated['password']));
+            } catch (\Exception $e) {
+                Log::error("Failed to send password changed email: " . $e->getMessage());
+            }
         }
 
         /*

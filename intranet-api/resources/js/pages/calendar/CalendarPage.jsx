@@ -53,139 +53,139 @@ const MONTHS = [
 ]
 
 export default function CalendarPage() {
-const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date());
 
-const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
 
-const [selectedEvent, setSelectedEvent] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
-const [isNewEventOpen, setIsNewEventOpen] = useState(false);
-const [eventos, setEventos] = useState([]);
-const user =JSON.parse(localStorage.getItem("user"));
+  const [isNewEventOpen, setIsNewEventOpen] = useState(false);
+  const [eventos, setEventos] = useState([]);
+  const user = JSON.parse(localStorage.getItem("user"));
 
-const [newEvent, setNewEvent] = useState({
-  titulo: "",
-  fecha: "",
-  hora_inicio: "",
-  hora_fin: "",
-  tipo: "",
-  ubicacion: "",
-  descripcion: "",
-});
-
-const getDaysInMonth = (date) => {
-  const year = date.getFullYear();
-  const month = date.getMonth();
-
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-
-  const daysInMonth = lastDay.getDate();
-
-  let startingDay = firstDay.getDay() - 1;
-
-  if (startingDay === -1) {
-    startingDay = 6;
-  }
-
-  return {
-    daysInMonth,
-    startingDay,
-  };
-};
-
-const { daysInMonth, startingDay } =
-  getDaysInMonth(currentDate);
-
-const getEventsForDate = (day) => {
-
-  const resultado = eventos.filter((event) => {
-    return (
-      event.date.getDate() === day &&
-      event.date.getMonth() === currentDate.getMonth() &&
-      event.date.getFullYear() === currentDate.getFullYear()
-    );
+  const [newEvent, setNewEvent] = useState({
+    titulo: "",
+    fecha: "",
+    hora_inicio: "",
+    hora_fin: "",
+    tipo: "",
+    ubicacion: "",
+    descripcion: "",
   });
 
-  return resultado;
-};
+  const getDaysInMonth = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
 
-const prevMonth = () => {
-  setCurrentDate(
-    new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() - 1,
-      1
-    )
-  );
-};
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
 
-const nextMonth = () => {
-  setCurrentDate(
-    new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + 1,
-      1
-    )
-  );
-};
+    const daysInMonth = lastDay.getDate();
 
-const goToToday = () => {
-  setCurrentDate(new Date());
-};
+    let startingDay = firstDay.getDay() - 1;
 
-const isToday = (day) => {
-  const today = new Date();
-
-  return (
-    day === today.getDate() &&
-    currentDate.getMonth() === today.getMonth() &&
-    currentDate.getFullYear() === today.getFullYear()
-  );
-};
-
-const handleDayClick = (day) => {
-  const clickedDate = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    day
-  );
-
-  setSelectedDate(clickedDate);
-};
-
-const handleCreateEvent = async () => {
-    try {
-        const payload = {
-            titulo: newEvent.titulo,
-            fecha: newEvent.fecha,
-            hora_inicio: newEvent.hora_inicio,
-            hora_fin: newEvent.hora_fin,
-            tipo: newEvent.tipo,
-            ubicacion: newEvent.ubicacion,
-            descripcion: newEvent.descripcion,
-        };
-        console.log(payload);
-        const response = await createEvent(payload);
-        console.log(response);
-        alert(
-            "Evento creado correctamente"
-        );
-        setIsNewEventOpen(false);
-        window.location.reload();
-    } catch (error) {
-        console.error(error);
-        alert(
-            error.message ||
-            "Error al crear evento"
-        );
+    if (startingDay === -1) {
+      startingDay = 6;
     }
-};
 
-const upcomingEvents = eventos
-  .filter((event) => event.date >= new Date())
-  .sort((a, b) => a.date.getTime() - b.date.getTime())
-  .slice(0, 5);
+    return {
+      daysInMonth,
+      startingDay,
+    };
+  };
+
+  const { daysInMonth, startingDay } =
+    getDaysInMonth(currentDate);
+
+  const getEventsForDate = (day) => {
+
+    const resultado = eventos.filter((event) => {
+      return (
+        event.date.getDate() === day &&
+        event.date.getMonth() === currentDate.getMonth() &&
+        event.date.getFullYear() === currentDate.getFullYear()
+      );
+    });
+
+    return resultado;
+  };
+
+  const prevMonth = () => {
+    setCurrentDate(
+      new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() - 1,
+        1
+      )
+    );
+  };
+
+  const nextMonth = () => {
+    setCurrentDate(
+      new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() + 1,
+        1
+      )
+    );
+  };
+
+  const goToToday = () => {
+    setCurrentDate(new Date());
+  };
+
+  const isToday = (day) => {
+    const today = new Date();
+
+    return (
+      day === today.getDate() &&
+      currentDate.getMonth() === today.getMonth() &&
+      currentDate.getFullYear() === today.getFullYear()
+    );
+  };
+
+  const handleDayClick = (day) => {
+    const clickedDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      day
+    );
+
+    setSelectedDate(clickedDate);
+  };
+
+  const handleCreateEvent = async () => {
+    try {
+      const payload = {
+        titulo: newEvent.titulo,
+        fecha: newEvent.fecha,
+        hora_inicio: newEvent.hora_inicio,
+        hora_fin: newEvent.hora_fin,
+        tipo: newEvent.tipo,
+        ubicacion: newEvent.ubicacion,
+        descripcion: newEvent.descripcion,
+      };
+      console.log(payload);
+      const response = await createEvent(payload);
+      console.log(response);
+      alert(
+        "Evento creado correctamente"
+      );
+      setIsNewEventOpen(false);
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+      alert(
+        error.message ||
+        "Error al crear evento"
+      );
+    }
+  };
+
+  const upcomingEvents = eventos
+    .filter((event) => event.date >= new Date())
+    .sort((a, b) => a.date.getTime() - b.date.getTime())
+    .slice(0, 5);
 
   useEffect(() => {
 
@@ -193,20 +193,20 @@ const upcomingEvents = eventos
 
       try {
 
-      const data = await getEvents();
+        const data = await getEvents();
 
-      const eventosFormateados = data.map(evento => ({
-        id: evento.id,
-        title: evento.titulo,
-        date: new Date(evento.fecha),
-        startTime: evento.hora_inicio,
-        endTime: evento.hora_fin,
-        type: evento.tipo?.toLowerCase(),
-        location: evento.ubicacion,
-        description: evento.descripcion,
-      }));
+        const eventosFormateados = data.map(evento => ({
+          id: evento.id,
+          title: evento.titulo,
+          date: new Date(`${evento.fecha}T00:00:00`),
+          startTime: evento.hora_inicio,
+          endTime: evento.hora_fin,
+          type: evento.tipo?.toLowerCase(),
+          location: evento.ubicacion,
+          description: evento.descripcion,
+        }));
 
-      setEventos(eventosFormateados);
+        setEventos(eventosFormateados);
 
       } catch (error) {
 
@@ -236,14 +236,14 @@ const upcomingEvents = eventos
           </Box>
           {
             user?.role === "admin" && (
-          <Button
-            variant="contained"
-            startIcon={<AddIcon  className="w-5 h-5" /> }
-            onClick={() => setIsNewEventOpen(true)}
-            className="!bg-[#6a1936] hover:!bg-[#4a1025]"
-          >
-            Nuevo Evento
-          </Button>)
+              <Button
+                variant="contained"
+                startIcon={<AddIcon className="w-5 h-5" />}
+                onClick={() => setIsNewEventOpen(true)}
+                className="!bg-[#6a1936] hover:!bg-[#4a1025]"
+              >
+                Nuevo Evento
+              </Button>)
           }
         </Box>
 
@@ -394,7 +394,7 @@ const upcomingEvents = eventos
           </Paper>
 
           {/* Sidebar - Upcoming Events */}
-          <Paper sx={{ width: 320, p: 3, borderRadius: 3, alignSelf: "flex-start", overflow:"hidden" }}>
+          <Paper sx={{ width: 320, p: 3, borderRadius: 3, alignSelf: "flex-start", overflow: "hidden" }}>
             <Typography variant="h6" sx={{ color: "#4A1C23", fontWeight: 600, mb: 2 }}>
               Proximos Eventos
             </Typography>
@@ -554,7 +554,7 @@ const upcomingEvents = eventos
               <DialogContent sx={{ mt: 2 }}>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    
+
                     <Box>
                       <Typography sx={{ fontSize: "0.875rem", color: "#4A1C23" }}>
                         {selectedEvent.date.getDate()} de {MONTHS[selectedEvent.date.getMonth()]} de {selectedEvent.date.getFullYear()}
@@ -567,7 +567,7 @@ const upcomingEvents = eventos
 
                   {selectedEvent.location && (
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                      
+
                       <Typography sx={{ fontSize: "0.875rem", color: "#4A1C23" }}>
                         {selectedEvent.location}
                       </Typography>
@@ -647,21 +647,21 @@ const upcomingEvents = eventos
 
               <Box sx={{ display: "flex", gap: 2 }}>
                 <TextField
-                label="Fecha"
-                type="date"
-                fullWidth
-                value={newEvent.fecha}
-                onChange={(e) =>
+                  label="Fecha"
+                  type="date"
+                  fullWidth
+                  value={newEvent.fecha}
+                  onChange={(e) =>
                     setNewEvent({
-                    ...newEvent,
-                    fecha: e.target.value,
+                      ...newEvent,
+                      fecha: e.target.value,
                     })
-                }
-                slotProps={{
+                  }
+                  slotProps={{
                     inputLabel: {
-                    shrink: true,
+                      shrink: true,
                     },
-                }}
+                  }}
                 />
                 <FormControl fullWidth>
                   <InputLabel sx={{ "&.Mui-focused": { color: "#722F37" } }}>Tipo</InputLabel>
@@ -682,60 +682,60 @@ const upcomingEvents = eventos
 
               <Box sx={{ display: "flex", gap: 2 }}>
                 <TextField
-                label="Hora inicio"
-                type="time"
-                variant="outlined"
-                fullWidth
-                value={newEvent.hora_inicio}
-                onChange={(e) =>
+                  label="Hora inicio"
+                  type="time"
+                  variant="outlined"
+                  fullWidth
+                  value={newEvent.hora_inicio}
+                  onChange={(e) =>
                     setNewEvent({
-                    ...newEvent,
-                    hora_inicio: e.target.value,
+                      ...newEvent,
+                      hora_inicio: e.target.value,
                     })
-                }
-                sx={{
+                  }
+                  sx={{
                     mt: 1,
                     "& .MuiOutlinedInput-root": {
-                    "&.Mui-focused fieldset": {
+                      "&.Mui-focused fieldset": {
                         borderColor: "#722F37",
-                    },
+                      },
                     },
                     "& .MuiInputLabel-root": {
-                    backgroundColor: "#fff",
-                    px: 0.5,
+                      backgroundColor: "#fff",
+                      px: 0.5,
                     },
                     "& .MuiInputLabel-root.Mui-focused": {
-                    color: "#722F37",
+                      color: "#722F37",
                     },
-                }}
+                  }}
                 />
                 <TextField
-                label="Hora fin"
-                type="time"
-                variant="outlined"
-                fullWidth
-                value={newEvent.hora_fin}
-                onChange={(e) =>
+                  label="Hora fin"
+                  type="time"
+                  variant="outlined"
+                  fullWidth
+                  value={newEvent.hora_fin}
+                  onChange={(e) =>
                     setNewEvent({
-                    ...newEvent,
-                    hora_fin: e.target.value,
+                      ...newEvent,
+                      hora_fin: e.target.value,
                     })
-                }
-                sx={{
+                  }
+                  sx={{
                     mt: 1,
                     "& .MuiOutlinedInput-root": {
-                    "&.Mui-focused fieldset": {
+                      "&.Mui-focused fieldset": {
                         borderColor: "#722F37",
-                    },
+                      },
                     },
                     "& .MuiInputLabel-root": {
-                    backgroundColor: "#fff",
-                    px: 0.5,
+                      backgroundColor: "#fff",
+                      px: 0.5,
                     },
                     "& .MuiInputLabel-root.Mui-focused": {
-                    color: "#722F37",
+                      color: "#722F37",
                     },
-                }}
+                  }}
                 />
               </Box>
 
