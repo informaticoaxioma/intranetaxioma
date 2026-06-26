@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getNewsById, updateNews } from "../../services/api";
+import { getNewsById, updateNews, deleteNews } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 
 import Box from "@mui/material/Box"
@@ -34,6 +34,7 @@ function ArrowLeftIcon() {
 export default function NewsDetailPage() {
   const navigate = useNavigate();
   const params = useParams();
+  const user = JSON.parse(localStorage.getItem("user"));
   console.log("Params:", params);
   console.log("ID:", params);
 
@@ -42,6 +43,23 @@ export default function NewsDetailPage() {
   const [noticia, setNoticia] = useState(null);
 
   const [isEditing, setIsEditing] = useState(false);
+
+  const handleDelete = async () => {
+    if (window.confirm("¿Estás seguro de que deseas eliminar esta noticia?")) {
+      try {
+        await deleteNews(noticia.id);
+        alert("Noticia eliminada correctamente");
+        navigate("/dashboard/news");
+      } catch (error) {
+        console.error(error);
+        setSnackbar({
+          open: true,
+          message: error.message || "Error al eliminar la noticia",
+          severity: "error",
+        });
+      }
+    }
+  };
 
   const [formData, setFormData] = useState({
     titulo: "",
@@ -163,17 +181,35 @@ export default function NewsDetailPage() {
           </Box>
 
           {!isEditing ? (
-            <Button
-              variant="contained"
-              onClick={() => setIsEditing(true)}
-              sx={{
-                textTransform: "none",
-                backgroundColor: "#6a1936",
-                fontWeight: 600,
-              }}
-            >
-              Editar
-            </Button>
+            <Box sx={{ display: "flex", gap: 1 }}>
+              {user?.role === "admin" && (
+                <Button
+                  variant="contained"
+                  onClick={() => setIsEditing(true)}
+                  sx={{
+                    textTransform: "none",
+                    backgroundColor: "#6a1936",
+                    fontWeight: 600,
+                    "&:hover": { backgroundColor: "#4a1025" },
+                  }}
+                >
+                  Editar
+                </Button>
+              )}
+              {user?.role === "admin" && (
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={handleDelete}
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: 600,
+                  }}
+                >
+                  Eliminar
+                </Button>
+              )}
+            </Box>
           ) : (
             <Button variant="outlined" onClick={() => setIsEditing(false)}>
               Cancelar

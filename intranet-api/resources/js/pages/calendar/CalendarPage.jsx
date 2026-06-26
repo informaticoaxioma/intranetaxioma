@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { createEvent, getEvents } from "../../services/api";
+import { createEvent, getEvents, deleteEvent } from "../../services/api";
+import { useNavigate } from "react-router-dom";
 
 
 import {
@@ -53,6 +54,7 @@ const MONTHS = [
 ]
 
 export default function CalendarPage() {
+  const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const [selectedDate, setSelectedDate] = useState(null);
@@ -62,6 +64,20 @@ export default function CalendarPage() {
   const [isNewEventOpen, setIsNewEventOpen] = useState(false);
   const [eventos, setEventos] = useState([]);
   const user = JSON.parse(localStorage.getItem("user"));
+
+  const handleDeleteEvent = async (id) => {
+    if (window.confirm("¿Estás seguro de que deseas eliminar este evento?")) {
+      try {
+        await deleteEvent(id);
+        setEventos((prev) => prev.filter((event) => event.id !== id));
+        setSelectedEvent(null);
+        alert("Evento eliminado correctamente");
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Error al eliminar el evento");
+      }
+    }
+  };
 
   const [newEvent, setNewEvent] = useState({
     titulo: "",
@@ -598,16 +614,31 @@ export default function CalendarPage() {
                 >
                   Cerrar
                 </Button>
-                <Button
-                  variant="contained"
-                  sx={{
-                    bgcolor: "#722F37",
-                    "&:hover": { bgcolor: "#4A1C23" },
-                    textTransform: "none",
-                  }}
-                >
-                  Editar Evento
-                </Button>
+                {user?.role === "admin" && (
+                  <>
+                    <Button
+                      variant="contained"
+                      onClick={() => navigate(`/dashboard/calendar/editar/${selectedEvent.id}`)}
+                      sx={{
+                        bgcolor: "#722F37",
+                        "&:hover": { bgcolor: "#4A1C23" },
+                        textTransform: "none",
+                      }}
+                    >
+                      Editar Evento
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => handleDeleteEvent(selectedEvent.id)}
+                      sx={{
+                        textTransform: "none",
+                      }}
+                    >
+                      Eliminar Evento
+                    </Button>
+                  </>
+                )}
               </DialogActions>
             </>
           )}

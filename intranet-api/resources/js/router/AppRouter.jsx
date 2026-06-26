@@ -17,6 +17,7 @@ import CreateDocumentsPage from "../pages/documents/CreateDocumentsPage";
 import EditDocumentsPage from "../pages/documents/EditDocumentsPage";
 import NewsPage from "../pages/news/NewsPage";
 import CalendarPage from "../pages/calendar/CalendarPage";
+import EditEventPage from "../pages/calendar/EditEventPage";
 import UsersPage from "../pages/users/UsersPage";
 import CreateUsersPage from "../pages/users/CreateUsersPage";
 import EditUsersPage from "../pages/users/EditUsersPage";
@@ -176,6 +177,17 @@ export default function AppRouter() {
                             </DashboardLayout>
                         </PrivateRoute>
 
+                    }
+                />
+
+                <Route
+                    path="/dashboard/calendar/editar/:id"
+                    element={
+                        <AdminRoute>
+                            <DashboardLayout>
+                                <EditEventPage />
+                            </DashboardLayout>
+                        </AdminRoute>
                     }
                 />
 

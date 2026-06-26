@@ -52,7 +52,7 @@ const departamentos = [
 
 const cargos = {
   Tecnología: ["Director de TI", "Desarrollador Senior", "Desarrollador Junior", "Analista de Sistemas", "Soporte Técnico"],
-  "Recursos Humanos": ["Gerente de RRHH", "Analista de RRHH", "Reclutador", "Especialista en Nóminas"],
+  "Recursos Humanos": ["Gerente de RRHH", "Cordinadora de Contratos", "Analista de RRHH", "Reclutador", "Especialista en Nóminas"],
   Finanzas: ["Director Financiero", "Analista Financiero", "Contador", "Tesorero"],
   Marketing: ["Director de Marketing", "Coordinador de Marketing", "Community Manager", "Diseñador Gráfico"],
   Ventas: ["Director de Ventas", "Gerente de Ventas", "Ejecutivo de Ventas", "Representante Comercial"],
@@ -78,14 +78,6 @@ const mockUser = {
   ultimoAcceso: "2024-03-18 09:30",
   fechaCreacion: "2023-01-15",
 }
-
-const activityLog = [
-  { fecha: "2024-03-18 09:30", accion: "Inicio de sesión", ip: "192.168.1.100" },
-  { fecha: "2024-03-17 14:45", accion: "Actualizó documento: Política de Seguridad", ip: "192.168.1.100" },
-  { fecha: "2024-03-17 10:20", accion: "Inicio de sesión", ip: "192.168.1.100" },
-  { fecha: "2024-03-16 16:30", accion: "Creó nuevo evento: Reunión de Equipo", ip: "192.168.1.105" },
-  { fecha: "2024-03-16 09:15", accion: "Inicio de sesión", ip: "192.168.1.105" },
-]
 
 export default function EditUsersPage() {
   const params = useParams();
@@ -692,7 +684,7 @@ export default function EditUsersPage() {
                   <InputLabel>Rol de Usuario</InputLabel>
                   <Select value={formData.role} label="Rol de Usuario" onChange={(e) => handleChange("role", e.target.value)}>
                     <MenuItem value="admin">Administrador</MenuItem>
-                    <MenuItem value="usuario">Usuario</MenuItem>
+                    <MenuItem value="user">Usuario</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>

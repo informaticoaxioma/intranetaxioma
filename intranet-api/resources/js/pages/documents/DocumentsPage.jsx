@@ -8,6 +8,7 @@ import {
   Star,
   Edit,
   Folder,
+  Trash2,
 } from "lucide-react"
 import {
   Box,
@@ -33,11 +34,13 @@ import {
   Breadcrumbs,
   Tooltip,
   Button,
+  Snackbar,
+  Alert,
 } from "@mui/material"
 import { Link } from "react-router-dom"
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
-import { getDocuments, downloadDocument, previewDocument } from "../../services/api";
+import { getDocuments, downloadDocument, previewDocument, deleteDocument } from "../../services/api";
 
 // ==========================
 // ICONOS CUSTOM
@@ -115,6 +118,32 @@ export default function DocumentsPage() {
   const [busqueda, setBusqueda] = useState("");
   const [documents, setDocuments] = useState([])
   const user = JSON.parse(localStorage.getItem("user"));
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleDelete = async (id) => {
+    if (window.confirm("¿Estás seguro de que deseas eliminar este documento?")) {
+      try {
+        await deleteDocument(id);
+        setDocuments((prev) => prev.filter((doc) => doc.id !== id));
+        setSnackbar({
+          open: true,
+          message: "Documento eliminado correctamente",
+          severity: "success",
+        });
+      } catch (error) {
+        console.error(error);
+        setSnackbar({
+          open: true,
+          message: error.message || "Error al eliminar el documento",
+          severity: "error",
+        });
+      }
+    }
+  };
 
   const documentosFiltrados = documents.filter((doc) => {
 
@@ -413,17 +442,30 @@ export default function DocumentsPage() {
                       </IconButton>
                     </Tooltip>
 
-                    <Tooltip title="Editar">
-                      <IconButton
-                        onClick={() =>
-                          navigate(
-                            `/dashboard/documents/editar/${doc.id}`
-                          )
-                        }
-                      >
-                        <Edit size={18} />
-                      </IconButton>
-                    </Tooltip>
+                    {user?.role === "admin" && (
+                      <Tooltip title="Editar">
+                        <IconButton
+                          onClick={() =>
+                            navigate(
+                              `/dashboard/documents/editar/${doc.id}`
+                            )
+                          }
+                        >
+                          <Edit size={18} />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+
+                    {user?.role === "admin" && (
+                      <Tooltip title="Eliminar">
+                        <IconButton
+                          onClick={() => handleDelete(doc.id)}
+                          sx={{ color: "error.main" }}
+                        >
+                          <Trash2 size={18} />
+                        </IconButton>
+                      </Tooltip>
+                    )}
 
                   </Box>
 
@@ -437,6 +479,20 @@ export default function DocumentsPage() {
         </Table>
 
       </TableContainer>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   )
 }

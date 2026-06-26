@@ -122,7 +122,7 @@
             <p style="font-size: 15px; color: #64748b; line-height: 1.5;">Ingresa a la plataforma de Intranet para leer la noticia completa y mantenerte al día con las últimas novedades.</p>
             
             <div class="btn-container">
-                <a href="{{ config('app.url') }}" class="btn">Leer noticia completa</a>
+                <a href="https://intranet.axioma.cl/news/{{ $news->id }}" class="btn">Leer noticia completa</a>
             </div>
         </div>
         <div class="footer">

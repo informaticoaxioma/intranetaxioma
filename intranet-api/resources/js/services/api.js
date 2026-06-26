@@ -1186,3 +1186,100 @@ export const reactToWallPost = async (postId, reactionData) => {
     }
     return data;
 };
+
+export const deleteDocument = async (id) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+        `${API_URL}/documents/${id}`,
+        {
+            method: "DELETE",
+            headers: {
+                Accept: "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || "Error al eliminar el documento");
+    }
+    return data;
+};
+
+export const deleteNews = async (id) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+        `${API_URL}/news/${id}`,
+        {
+            method: "DELETE",
+            headers: {
+                Accept: "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || "Error al eliminar la noticia");
+    }
+    return data;
+};
+
+export const getEventById = async (id) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+        `${API_URL}/events/${id}`,
+        {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: "application/json"
+            }
+        }
+    );
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || "Error al obtener el evento");
+    }
+    return data;
+};
+
+export const updateEvent = async (id, eventData) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+        `${API_URL}/events/${id}`,
+        {
+            method: "PUT",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+                Accept: "application/json"
+            },
+            body: JSON.stringify(eventData)
+        }
+    );
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || "Error al actualizar el evento");
+    }
+    return data;
+};
+
+export const deleteEvent = async (id) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+        `${API_URL}/events/${id}`,
+        {
+            method: "DELETE",
+            headers: {
+                Accept: "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || "Error al eliminar el evento");
+    }
+    return data;
+};

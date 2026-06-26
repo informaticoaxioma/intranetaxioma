@@ -465,13 +465,11 @@ export default function CreateUsersPage() {
                 <InputLabel>Rol de Usuario</InputLabel>
                 <Select value={formData.role} label="Rol de Usuario" onChange={(e) => handleChange("role", e.target.value)}>
                   <MenuItem value="admin">Administrador</MenuItem>
-                  <MenuItem value="editor">Editor</MenuItem>
                   <MenuItem value="user">Usuario</MenuItem>
                 </Select>
               </FormControl>
               <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: "block" }}>
                 {formData.role === "admin" && "Acceso completo a todas las funcionalidades del sistema."}
-                {formData.role === "editor" && "Puede crear y editar contenido, pero no administrar usuarios."}
                 {formData.role === "user" && "Acceso básico de solo lectura y funciones limitadas."}
               </Typography>
             </Grid>
