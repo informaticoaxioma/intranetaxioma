@@ -241,7 +241,7 @@ export default function CalendarPage() {
     <>
       <Box className="max-w-[1400px] mx-auto p-6">
         {/* Header */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}>
+        <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, justifyContent: "space-between", alignItems: { xs: "flex-start", sm: "center" }, gap: 2, mb: 4 }}>
           <Box>
             <Typography variant="h4" sx={{ color: "#4A1C23", fontWeight: 700 }}>
               Calendario
@@ -257,25 +257,26 @@ export default function CalendarPage() {
                 startIcon={<AddIcon className="w-5 h-5" />}
                 onClick={() => setIsNewEventOpen(true)}
                 className="!bg-[#6a1936] hover:!bg-[#4a1025]"
+                sx={{ width: { xs: "100%", sm: "auto" } }}
               >
                 Nuevo Evento
               </Button>)
           }
         </Box>
 
-        <Box sx={{ display: "flex", gap: 3 }}>
+        <Box sx={{ display: "flex", flexDirection: { xs: "column", lg: "row" }, gap: 3 }}>
           {/* Calendar Grid */}
-          <Paper sx={{ flex: 1, p: 3, borderRadius: 3 }}>
+          <Paper sx={{ flex: 1, p: { xs: 1.5, sm: 3 }, borderRadius: 3 }}>
             {/* Calendar Header */}
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                <IconButton onClick={prevMonth} sx={{ color: "#722F37" }}>
+            <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, justifyContent: "space-between", alignItems: "center", gap: 2, mb: 3 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <IconButton onClick={prevMonth} sx={{ color: "#722F37", p: { xs: 0.5, sm: 1 } }}>
                   <ChevronLeftIcon />
                 </IconButton>
-                <Typography variant="h5" sx={{ color: "#4A1C23", fontWeight: 600, minWidth: 200, textAlign: "center" }}>
+                <Typography variant="h5" sx={{ color: "#4A1C23", fontWeight: 600, minWidth: { xs: 150, sm: 200 }, textAlign: "center", fontSize: { xs: "1.25rem", sm: "1.5rem" } }}>
                   {MONTHS[currentDate.getMonth()]} {currentDate.getFullYear()}
                 </Typography>
-                <IconButton onClick={nextMonth} sx={{ color: "#722F37" }}>
+                <IconButton onClick={nextMonth} sx={{ color: "#722F37", p: { xs: 0.5, sm: 1 } }}>
                   <ChevronRightIcon />
                 </IconButton>
               </Box>
@@ -287,6 +288,7 @@ export default function CalendarPage() {
                   color: "#722F37",
                   "&:hover": { borderColor: "#4A1C23", bgcolor: "#F5F1EB" },
                   textTransform: "none",
+                  width: { xs: "100%", sm: "auto" }
                 }}
               >
                 Hoy
@@ -303,10 +305,11 @@ export default function CalendarPage() {
                     py: 1,
                     fontWeight: 600,
                     color: "#722F37",
-                    fontSize: "0.875rem",
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
                   }}
                 >
-                  {day}
+                  <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>{day}</Box>
+                  <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>{day[0]}</Box>
                 </Box>
               ))}
             </Box>
@@ -316,9 +319,7 @@ export default function CalendarPage() {
               {/* Empty cells for days before the first day of the month */}
               {Array.from({ length: startingDay }).map((_, index) => (
                 <Box key={`empty-${index}`} sx={{ minHeight: 100 }} />
-              ))}
-
-              {/* Days of the month */}
+              ))}              {/* Days of the month */}
               {Array.from({ length: daysInMonth }).map((_, index) => {
                 const day = index + 1
                 const dayEvents = getEventsForDate(day)
@@ -329,8 +330,8 @@ export default function CalendarPage() {
                     key={day}
                     onClick={() => handleDayClick(day)}
                     sx={{
-                      minHeight: 100,
-                      p: 1,
+                      minHeight: { xs: 60, sm: 80, md: 100 },
+                      p: { xs: 0.5, sm: 1 },
                       cursor: "pointer",
                       border: isCurrentDay ? "2px solid #722F37" : "1px solid #E8E0D5",
                       bgcolor: isCurrentDay ? "#FDF8F8" : "white",
@@ -345,7 +346,7 @@ export default function CalendarPage() {
                       sx={{
                         fontWeight: isCurrentDay ? 700 : 500,
                         color: isCurrentDay ? "#722F37" : "#4A1C23",
-                        fontSize: "0.875rem",
+                        fontSize: { xs: "0.75rem", sm: "0.875rem" },
                         mb: 0.5,
                       }}
                     >
@@ -362,14 +363,17 @@ export default function CalendarPage() {
                             setSelectedEvent(event)
                           }}
                           sx={{
-                            height: 16,
+                            height: { xs: 8, sm: 16 },
                             fontSize: "0.65rem",
                             bgcolor: eventTypeColors[event.type].bg,
                             color: eventTypeColors[event.type].text,
                             borderLeft: `3px solid ${eventTypeColors[event.type].border}`,
                             borderRadius: 1,
                             maxWidth: "100%",
+                            minWidth: { xs: 8, sm: "auto" },
+                            p: 0,
                             "& .MuiChip-label": {
+                              display: { xs: "none", sm: "block" },
                               whiteSpace: "nowrap",
                               overflow: "hidden",
                               textOverflow: "ellipsis",
@@ -380,7 +384,7 @@ export default function CalendarPage() {
                         />
                       ))}
                       {dayEvents.length > 2 && (
-                        <Typography sx={{ fontSize: "0.65rem", color: "#722F37", fontWeight: 500, lineHeight: 1 }}>
+                        <Typography sx={{ fontSize: "0.65rem", color: "#722F37", fontWeight: 500, lineHeight: 1, display: { xs: "none", sm: "block" } }}>
                           +{dayEvents.length - 2} mas
                         </Typography>
                       )}
@@ -410,7 +414,7 @@ export default function CalendarPage() {
           </Paper>
 
           {/* Sidebar - Upcoming Events */}
-          <Paper sx={{ width: 320, p: 3, borderRadius: 3, alignSelf: "flex-start", overflow: "hidden" }}>
+          <Paper sx={{ width: { xs: "100%", lg: 320 }, p: 3, borderRadius: 3, alignSelf: "flex-start", overflow: "hidden" }}>
             <Typography variant="h6" sx={{ color: "#4A1C23", fontWeight: 600, mb: 2 }}>
               Proximos Eventos
             </Typography>
@@ -676,7 +680,7 @@ export default function CalendarPage() {
                 }}
               />
 
-              <Box sx={{ display: "flex", gap: 2 }}>
+              <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2 }}>
                 <TextField
                   label="Fecha"
                   type="date"
@@ -711,7 +715,7 @@ export default function CalendarPage() {
                 </FormControl>
               </Box>
 
-              <Box sx={{ display: "flex", gap: 2 }}>
+              <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2 }}>
                 <TextField
                   label="Hora inicio"
                   type="time"

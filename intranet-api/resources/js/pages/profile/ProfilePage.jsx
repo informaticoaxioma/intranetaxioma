@@ -12,7 +12,7 @@ import AddIcon from "@mui/icons-material/Add";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import { useAuth } from "../../hooks/AuthContext";
-import { downloadPayroll, previewPayroll, myPayrolls, getMyVacations, createVacation, getMyLaborDocuments, previewLaborDocument, downloadLaborDocument } from "../../services/api";
+import { downloadPayroll, previewPayroll, myPayrolls, getMyVacations, createVacation, getMyLaborDocuments, previewLaborDocument, downloadLaborDocument, updateMyAvatar } from "../../services/api";
 import { Eye, Download, Edit } from "lucide-react"
 import { useNavigate } from "react-router-dom";
 
@@ -44,7 +44,9 @@ import {
   Grid,
   Paper,
   Tooltip,
-  Avatar
+  Avatar,
+  Snackbar,
+  Alert
 } from "@mui/material";
 
 function FileIcon({ type }) {
@@ -78,6 +80,11 @@ function FileIcon({ type }) {
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
   const [tab, setTab] = useState("info");
   const [busqueda, setBusqueda] = useState("")
   const [vistaMode, setVistaMode] = useState("list")
@@ -205,7 +212,39 @@ export default function ProfilePage() {
       );
     });
 
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      setSnackbar({
+        open: true,
+        message: "El archivo no debe superar los 10 MBytes",
+        severity: "error",
+      });
+      return;
+    }
+
+    try {
+      const response = await updateMyAvatar(file);
+      localStorage.setItem("user", JSON.stringify(response.user));
+      setUser(response.user);
+      setSnackbar({
+        open: true,
+        message: "Foto de perfil actualizada correctamente",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error(error);
+      setSnackbar({
+        open: true,
+        message: error.message || "Error al actualizar la foto de perfil",
+        severity: "error",
+      });
+    }
+  };
 
   const handleDownload = async (id, archivo) => {
     try {
@@ -397,31 +436,57 @@ export default function ProfilePage() {
             direction={{ xs: "column", md: "row" }}
             spacing={3}
           >
-            {/* AVATAR */}
-            <Avatar
-              src={
-                user?.path_foto_perfil
-                  ? `${import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"}/storage/${user.path_foto_perfil}`
-                  : undefined
-              }
-              sx={{
-                width: 120,
-                height: 120,
-                borderRadius: 3,
-                bgcolor: "#E5E5E5",
-                fontWeight: "bold",
-                fontSize: 40,
-                flexShrink: 0,
-                mt: -10,
-                border: "4px solid white",
-                boxShadow: 2,
-              }}
-            >
-              {
-                `${user?.name?.[0] || ""}${user?.apellido?.[0] || ""}`
-                  .toUpperCase()
-              }
-            </Avatar>
+            {/* AVATAR CONTAINER */}
+            <Box sx={{ position: "relative", mt: -10, display: "inline-block" }}>
+              <Avatar
+                src={
+                  user?.path_foto_perfil
+                    ? `${import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"}/storage/${user.path_foto_perfil}`
+                    : undefined
+                }
+                sx={{
+                  width: 120,
+                  height: 120,
+                  borderRadius: 3,
+                  bgcolor: "#E5E5E5",
+                  fontWeight: "bold",
+                  fontSize: 40,
+                  border: "4px solid white",
+                  boxShadow: 2,
+                }}
+              >
+                {
+                  `${user?.name?.[0] || ""}${user?.apellido?.[0] || ""}`
+                    .toUpperCase()
+                }
+              </Avatar>
+              <input
+                accept="image/*"
+                style={{ display: "none" }}
+                id="avatar-upload-file"
+                type="file"
+                onChange={handleAvatarChange}
+              />
+              <label htmlFor="avatar-upload-file">
+                <IconButton
+                  component="span"
+                  sx={{
+                    position: "absolute",
+                    bottom: 0,
+                    right: 0,
+                    backgroundColor: "#6b1426",
+                    color: "white",
+                    boxShadow: 1,
+                    p: 0.8,
+                    "&:hover": {
+                      backgroundColor: "#4a1025",
+                    },
+                  }}
+                >
+                  <PhotoCameraIcon fontSize="small" />
+                </IconButton>
+              </label>
+            </Box>
 
             {/* INFORMACIÓN */}
             <Box>
@@ -1091,6 +1156,19 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
       )}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert
+          severity={snackbar.severity}
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
 
   );

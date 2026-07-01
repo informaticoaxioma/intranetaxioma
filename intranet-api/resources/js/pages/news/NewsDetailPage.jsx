@@ -363,13 +363,10 @@ export default function NewsDetailPage() {
                             handleChange("categoria", e.target.value)
                           }
                         >
-                          <MenuItem value="Recursos Humanos">
-                            Recursos Humanos
-                          </MenuItem>
-                          <MenuItem value="Finanzas">Finanzas</MenuItem>
-                          <MenuItem value="Corporativo">Corporativo</MenuItem>
-                          <MenuItem value="Formación">Formación</MenuItem>
-                          <MenuItem value="Eventos">Eventos</MenuItem>
+                          <MenuItem value="Adjudicaciones">Adjudicaciones</MenuItem>
+                          <MenuItem value="Corporativas">Corporativas</MenuItem>
+                          <MenuItem value="Prevención de Riesgos">Prevención de Riesgos</MenuItem>
+                          <MenuItem value="Calidad">Calidad</MenuItem>
                           <MenuItem value="Tecnología">Tecnología</MenuItem>
                         </Select>
                       </FormControl>

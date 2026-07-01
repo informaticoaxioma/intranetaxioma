@@ -92,7 +92,6 @@ const carpetas = [
   { id: 3, nombre: "Finanzas", color: "#8B4513", cantidad: 32 },
   { id: 4, nombre: "Corporativo", color: "#5D6D7E", cantidad: 45 },
   { id: 5, nombre: "Formación", color: "#1E88E5", cantidad: 15 },
-  { id: 6, nombre: "Legal", color: "#1E88E5", cantidad: 15 },
   { id: 7, nombre: "Tecnología", color: "#1E88E5", cantidad: 15 },
 ]
 
@@ -104,7 +103,6 @@ const categorias = [
   "Finanzas",
   "Corporativo",
   "Formación",
-  "Legal",
   "Tecnología",
 ]
 

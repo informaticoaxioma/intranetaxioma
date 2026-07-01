@@ -11,6 +11,7 @@ use App\Models\Payroll;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserCredentialsMail;
 use Illuminate\Support\Facades\Log;
@@ -183,6 +184,32 @@ class AuthController extends Controller
 
             'payrolls' =>
                 Payroll::count()
+        ]);
+    }
+
+    public function updateAvatar(Request $request)
+    {
+        $request->validate([
+            'foto_perfil' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
+        ]);
+
+        $user = $request->user();
+
+        if ($user->path_foto_perfil) {
+            Storage::disk('public')->delete($user->path_foto_perfil);
+        }
+
+        $foto = $request->file('foto_perfil');
+        $path = $foto->store('profilephotos', 'public');
+
+        $user->update([
+            'foto_perfil' => $foto->getClientOriginalName(),
+            'path_foto_perfil' => $path,
+        ]);
+
+        return response()->json([
+            'message' => 'Foto de perfil actualizada correctamente',
+            'user' => $user,
         ]);
     }
 }

@@ -272,8 +272,10 @@ export default function UsersPage() {
       <Box
         sx={{
           display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
           justifyContent: "space-between",
-          alignItems: "center",
+          alignItems: { xs: "flex-start", sm: "center" },
+          gap: 2,
           mb: 4,
         }}
       >
@@ -302,7 +304,8 @@ export default function UsersPage() {
           onClick={() =>
             navigate("/dashboard/users/create")
           }
-            className="!bg-[#6a1936] hover:!bg-[#4a1025]"
+          className="!bg-[#6a1936] hover:!bg-[#4a1025]"
+          sx={{ width: { xs: "100%", sm: "auto" } }}
         >
           Nuevo Usuario
         </Button>
@@ -315,8 +318,10 @@ export default function UsersPage() {
         <Box
           sx={{
             display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
             gap: 2,
             flexWrap: "wrap",
+            width: "100%",
           }}
         >
           <TextField
@@ -326,13 +331,12 @@ export default function UsersPage() {
             onChange={(e) =>
               setSearchTerm(e.target.value)
             }
-            sx={{ minWidth: 300 }}
-
+            sx={{ width: { xs: "100%", sm: 300 } }}
           />
 
           <FormControl
             size="small"
-            sx={{ minWidth: 180 }}
+            sx={{ width: { xs: "100%", sm: 180 } }}
           >
             <InputLabel>
               Departamento
@@ -370,6 +374,8 @@ export default function UsersPage() {
         <Tabs
           value={tabValue}
           onChange={(_, v) => setTabValue(v)}
+          variant="scrollable"
+          scrollButtons="auto"
         >
           <Tab
             label={`Todos (${stats.total})`}
@@ -598,6 +604,8 @@ export default function UsersPage() {
         onClose={() =>
           setDeleteDialogOpen(false)
         }
+        maxWidth="xs"
+        fullWidth
       >
         <DialogTitle>
           Confirmar Eliminación

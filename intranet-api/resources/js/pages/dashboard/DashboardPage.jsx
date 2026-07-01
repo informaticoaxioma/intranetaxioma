@@ -5,6 +5,8 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import EventIcon from "@mui/icons-material/Event";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useNavigate } from "react-router-dom";
 
 // Card
@@ -14,7 +16,7 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 
-import { Typography, Box, useStepContext } from "@mui/material";
+import { Typography, Box, IconButton } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/AuthContext";
 import { getNews, getEvents, getDashboardStats } from '../../services/api';
@@ -25,89 +27,126 @@ const stats = [
   { label: "Eventos", value: "8", icon: CalendarTodayIcon, change: "Esta semana" },
 ]
 
-
-
-const employee = {
-  name: "Carolina Perez",
-  position: "Coordinadora de Contratos",
-};
+const slidesComite = [
+  {
+    title: "Comité Paritario - Higiene y Seguridad",
+    description: "Organismo encargado de velar por el cumplimiento del reglamento interno, promover buenas prácticas laborales, fomentar ambientes de trabajo seguros y colaborar en la aplicación de las políticas internas de la empresa.",
+    image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80",
+    link: "/dashboard/documents"
+  },
+  {
+    title: "Comité Paritario - Prevención y Seguridad",
+    description: "Promovemos una cultura de autocuidado e identificamos riesgos en nuestras instalaciones, velando por que cada miembro del equipo trabaje en condiciones óptimas y protegidas.",
+    image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80",
+    link: "/dashboard/news"
+  },
+  {
+    title: "Comité Paritario - Bienestar Laboral",
+    description: "Fomentamos la salud y calidad de vida de nuestros trabajadores, impulsando la mejora continua de los espacios de trabajo y el equilibrio entre vida laboral y personal.",
+    image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1200&q=80",
+    link: "/dashboard/profile"
+  },
+  {
+    title: "Comité Paritario - Capacitaciones y Emergencias",
+    description: "Coordinamos planes de emergencia, simulacros y capacitaciones constantes para que todo nuestro personal esté preparado ante cualquier eventualidad de manera coordinada.",
+    image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80",
+    link: "https://www.google.com"
+  }
+];
 
 
 
 export default function DashboardPage() {
-    const navigate = useNavigate();
-    const { user } = useAuth();
-    const [corporateNews, setCorporateNews] = useState([]);
-    const [upcomingEvents, setUpcomingEvents] = useState([]);
-    const [stats, setStats] = useState([]);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [corporateNews, setCorporateNews] = useState([]);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [stats, setStats] = useState([]);
+  const [activeSlide, setActiveSlide] = useState(0);
 
-    useEffect(() => {
-        const loadNews = async () => {
-            try {
-                const data =
-                    await getNews();
-                setCorporateNews(data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        loadNews();
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % slidesComite.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [activeSlide]);
 
-    }, []);
+  const handleImageClick = (link) => {
+    if (!link) return;
+    if (link.startsWith("http://") || link.startsWith("https://")) {
+      window.open(link, "_blank", "noopener,noreferrer");
+    } else {
+      navigate(link);
+    }
+  };
 
-    useEffect(() => {
-      const loadEvents = async () => {
-        try {
-          const data =
-            await getEvents();
+  useEffect(() => {
+    const loadNews = async () => {
+      try {
+        const data =
+          await getNews();
+        setCorporateNews(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    loadNews();
 
-          setUpcomingEvents(data);
-        } catch (error) {
-          console.error(error);
-        }
-      };
+  }, []);
 
-      loadEvents();
+  useEffect(() => {
+    const loadEvents = async () => {
+      try {
+        const data =
+          await getEvents();
 
-    }, []);
+        setUpcomingEvents(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-    useEffect(() => {
-        const loadStats = async () => {
-            try {
-                const data = await getDashboardStats();
-                setStats([
-                    {
-                        label: "Documentos",
-                        value: data.documents,
-                        change: "Disponibles",
-                        icon: DescriptionIcon,
-                    },
-                    {
-                        label: "Eventos",
-                        value: data.events,
-                        change: "Programados",
-                        icon: EventIcon,
-                    },
-                    {
-                        label: "Noticias",
-                        value: data.news,
-                        change: "Publicadas",
-                        icon: CampaignIcon,
-                    }
-                ]);
-            } catch (error) {
-                console.error(
-                    "Error cargando estadísticas",
-                    error
-                );
-            }
-        };
-        loadStats();
+    loadEvents();
 
-    }, []);
+  }, []);
 
-    return (
-    
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const data = await getDashboardStats();
+        setStats([
+          {
+            label: "Documentos",
+            value: data.documents,
+            change: "Disponibles",
+            icon: DescriptionIcon,
+          },
+          {
+            label: "Eventos",
+            value: data.events,
+            change: "Programados",
+            icon: EventIcon,
+          },
+          {
+            label: "Noticias",
+            value: data.news,
+            change: "Publicadas",
+            icon: CampaignIcon,
+          }
+        ]);
+      } catch (error) {
+        console.error(
+          "Error cargando estadísticas",
+          error
+        );
+      }
+    };
+    loadStats();
+
+  }, []);
+
+  return (
+
     <Box className="space-y-6 max-w-[1400px] mx-auto">
       {/* Welcome section */}
       <div className="flex items-center justify-between">
@@ -148,8 +187,8 @@ export default function DashboardPage() {
           const Icon = stat.icon
           return (
             <Card
-            sx={{ borderRadius: 2 }} 
-            key={stat.label} className="  rounded-lg ">
+              sx={{ borderRadius: 2 }}
+              key={stat.label} className="  rounded-lg ">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between rounded-lg ">
                   <div>
@@ -170,55 +209,133 @@ export default function DashboardPage() {
         })}
       </div>
       <Card
+        sx={{
+          borderRadius: 2,
+          overflow: "hidden",
+          position: "relative"
+        }}
+      >
+        {/* TEXT SECTION (Transitions with activeSlide) */}
+        <Box sx={{ p: 3, minHeight: 140, transition: "all 0.5s ease" }}>
+          <Typography
+            variant="h4"
             sx={{
-                borderRadius: 2,
-                overflow: "hidden",
+              fontWeight: "bold",
+              color: "#4A1C23",
+              transition: "opacity 0.5s ease",
             }}
-        >
+          >
+            {slidesComite[activeSlide].title}
+          </Typography>
+          <Typography
+            sx={{
+              mt: 1,
+              color: "text.secondary",
+              fontSize: "1rem",
+              minHeight: 60
+            }}
+          >
+            {slidesComite[activeSlide].description}
+          </Typography>
+        </Box>
 
-            <CardHeader
-                title={
-                    <Typography
-                        variant="h4"
-                        sx={{
-                            fontWeight: "bold",
-                            color: "#4A1C23",
-                        }}
-                    >
-                        Comité Paritario
-                    </Typography>
-                }
-                subheader={
-                    <Typography
-                        sx={{
-                            mt: 1,
-                            color: "text.secondary",
-                            fontSize: "1rem",
-                        }}
-                    >
-                        Organismo encargado de velar por el cumplimiento del
-                        reglamento interno, promover buenas prácticas laborales,
-                        fomentar ambientes de trabajo seguros y colaborar en la
-                        aplicación de las políticas internas de la empresa.
-                    </Typography>
-                }
-            />
-            <CardMedia
-                component="img"
-                sx={{
-                    height: 400,
-                    objectFit: "cover",
-                    borderTopLeftRadius: 8,
-                    borderTopRightRadius: 8,
+        {/* IMAGE/MEDIA CAROUSEL WITH OVERLAY CONTROLS */}
+        <Box sx={{ position: "relative", overflow: "hidden", height: 400 }}>
+          {/* IMAGE */}
+          <Box
+            component="img"
+            src={slidesComite[activeSlide].image}
+            alt={slidesComite[activeSlide].title}
+            onClick={() => handleImageClick(slidesComite[activeSlide].link)}
+            sx={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              cursor: "pointer",
+              transition: "transform 0.5s ease, opacity 0.5s ease",
+              "&:hover": {
+                transform: "scale(1.03)"
+              }
+            }}
+          />
+
+          {/* ARROWS (CONTROLS) */}
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveSlide((prev) => (prev === 0 ? slidesComite.length - 1 : prev - 1));
+            }}
+            sx={{
+              position: "absolute",
+              left: 16,
+              top: "50%",
+              transform: "translateY(-50%)",
+              backgroundColor: "rgba(0,0,0,0.5)",
+              color: "white",
+              "&:hover": {
+                backgroundColor: "rgba(0,0,0,0.7)"
+              }
+            }}
+          >
+            <ChevronLeftIcon />
+          </IconButton>
+
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveSlide((prev) => (prev === slidesComite.length - 1 ? 0 : prev + 1));
+            }}
+            sx={{
+              position: "absolute",
+              right: 16,
+              top: "50%",
+              transform: "translateY(-50%)",
+              backgroundColor: "rgba(0,0,0,0.5)",
+              color: "white",
+              "&:hover": {
+                backgroundColor: "rgba(0,0,0,0.7)"
+              }
+            }}
+          >
+            <ChevronRightIcon />
+          </IconButton>
+
+          {/* SLIDE INDICATORS (DOTS) */}
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: 16,
+              left: "50%",
+              transform: "translateX(-50%)",
+              display: "flex",
+              gap: 1,
+              zIndex: 10
+            }}
+          >
+            {slidesComite.map((_, index) => (
+              <Box
+                key={index}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveSlide(index);
                 }}
-                image="https://picsum.photos/600/300?1"
-                alt="Comité Paritario"
-            />
-        </Card>
-      
+                sx={{
+                  width: index === activeSlide ? 24 : 8,
+                  height: 8,
+                  borderRadius: 4,
+                  backgroundColor: index === activeSlide ? "white" : "rgba(255,255,255,0.5)",
+                  cursor: "pointer",
+                  transition: "all 0.3s ease"
+                }}
+              />
+            ))}
+          </Box>
+        </Box>
+      </Card>
+
 
       {/* Main content grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent documents */}
         <Card sx={{ borderRadius: 2 }}>
           <CardHeader
@@ -237,47 +354,47 @@ export default function DashboardPage() {
             subheader="Últimas novedades de la empresa"
           />
           <CardContent>
-              <div className="space-y-4">
-                  {corporateNews
-                      .slice(0, 3)
-                      .map((news) => (
+            <div className="space-y-4">
+              {corporateNews
+                .slice(0, 3)
+                .map((news) => (
 
-                          <div
-                              key={news.id}
-                              onClick={() =>
-                                    navigate(
-                                        `/dashboard/news/${news.id}`
-                                    )
-                                }
-                              className="
+                  <div
+                    key={news.id}
+                    onClick={() =>
+                      navigate(
+                        `/dashboard/news/${news.id}`
+                      )
+                    }
+                    className="
                                   p-4
                                   rounded-lg
                                   bg-secondary/50
                                   hover:bg-secondary
                                   transition-colors
                               "
-                          >
+                  >
 
-                              <p className="font-medium text-foreground">
-                                  {news.titulo}
-                              </p>
+                    <p className="font-medium text-foreground">
+                      {news.titulo}
+                    </p>
 
-                              <p className="text-sm text-muted-foreground">
-                                  {
-                                      news.created_at?.substring(
-                                          0,
-                                          10
-                                      )
-                                  }
-                              </p>
-                          </div>
-                  ))}
-              </div>
+                    <p className="text-sm text-muted-foreground">
+                      {
+                        news.created_at?.substring(
+                          0,
+                          10
+                        )
+                      }
+                    </p>
+                  </div>
+                ))}
+            </div>
           </CardContent>
         </Card>
 
-        <Card  sx={{ borderRadius: 2 }} className="">
-          <CardHeader 
+        <Card sx={{ borderRadius: 2 }} className="">
+          <CardHeader
             title={
               <Typography
                 variant="h5"
@@ -291,20 +408,20 @@ export default function DashboardPage() {
               </Typography>
             }
             subheader="Tu agenda para esta semana"
-            />
+          />
           <CardContent>
             <div className="space-y-4">
               {[...upcomingEvents]
-                  .filter(
-                      (event) =>
-                          new Date(event.fecha) >= new Date()
-                  )
+                .filter(
+                  (event) =>
+                    new Date(event.fecha) >= new Date()
+                )
 
-                  .sort(
-                      (a, b) =>
-                          new Date(a.fecha) -
-                          new Date(b.fecha)
-                  ).slice(0, 3).map((event) => (
+                .sort(
+                  (a, b) =>
+                    new Date(a.fecha) -
+                    new Date(b.fecha)
+                ).slice(0, 3).map((event) => (
 
                   <div
                     key={event.id}
@@ -381,13 +498,13 @@ export default function DashboardPage() {
             </div>
             <CardActions>
 
-                <button
+              <button
 
-                    onClick={() =>
-                        navigate("/dashboard/calendar")
-                    }
+                onClick={() =>
+                  navigate("/dashboard/calendar")
+                }
 
-                    className="
+                className="
                     w-full
                     border
                       border-ring
@@ -403,66 +520,21 @@ export default function DashboardPage() {
                       transition-all
                       duration-200
                     "
-                >
+              >
 
-                    Ver calendario completo
+                Ver calendario completo
 
-                </button>
+              </button>
 
             </CardActions>
           </CardContent>
         </Card>
 
-        {/* Card 2: Empleado del Mes */}
-        <Card sx={{ borderRadius: 2 }}>
-          <CardHeader
-            title={
-              <Typography
-                variant="h5"
-                sx={{
-                  fontWeight: "bold",
-                  fontSize: "1.5rem",
-                  color: "var(--foreground)",
-                }}
-              >
-                Empleado del Mes
-              </Typography>
-            }
-            subheader="Reconocimiento destacado"
-          />
-          <CardContent>
-            <div className="flex flex-col items-center text-center gap-4">
-              
-              {/* Avatar */}
-              <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
-                {/* Puedes reemplazar por <Avatar src="..." /> */}
-                <span className="text-2xl font-bold text-primary">
-                  {employee.name.charAt(0)}
-                </span>
-              </div>
-
-              {/* Info */}
-              <div>
-                <p className="font-semibold text-lg text-foreground">
-                  {employee.name}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {employee.position}
-                </p>
-              </div>
-
-              {/* Badge */}
-              <span className="px-3 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary">
-                Destacado
-              </span>
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Upcoming events */}
       </div>
 
 
     </Box>
-    );
+  );
 }

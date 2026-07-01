@@ -43,6 +43,20 @@ class LaborDocumentController extends Controller
      */
     public function store(Request $request)
     {
+        if ($request->hasFile('archivo')) {
+
+            dd([
+                'nombre' => $request->file('archivo')->getClientOriginalName(),
+                'size' => $request->file('archivo')->getSize(),
+                'error' => $request->file('archivo')->getError(),
+                'errorMessage' => $request->file('archivo')->getErrorMessage(),
+            ]);
+
+        } else {
+
+            dd($request->all(), $request->file('archivo'));
+
+        }
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'tipo_documento' => 'required|string|max:255',

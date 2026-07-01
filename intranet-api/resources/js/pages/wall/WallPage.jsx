@@ -252,8 +252,19 @@ export default function WallPage() {
             <Card className="shadow-lg border border-gray-100 rounded-2xl overflow-visible bg-white/70 backdrop-blur-md">
                 <CardContent className="p-5">
                     <Stack direction="row" spacing={2} alignItems="flex-start">
-                        <Avatar sx={{ bgcolor: "#6a1936", fontWeight: "bold" }}>
-                            {user?.name?.charAt(0) || "U"}
+                        <Avatar
+                            src={
+                                user?.path_foto_perfil
+                                    ? `${import.meta.env.VITE_API_URL || "https://intranet.axioma.cl"}/storage/${user.path_foto_perfil}`
+                                    : undefined
+                            }
+                            sx={{
+                                width: 32,
+                                height: 32,
+                                backgroundColor: "#7b1e3f",
+                            }}
+                        >
+                            {`${user?.name?.[0] || ""}${user?.apellido?.[0] || ""}`.toUpperCase() || "U"}
                         </Avatar>
                         <Box className="flex-1 space-y-3">
                             <Typography className="font-semibold text-gray-800">
@@ -375,8 +386,20 @@ export default function WallPage() {
                                 <CardContent className="p-5 pb-3">
                                     <Box className="flex justify-between items-start">
                                         <Stack direction="row" spacing={2} alignItems="center">
-                                            <Avatar sx={{ bgcolor: "#6a1936", fontWeight: "bold" }}>
-                                                {post.user?.name?.charAt(0) || "U"}
+
+                                            <Avatar
+                                                src={
+                                                    post.user?.path_foto_perfil
+                                                        ? `${import.meta.env.VITE_API_URL || "https://intranet.axioma.cl"}/storage/${post.user.path_foto_perfil}`
+                                                        : undefined
+                                                }
+                                                sx={{
+                                                    width: 32,
+                                                    height: 32,
+                                                    backgroundColor: "#7b1e3f",
+                                                }}
+                                            >
+                                                {`${post.user.name?.[0] || ""}${post.user.apellido?.[0] || ""}`.toUpperCase() || "U"}
                                             </Avatar>
                                             <Box>
                                                 <Typography className="font-semibold text-gray-900">
@@ -473,15 +496,18 @@ export default function WallPage() {
                                                     className="flex gap-2 items-start bg-white p-3 rounded-2xl shadow-sm border border-gray-100"
                                                 >
                                                     <Avatar
+                                                        src={
+                                                            comment.user?.path_foto_perfil
+                                                                ? `${import.meta.env.VITE_API_URL || "https://intranet.axioma.cl"}/storage/${comment.user.path_foto_perfil}`
+                                                                : undefined
+                                                        }
                                                         sx={{
                                                             width: 32,
                                                             height: 32,
-                                                            bgcolor: "#8c2e4f",
-                                                            fontSize: "14px",
-                                                            fontWeight: "bold",
+                                                            backgroundColor: "#7b1e3f",
                                                         }}
                                                     >
-                                                        {comment.user?.name?.charAt(0) || "U"}
+                                                        {`${comment.user.name?.[0] || ""}${comment.user.apellido?.[0] || ""}`.toUpperCase() || "U"}
                                                     </Avatar>
                                                     <Box className="flex-1">
                                                         <Box className="flex justify-between items-start">
@@ -515,15 +541,18 @@ export default function WallPage() {
                                     {/* New Comment Input */}
                                     <Stack direction="row" spacing={1} alignItems="center">
                                         <Avatar
+                                            src={
+                                                user?.path_foto_perfil
+                                                    ? `${import.meta.env.VITE_API_URL || "https://intranet.axioma.cl"}/storage/${user.path_foto_perfil}`
+                                                    : undefined
+                                            }
                                             sx={{
                                                 width: 32,
                                                 height: 32,
-                                                bgcolor: "#6a1936",
-                                                fontSize: "14px",
-                                                fontWeight: "bold",
+                                                backgroundColor: "#7b1e3f",
                                             }}
                                         >
-                                            {user?.name?.charAt(0) || "U"}
+                                            {`${user?.name?.[0] || ""}${user?.apellido?.[0] || ""}`.toUpperCase() || "U"}
                                         </Avatar>
                                         <TextField
                                             fullWidth

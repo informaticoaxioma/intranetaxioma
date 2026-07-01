@@ -35,11 +35,10 @@ import SearchIcon from "@mui/icons-material/Search";
 
 const categorias = [
   "Todas",
-  "Recursos Humanos",
-  "Finanzas",
-  "Corporativo",
-  "Formación",
-  "Eventos",
+  "Adjudicaciones",
+  "Corporativas",
+  "Prevención de Riesgos",
+  "Calidad",
   "Tecnología",
 ];
 
@@ -278,9 +277,10 @@ export default function NoticiasPage() {
           flexDirection: { xs: "column", md: "row" },
           alignItems: "center",
           marginTop: 4,
+          width: "100%",
         }}
       >
-        <Box sx={{ flex: 3 }}>
+        <Box sx={{ flex: 3, width: { xs: "100%", md: "auto" } }}>
           <Tabs
             value={tabValue}
             onChange={(_, value) => setTabValue(value)}
@@ -293,7 +293,7 @@ export default function NoticiasPage() {
           </Tabs>
         </Box>
 
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1, width: { xs: "100%", md: "auto" } }}>
           <TextField
             fullWidth
             size="small"
@@ -316,7 +316,7 @@ export default function NoticiasPage() {
 
         {noticiasFiltradas.map((noticia) => (
 
-          <Grid size={{ xs: 12, md: 4 }}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={noticia.id}>
 
             <Card className="h-full">
 

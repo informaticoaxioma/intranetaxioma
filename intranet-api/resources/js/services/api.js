@@ -1283,3 +1283,31 @@ export const deleteEvent = async (id) => {
     }
     return data;
 };
+
+export const updateMyAvatar = async (file) => {
+    const token = localStorage.getItem("token");
+    const formData = new FormData();
+    formData.append("foto_perfil", file);
+
+    const response = await fetch(
+        `${API_URL}/me/avatar`,
+        {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: "application/json",
+            },
+            body: formData,
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            data.message || "Error al actualizar la foto de perfil"
+        );
+    }
+
+    return data;
+};

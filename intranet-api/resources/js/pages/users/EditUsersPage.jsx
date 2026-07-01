@@ -26,10 +26,19 @@ import {
   ListItem,
   ListItemText,
   ListItemIcon,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Tooltip,
 } from "@mui/material"
 import Grid from "@mui/material/Grid";
-import { updateUser, getUser } from "../../services/api";
+import AddIcon from "@mui/icons-material/Add"
+import { updateUser, getUser, getLaborDocuments, previewLaborDocument, downloadLaborDocument } from "../../services/api";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import { Eye, Download, Edit, FileText } from "lucide-react";
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -38,7 +47,29 @@ function TabPanel({ children, value, index, ...other }) {
     </div>
   );
 }
+function FileIcon({ type }) {
+  const colors = {
+    pdf: "#E53935",
+    doc: "#1E88E5",
+    docx: "#1E88E5",
+    xls: "#43A047",
+    xlsx: "#43A047",
+    default: "#722F37",
+  }
 
+  const fileType = type?.toLowerCase() || ""
+  const color = colors[fileType] || colors.default
+
+  return (
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5">
+      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" fill={`${color}20`} />
+      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+      <text x="12" y="16" textAnchor="middle" fontSize="6" fill={color} fontWeight="bold">
+        {fileType.toUpperCase()}
+      </text>
+    </svg>
+  )
+}
 const departamentos = [
   "Tecnología",
   "Recursos Humanos",
@@ -87,6 +118,12 @@ export default function EditUsersPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" })
+  const [laborDocuments, setLaborDocuments] = useState([])
+  const [loadingDocs, setLoadingDocs] = useState(false)
+
+  const getFileType = (path) => {
+    return path?.split(".").pop() || "pdf"
+  }
 
   const [formData, setFormData] = useState({
     name: "",
@@ -160,6 +197,22 @@ export default function EditUsersPage() {
 
     loadUser();
 
+  }, [id]);
+
+  useEffect(() => {
+    const loadLaborDocs = async () => {
+      setLoadingDocs(true);
+      try {
+        const docs = await getLaborDocuments();
+        const filteredDocs = docs.filter(doc => doc.user_id === parseInt(id));
+        setLaborDocuments(filteredDocs);
+      } catch (err) {
+        console.error("Error loading labor documents:", err);
+      } finally {
+        setLoadingDocs(false);
+      }
+    };
+    loadLaborDocs();
   }, [id]);
 
   const handleChange = (field, value) => {
@@ -294,32 +347,34 @@ export default function EditUsersPage() {
       </Breadcrumbs>
 
       {/* Header */}
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4 }}>
-        <IconButton component={Link} to="/dashboard/users" sx={{ border: 1, borderColor: "divider" }}>
-
-        </IconButton>
-        <Box sx={{ flex: 1 }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Typography variant="h4" fontWeight="bold" color="primary">
-              Editar Usuario
+      <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, alignItems: { xs: "flex-start", sm: "center" }, gap: 2, mb: 4, width: "100%" }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2, width: "100%" }}>
+          <IconButton component={Link} to="/dashboard/users" sx={{ border: 1, borderColor: "divider" }}>
+            {/* Back button */}
+          </IconButton>
+          <Box sx={{ flex: 1 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2, flexWrap: "wrap" }}>
+              <Typography variant="h4" fontWeight="bold" color="primary">
+                Editar Usuario
+              </Typography>
+              <Chip
+                label={formData.estado_cuenta === "activo" ? "Activo" : formData.estado_cuenta === "inactivo" ? "Inactivo" : "Pendiente"}
+                color={formData.estado_cuenta === "activo" ? "success" : formData.estado_cuenta === "inactivo" ? "error" : "warning"}
+                size="small"
+              />
+            </Box>
+            <Typography variant="body2" color="text.secondary">
+              ID de Usuario: {params.id} | Creado: {mockUser.fechaCreacion}
             </Typography>
-            <Chip
-              label={formData.estado_cuenta === "activo" ? "Activo" : formData.estado_cuenta === "inactivo" ? "Inactivo" : "Pendiente"}
-              color={formData.estado_cuenta === "activo" ? "success" : formData.estado_cuenta === "inactivo" ? "error" : "warning"}
-              size="small"
-            />
           </Box>
-          <Typography variant="body2" color="text.secondary">
-            ID de Usuario: {params.id} | Creado: {mockUser.fechaCreacion}
-          </Typography>
         </Box>
-        <Button variant="outlined" color="error">
+        <Button variant="outlined" color="error" sx={{ width: { xs: "100%", sm: "auto" } }}>
           Eliminar
         </Button>
       </Box>
 
       {/* User Header Card */}
-      <Paper sx={{ p: 3, mb: 3, display: "flex", alignItems: "center", gap: 3 }}>
+      <Paper sx={{ p: 3, mb: 3, display: "flex", flexDirection: { xs: "column", sm: "row" }, alignItems: "center", textAlign: { xs: "center", sm: "left" }, gap: 3 }}>
         <Box sx={{ position: "relative" }}>
           <input
             type="file"
@@ -373,7 +428,7 @@ export default function EditUsersPage() {
           <Typography variant="body1" color="text.secondary">
             {formData.cargo} - {formData.departamento}
           </Typography>
-          <Box sx={{ display: "flex", gap: 3, mt: 1 }}>
+          <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, alignItems: "center", justifyContent: { xs: "center", sm: "flex-start" }, gap: { xs: 1, sm: 3 }, mt: 1 }}>
             <Typography variant="body2" color="text.secondary" sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
               {formData.email}
             </Typography>
@@ -382,7 +437,7 @@ export default function EditUsersPage() {
             </Typography>
           </Box>
         </Box>
-        <Box sx={{ textAlign: "right" }}>
+        <Box sx={{ textAlign: { xs: "center", sm: "right" }, width: { xs: "100%", sm: "auto" } }}>
           <Typography variant="caption" color="text.secondary">
             Último acceso
           </Typography>
@@ -392,10 +447,10 @@ export default function EditUsersPage() {
 
       {/* Tabs */}
       <Paper sx={{ mb: 3 }}>
-        <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)} sx={{ borderBottom: 1, borderColor: "divider", px: 2 }}>
+        <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)} sx={{ borderBottom: 1, borderColor: "divider", px: 2 }} variant="scrollable" scrollButtons="auto">
           <Tab iconPosition="start" label="Información Personal" />
           <Tab iconPosition="start" label="Seguridad" />
-
+          <Tab iconPosition="start" label="Documentos Laborales" />
         </Tabs>
 
         {/* Tab 0: Información Personal */}
@@ -598,11 +653,11 @@ export default function EditUsersPage() {
               </Grid>
             </Grid>
 
-            <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 4, gap: 2 }}>
-              <Button component={Link} to="/dashboard/users" variant="outlined" color="inherit">
+            <Box sx={{ display: "flex", flexDirection: { xs: "column-reverse", sm: "row" }, justifyContent: "flex-end", mt: 4, gap: 2 }}>
+              <Button component={Link} to="/dashboard/users" variant="outlined" color="inherit" fullWidth sx={{ maxWidth: { sm: "auto" } }}>
                 Cancelar
               </Button>
-              <Button variant="contained" onClick={handleSave} >
+              <Button variant="contained" onClick={handleSave} fullWidth sx={{ maxWidth: { sm: "auto" } }}>
                 Guardar Cambios
               </Button>
             </Box>
@@ -702,6 +757,117 @@ export default function EditUsersPage() {
           </Box>
         </TabPanel>
 
+        {/* Tab 2: Documentos Laborales */}
+        <TabPanel value={tabValue} index={2}>
+          <Box sx={{ px: 3, pb: 2 }}>
+            <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, justifyContent: "space-between", alignItems: { xs: "flex-start", sm: "center" }, gap: 2, mb: 3 }}>
+              <Typography variant="h6" fontWeight={600} sx={{ color: "#4A1C23" }}>
+                Documentos Laborales del Colaborador
+              </Typography>
+              <Button
+                component={Link}
+                to={`/dashboard/labor-documents/crear?user_id=${id}`}
+                variant="contained"
+                size="small"
+                sx={{
+                  backgroundColor: "#6a1936",
+                  textTransform: "none",
+                  width: { xs: "100%", sm: "auto" },
+                  "&:hover": {
+                    backgroundColor: "#4a1025",
+                  },
+                }}
+              >
+                Subir Nuevo Documento
+              </Button>
+            </Box>
+
+            {loadingDocs ? (
+              <Typography variant="body2" color="text.secondary">
+                Cargando documentos...
+              </Typography>
+            ) : laborDocuments.length === 0 ? (
+              <Typography variant="body2" color="text.secondary">
+                No hay documentos laborales registrados para este usuario.
+              </Typography>
+            ) : (
+              <TableContainer component={Paper} sx={{ boxShadow: "none", border: "1px solid", borderColor: "divider", overflowX: "auto", maxWidth: "100%" }}>
+                <Table>
+                  <TableHead sx={{ bgcolor: "#fcfaf7" }}>
+                    <TableRow>
+                      <TableCell sx={{ fontWeight: "bold" }}>Documento</TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>Tipo Documento</TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>Fecha Emisión</TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>Fecha Vencimiento</TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }} align="center">Acciones</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {laborDocuments.map((doc) => (
+                      <TableRow key={doc.id} hover>
+                        <TableCell>
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                            <FileIcon type={getFileType(doc.archivo)} />
+                            <Box>
+                              <Typography variant="body2" fontWeight="semibold" sx={{ color: "#4a1025" }}>
+                                {doc.tipo_documento}
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                {doc.archivo}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </TableCell>
+                        <TableCell>{doc.tipo_documento}</TableCell>
+                        <TableCell>{doc.fecha_emision || "-"}</TableCell>
+                        <TableCell>{doc.fecha_vencimiento || "-"}</TableCell>
+                        <TableCell align="center">
+                          <Box sx={{ display: "flex", justifyContent: "center", gap: 1 }}>
+                            <Tooltip title="Vista previa">
+                              <IconButton
+                                size="small"
+                                onClick={() => previewLaborDocument(doc.id)}
+                              >
+                                <Eye size={18} />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Descargar">
+                              <IconButton
+                                size="small"
+                                onClick={async () => {
+                                  try {
+                                    await downloadLaborDocument(doc.id, doc.archivo);
+                                  } catch (error) {
+                                    console.error(error);
+                                    setSnackbar({
+                                      open: true,
+                                      message: "Error al descargar el documento",
+                                      severity: "error",
+                                    });
+                                  }
+                                }}
+                              >
+                                <Download size={18} />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Editar">
+                              <IconButton
+                                size="small"
+                                onClick={() => navigate(`/dashboard/labor-documents/editar/${doc.id}`)}
+                              >
+                                <Edit size={18} />
+                              </IconButton>
+                            </Tooltip>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          </Box>
+        </TabPanel>
 
       </Paper>
 
