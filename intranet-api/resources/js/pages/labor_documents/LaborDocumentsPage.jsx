@@ -69,7 +69,8 @@ const tiposDocumento = [
   "Contrato de Trabajo",
   "Anexo de Contrato",
   "Certificado Laboral",
-  "Comprobante de Vacaciones",
+  "Finiquito",
+  "Ficha Trabajador",
   "Otro",
 ]
 
@@ -186,7 +187,7 @@ export default function LaborDocumentsPage() {
             {isAdmin ? "Gestión de Documentos Laborales" : "Mis Documentos Laborales"}
           </Typography>
           <Typography className="text-gray-500 mt-1">
-            {isAdmin 
+            {isAdmin
               ? "Administra contratos, anexos y certificados del personal."
               : "Visualiza y descarga tus contratos, anexos y otros documentos."}
           </Typography>

@@ -9,3 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('app:send-birthday-greetings')->dailyAt('09:00');
+Schedule::command('app:send-monthly-birthday-reminders')->monthlyOn(1, '09:00');

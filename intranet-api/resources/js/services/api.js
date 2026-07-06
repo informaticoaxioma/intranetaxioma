@@ -149,32 +149,35 @@ export const getDocumentById = async (id) => {
 };
 
 export const updateNews = async (id, newsData) => {
-
     const token = localStorage.getItem("token");
+    const formData = new FormData();
+
+    formData.append("_method", "PUT");
+
+    Object.keys(newsData).forEach((key) => {
+        if (newsData[key] !== null && newsData[key] !== undefined) {
+            if (key === "imagen" && !(newsData[key] instanceof File)) {
+                return;
+            }
+            formData.append(key, newsData[key]);
+        }
+    });
 
     const response = await fetch(
         `${API_URL}/news/${id}`,
         {
-            method: "PUT",
+            method: "POST",
             headers: {
-                "Content-Type":
-                    "application/json",
-                "Accept":
-                    "application/json",
-                Authorization:
-                    `Bearer ${token}`,
+                Accept: "application/json",
+                Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(
-                newsData
-            ),
+            body: formData,
         }
     );
 
-    const data =
-        await response.json();
+    const data = await response.json();
 
     if (!response.ok) {
-
         throw new Error(
             data.message ||
             "Error al actualizar noticia"

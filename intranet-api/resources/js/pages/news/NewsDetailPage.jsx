@@ -59,9 +59,7 @@ export default function NewsDetailPage() {
         });
       }
     }
-  };
-
-  const [formData, setFormData] = useState({
+  }; const [formData, setFormData] = useState({
     titulo: "",
     resumen: "",
     texto_noticia: "",
@@ -69,8 +67,10 @@ export default function NewsDetailPage() {
     autor: "",
     created_at: "",
     path_imagen: "",
+    imagen: null,
   });
 
+  const [imagenPreview, setImagenPreview] = useState(null);
   const [errors, setErrors] = useState({});
 
   const [snackbar, setSnackbar] = useState({
@@ -97,7 +97,9 @@ export default function NewsDetailPage() {
           categoria: data.categoria || "",
           autor: data.autor || "",
           path_imagen: data.path_imagen || "",
+          imagen: null,
         });
+        setImagenPreview(null);
 
       } catch (error) {
 
@@ -121,9 +123,17 @@ export default function NewsDetailPage() {
         );
 
       console.log("RESPUESTA: ", response);
-      setFormData(
-        response
-      );
+      setNoticia(response);
+      setFormData({
+        titulo: response.titulo || "",
+        resumen: response.resumen || "",
+        texto_noticia: response.texto_noticia || "",
+        categoria: response.categoria || "",
+        autor: response.autor || "",
+        path_imagen: response.path_imagen || "",
+        imagen: null,
+      });
+      setImagenPreview(null);
       setIsEditing(false);
       setSnackbar({
         open: true,
@@ -137,7 +147,7 @@ export default function NewsDetailPage() {
       setSnackbar({
         open: true,
         message:
-          error.message,
+          error.message || "Error al actualizar noticia",
         severity: "error",
       });
     }
@@ -232,9 +242,12 @@ export default function NewsDetailPage() {
                 borderTopLeftRadius: 8,
                 borderTopRightRadius: 8,
               }}
-              image={formData.path_imagen
-                ? `http://127.0.0.1:8000/storage/${formData.path_imagen}`
-                : "https://picsum.photos/600/300"
+              image={
+                imagenPreview
+                  ? imagenPreview
+                  : formData.path_imagen
+                    ? `http://127.0.0.1:8000/storage/${formData.path_imagen}`
+                    : "https://picsum.photos/600/300"
               }
               alt={formData.titulo}
             />
@@ -379,6 +392,35 @@ export default function NewsDetailPage() {
                         value={formData.autor}
                         onChange={(e) => handleChange("autor", e.target.value)}
                       />
+                    </Grid>
+
+                    <Grid size={{ xs: 12 }}>
+                      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                        <Button
+                          variant="outlined"
+                          component="label"
+                          sx={{ textTransform: "none", alignSelf: "flex-start", color: "#6a1936", borderColor: "#6a1936", "&:hover": { borderColor: "#4a1025", backgroundColor: "rgba(106, 25, 54, 0.04)" } }}
+                        >
+                          Seleccionar nueva fotografía
+                          <input
+                            type="file"
+                            hidden
+                            accept="image/*"
+                            onChange={(e) => {
+                              if (e.target.files && e.target.files[0]) {
+                                const file = e.target.files[0];
+                                handleChange("imagen", file);
+                                setImagenPreview(URL.createObjectURL(file));
+                              }
+                            }}
+                          />
+                        </Button>
+                        {formData.imagen && (
+                          <Typography variant="caption" color="text.secondary">
+                            Archivo seleccionado: {formData.imagen.name}
+                          </Typography>
+                        )}
+                      </Box>
                     </Grid>
                   </Grid>
 

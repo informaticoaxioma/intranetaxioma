@@ -35,7 +35,7 @@ class NewsController extends Controller
             'texto_noticia' => 'required|string',
             'categoria' => 'required|string|max:255',
             'autor' => 'required|string|max:255',
-            'imagen' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'imagen' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
         ]);
         /*
         |--------------------------------------------------------------------------
@@ -89,8 +89,21 @@ class NewsController extends Controller
             'texto_noticia' => 'sometimes|string',
             'categoria' => 'sometimes|string|max:255',
             'autor' => 'sometimes|string|max:255',
-            'imagen' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'imagen' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
         ]);
+
+        if ($request->hasFile('imagen')) {
+            $imagen = $request->file('imagen');
+            $path = $imagen->store('newsphotos', 'public');
+            
+            // Delete old image if exists
+            if ($news->path_imagen && \Illuminate\Support\Facades\Storage::disk('public')->exists($news->path_imagen)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($news->path_imagen);
+            }
+            
+            $validated['path_imagen'] = $path;
+            unset($validated['imagen']); // prevent raw UploadedFile instance from being passed to update method directly
+        }
 
         $updated = $this->newsService->update($news, $validated);
 

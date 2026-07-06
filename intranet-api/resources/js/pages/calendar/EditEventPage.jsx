@@ -19,10 +19,9 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { getEventById, updateEvent, deleteEvent } from "../../services/api";
 
 const eventTypes = {
-  reunion: "Reunión",
   capacitacion: "Capacitación",
   evento: "Evento",
-  deadline: "Deadline",
+  cumpleanos: "Cumpleaños",
   festivo: "Festivo",
 };
 

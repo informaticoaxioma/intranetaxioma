@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import Grid from "@mui/material/Grid";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Autocomplete from "@mui/material/Autocomplete";
 
 import { createLaborDocument, getUsers } from "../../services/api";
@@ -24,7 +24,9 @@ const tiposDocumento = [
     "Contrato de Trabajo",
     "Anexo de Contrato",
     "Certificado Laboral",
-    "Comprobante de Vacaciones",
+    "Certificado de Salud",
+    "Finiquito",
+    "Ficha trabajador",
     "Otro",
 ];
 
@@ -54,18 +56,24 @@ export default function CreateLaborDocumentPage() {
         setForm({ ...form, [field]: value });
     };
 
+    const [searchParams] = useSearchParams();
+    const queryUserId = searchParams.get("user_id");
+
     useEffect(() => {
         const cargarUsuarios = async () => {
             try {
                 const data = await getUsers();
                 setUsuarios(data);
+                if (queryUserId) {
+                    setForm(prev => ({ ...prev, user_id: queryUserId }));
+                }
             } catch (error) {
                 console.error(error);
             }
         };
 
         cargarUsuarios();
-    }, []);
+    }, [queryUserId]);
 
     const handleSave = async () => {
         try {
@@ -86,7 +94,7 @@ export default function CreateLaborDocumentPage() {
                 message: "Documento laboral creado correctamente",
                 severity: "success",
             });
-            
+
             setTimeout(() => {
                 navigate("/dashboard/labor-documents");
             }, 1000);
@@ -112,7 +120,33 @@ export default function CreateLaborDocumentPage() {
                     <Grid size={{ xs: 12, md: 6 }}>
                         <Autocomplete
                             options={usuarios}
-                            getOptionLabel={(option) => option.name || ""}
+                            value={usuarios.find(u => String(u.id) === String(form.user_id)) || null}
+                            getOptionLabel={(option) => `${option.name || ""} ${option.apellido || ""}`.trim()}
+                            filterOptions={(options, state) => {
+                                const query = state.inputValue.toLowerCase();
+                                return options.filter((option) => {
+                                    const fullName = `${option.name || ""} ${option.apellido || ""}`.toLowerCase();
+                                    const rut = (option.rut || "").toLowerCase();
+                                    return fullName.includes(query) || rut.includes(query);
+                                });
+                            }}
+                            renderOption={(props, option) => {
+                                const { key, ...restProps } = props;
+                                return (
+                                    <li key={key} {...restProps}>
+                                        <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
+                                            <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                                {option.name} {option.apellido}
+                                            </Typography>
+                                            {option.rut && (
+                                                <Typography variant="body2" sx={{ color: "#722F37", fontWeight: 600 }}>
+                                                    {option.rut}
+                                                </Typography>
+                                            )}
+                                        </Box>
+                                    </li>
+                                );
+                            }}
                             onChange={(event, value) =>
                                 handleChange("user_id", value?.id || "")
                             }

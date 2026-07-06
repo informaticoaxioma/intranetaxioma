@@ -37,20 +37,20 @@ const slidesComite = [
   {
     title: "Comité Paritario - Prevención y Seguridad",
     description: "Promovemos una cultura de autocuidado e identificamos riesgos en nuestras instalaciones, velando por que cada miembro del equipo trabaje en condiciones óptimas y protegidas.",
-    image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80",
-    link: "/dashboard/news"
+    image: "/imagenes/imagen-principal-mutual.avif",
+    link: "https://www.mutual.cl/portal/publico/empresa/home"
   },
   {
     title: "Comité Paritario - Bienestar Laboral",
     description: "Fomentamos la salud y calidad de vida de nuestros trabajadores, impulsando la mejora continua de los espacios de trabajo y el equilibrio entre vida laboral y personal.",
-    image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1200&q=80",
-    link: "/dashboard/profile"
+    image: "/imagenes/bannercajalosandes.png",
+    link: "https://somosandes.cajalosandes.cl/"
   },
   {
-    title: "Comité Paritario - Capacitaciones y Emergencias",
-    description: "Coordinamos planes de emergencia, simulacros y capacitaciones constantes para que todo nuestro personal esté preparado ante cualquier eventualidad de manera coordinada.",
-    image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80",
-    link: "https://www.google.com"
+    title: "Sistema Ticketera Informatica",
+    description: "Enlace directo a nuestro sistema de ticketing informático para la gestión de incidencias y solicitudes de soporte técnico.",
+    image: "/imagenes/consorsio-logo.png",
+    link: "https://faceted-tilapia-231.notion.site/2e17837f803980dfa073f2e3ce488fe2?pvs=105"
   }
 ];
 

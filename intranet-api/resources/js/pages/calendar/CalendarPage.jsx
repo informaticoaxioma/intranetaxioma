@@ -32,18 +32,16 @@ import CloseIcon from "@mui/icons-material/Close";
 
 
 const eventTypeColors = {
-  reunion: { bg: "#E3F2FD", text: "#1565C0", border: "#1565C0" },
   capacitacion: { bg: "#E8F5E9", text: "#2E7D32", border: "#2E7D32" },
   evento: { bg: "#FFF3E0", text: "#E65100", border: "#E65100" },
-  deadline: { bg: "#FFEBEE", text: "#C62828", border: "#C62828" },
+  cumpleanos: { bg: "#FFEBEE", text: "#C62828", border: "#C62828" },
   festivo: { bg: "#F3E5F5", text: "#7B1FA2", border: "#7B1FA2" },
 }
 
 const eventTypeLabels = {
-  reunion: "Reunion",
   capacitacion: "Capacitacion",
   evento: "Evento",
-  deadline: "Deadline",
+  cumpleanos: "Cumpleaños",
   festivo: "Festivo",
 }
 
