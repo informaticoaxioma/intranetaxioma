@@ -74,6 +74,9 @@ const departamentos = [
   "Tecnología",
   "Recursos Humanos",
   "Finanzas",
+  "Flota",
+  "Calidad",
+  "Contabilidad",
   "Marketing",
   "Ventas",
   "Operaciones",
@@ -83,8 +86,11 @@ const departamentos = [
 
 const cargos = {
   Tecnología: ["Director de TI", "Desarrollador Senior", "Desarrollador Junior", "Analista de Sistemas", "Soporte Técnico"],
-  "Recursos Humanos": ["Gerente de RRHH", "Cordinadora de Contratos", "Analista de RRHH", "Reclutador", "Especialista en Nóminas"],
+  "Recursos Humanos": ["Gerente de RRHH", "Cordinadora de Contratos", "Jefa de RRHH y Contabilidad", "Analista de RRHH", "Asistente Contrato RRHH", "Reclutador", "Especialista en Nóminas"],
   Finanzas: ["Director Financiero", "Analista Financiero", "Contador", "Tesorero"],
+  Flota: ["Asistente de Flota"],
+  Calidad: ["Jefe Gestión de Calidad"],
+  Contabilidad: ["Asistente Contable", "Analista Contable"],
   Marketing: ["Director de Marketing", "Coordinador de Marketing", "Community Manager", "Diseñador Gráfico"],
   Ventas: ["Director de Ventas", "Gerente de Ventas", "Ejecutivo de Ventas", "Representante Comercial"],
   Operaciones: ["Gerente de Operaciones", "Supervision", "Coordinador de Logística", "Analista de Procesos"],

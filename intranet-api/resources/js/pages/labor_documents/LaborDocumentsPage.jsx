@@ -69,6 +69,7 @@ const tiposDocumento = [
   "Contrato de Trabajo",
   "Anexo de Contrato",
   "Certificado Laboral",
+  "Certificado de Salud",
   "Finiquito",
   "Ficha Trabajador",
   "Otro",

@@ -132,22 +132,18 @@ export default function AppRouter() {
                     path="/dashboard/news"
 
                     element={
-                        <PrivateRoute>
-                            <DashboardLayout>
-                                <NewsPage />
-                            </DashboardLayout>
-                        </PrivateRoute>
+                        <DashboardLayout>
+                            <NewsPage />
+                        </DashboardLayout>
                     }
                 />
 
                 <Route
                     path="/dashboard/news/:id"
                     element={
-                        <PrivateRoute>
-                            <DashboardLayout>
-                                <NewsDetailPage />
-                            </DashboardLayout>
-                        </PrivateRoute>
+                        <DashboardLayout>
+                            <NewsDetailPage />
+                        </DashboardLayout>
                     }
                 />
 

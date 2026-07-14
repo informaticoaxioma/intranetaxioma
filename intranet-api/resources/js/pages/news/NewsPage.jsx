@@ -28,6 +28,12 @@ import {
   MenuItem,
 } from "@mui/material";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || (
+  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://127.0.0.1:8000"
+    : "https://intranet.axioma.cl"
+);
+
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 
@@ -329,7 +335,7 @@ export default function NoticiasPage() {
                   component="img"
                   height="140"
                   image={noticia.path_imagen
-                    ? `http://127.0.0.1:8000/storage/${noticia.path_imagen}`
+                    ? `${API_BASE_URL}/storage/${noticia.path_imagen}`
                     : "https://picsum.photos/600/300"
                   }
                   alt={noticia.titulo}

@@ -1,4 +1,8 @@
-const API_URL = "http://127.0.0.1:8000/api";
+const API_URL = import.meta.env.VITE_API_URL
+    ? `${import.meta.env.VITE_API_URL}/api`
+    : (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+        ? "http://127.0.0.1:8000/api"
+        : "https://intranet.axioma.cl/api");
 
 export async function login(email, password) {
     const response = await fetch(`${API_URL}/login`, {
@@ -89,9 +93,11 @@ export async function getNews() {
 
     const response = await fetch(`${API_URL}/news`, {
         method: "GET",
-        headers: {
+        headers: token ? {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
+        } : {
+            "Content-Type": "application/json",
         },
     });
 
@@ -109,8 +115,10 @@ export const getNewsById = async (id) => {
     const response = await fetch(
         `${API_URL}/news/${id}`,
         {
-            headers: {
+            headers: token ? {
                 Authorization: `Bearer ${token}`,
+                Accept: "application/json",
+            } : {
                 Accept: "application/json",
             },
         }

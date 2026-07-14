@@ -466,9 +466,7 @@ export default function DashboardPage() {
                       <p className="text-sm text-muted-foreground">
 
                         {
-                          new Date(
-                            event.fecha
-                          ).toLocaleDateString(
+                          new Date(`${event.fecha}T00:00:00`).toLocaleDateString(
                             "es-CL"
                           )
                         }

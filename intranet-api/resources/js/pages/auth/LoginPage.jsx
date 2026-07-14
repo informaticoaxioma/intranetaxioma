@@ -67,10 +67,8 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-accent/20" />
         <div className="relative z-10 flex flex-col justify-between p-12 text-primary-foreground">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-card/10 backdrop-blur flex items-center justify-center">
-              <div className="w-12 h-12 rounded-xl bg-card/10 backdrop-blur flex items-center justify-center">
-                <Business className="w-7 h-7" />
-              </div>
+            <div className="w-12 h-12 overflow-hidden rounded-xl bg-white flex items-center justify-center">
+              <img src="/imagenes/logoAxioma.jpg" alt="Logo Axioma" className="w-full h-full object-contain" />
             </div>
             <div>
               <h2 className="text-xl font-bold tracking-tight">Axioma</h2>
@@ -116,8 +114,8 @@ export default function LoginPage() {
         <div className="w-full max-w-md space-y-8">
           {/* Logo móvil */}
           <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
-              <Business className="w-7 h-7 text-primary-foreground" />
+            <div className="w-12 h-12 overflow-hidden rounded-xl bg-white flex items-center justify-center">
+              <img src="/imagenes/logoAxioma.jpg" alt="Logo Axioma" className="w-full h-full object-contain" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-foreground">Axioma</h2>

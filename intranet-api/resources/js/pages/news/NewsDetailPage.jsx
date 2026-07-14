@@ -20,6 +20,12 @@ import Select from "@mui/material/Select"
 import MenuItem from "@mui/material/MenuItem"
 import { Avatar, TextField } from "@mui/material"
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || (
+  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://127.0.0.1:8000"
+    : "https://intranet.axioma.cl"
+);
+
 function ArrowLeftIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -246,7 +252,7 @@ export default function NewsDetailPage() {
                 imagenPreview
                   ? imagenPreview
                   : formData.path_imagen
-                    ? `http://127.0.0.1:8000/storage/${formData.path_imagen}`
+                    ? `${API_BASE_URL}/storage/${formData.path_imagen}`
                     : "https://picsum.photos/600/300"
               }
               alt={formData.titulo}

@@ -33,25 +33,27 @@
             letter-spacing: -0.05em;
         }
         .header p {
-            color: #fec7bfff;
+            color: #ffd0de;
             margin: 8px 0 0 0;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 500;
         }
         .content {
             padding: 40px 30px;
             color: #1f2937;
-            text-align: center;
         }
         .celebration-icon {
             font-size: 48px;
             margin-bottom: 20px;
         }
         .content h2 {
-            font-size: 24px;
+            font-size: 18px;
             font-weight: 700;
             margin-top: 0;
-            color: #2a110fff;
+            color: #7b1e3f;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 10px;
         }
         .content p {
             font-size: 16px;

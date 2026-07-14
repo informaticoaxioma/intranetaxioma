@@ -14,6 +14,8 @@ use App\Http\Controllers\WallController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/news', [NewsController::class, 'index']);
+Route::get('/news/{id}', [NewsController::class, 'show']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -23,8 +25,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // Usuarios normales
-    Route::get('/news', [NewsController::class, 'index']);
-    Route::get('/news/{id}', [NewsController::class, 'show']);
 
     Route::get('/events', [EventController::class, 'index']);
     Route::get('/events/{event}', [EventController::class, 'show']);
