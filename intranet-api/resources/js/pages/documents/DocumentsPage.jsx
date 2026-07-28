@@ -87,12 +87,12 @@ function FileIcon({ type }) {
 // ==========================
 
 const carpetas = [
-  { id: 1, nombre: "Politicas y Normativas", color: "#722F37", cantidad: 24 },
-  { id: 2, nombre: "Contabilidad y RRHH", color: "#4A1C23", cantidad: 18 },
-  { id: 3, nombre: "Finanzas", color: "#8B4513", cantidad: 32 },
-  { id: 4, nombre: "Corporativo", color: "#5D6D7E", cantidad: 45 },
-  { id: 5, nombre: "Formación", color: "#1E88E5", cantidad: 15 },
-  { id: 7, nombre: "Tecnología", color: "#1E88E5", cantidad: 15 },
+  { id: 1, nombre: "Politicas y Normativas", color: "#722F37" },
+  { id: 2, nombre: "Contabilidad y RRHH", color: "#4A1C23" },
+  { id: 3, nombre: "Finanzas", color: "#8B4513" },
+  { id: 4, nombre: "Corporativo", color: "#5D6D7E" },
+  { id: 5, nombre: "Formación", color: "#1E88E5" },
+  { id: 7, nombre: "Tecnología", color: "#1E88E5" },
 ]
 
 
@@ -300,12 +300,6 @@ export default function DocumentsPage() {
                     {carpeta.nombre}
                   </Typography>
 
-                  <Typography
-                    variant="caption"
-                    className="text-gray-500"
-                  >
-                    {carpeta.cantidad} documents
-                  </Typography>
                 </CardContent>
               </Card>
             </Grid>

@@ -471,20 +471,6 @@ export default function DashboardPage() {
                           )
                         }
 
-                        {" • "}
-
-                        {
-                          new Date(
-                            event.fecha
-                          ).toLocaleTimeString(
-                            "es-CL",
-                            {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )
-                        }
-
                       </p>
 
                     </div>

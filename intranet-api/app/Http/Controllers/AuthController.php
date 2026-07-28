@@ -146,6 +146,13 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
+        if ($user->estado_cuenta === 'inactivo') {
+            Auth::logout();
+            return response()->json([
+                'message' => 'Su cuenta se encuentra inactiva. Por favor, contacte al administrador.'
+            ], 403);
+        }
+
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([

@@ -10,4 +10,4 @@ Artisan::command('inspire', function () {
 
 Schedule::command('app:send-birthday-greetings')->dailyAt('09:00');
 Schedule::command('app:send-monthly-birthday-reminders')->monthlyOn(1, '09:00');
-Schedule::command('app:send-calendar-event-reminders')->dailyAt('09:00');
+Schedule::command('app:send-calendar-event-reminders')->dailyAt('10:00');

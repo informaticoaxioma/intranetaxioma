@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recordatorio de Eventos</title>
+    <title>Recordatorio de Eventos Intranet</title>
     <style>
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -112,7 +112,7 @@
 <body>
     <div class="email-container">
         <div class="header">
-            <h1>📅 Recordatorio de Eventos</h1>
+            <h1>📅 Recordatorio de Eventos Intranet</h1>
             <p>Intranet Corporativa Axioma</p>
         </div>
         <div class="content">
@@ -126,19 +126,6 @@
                             <span class="event-type-badge">{{ $event->tipo }}</span>
                         @endif
                         <h3 class="event-title">{{ $event->titulo }}</h3>
-                        
-                        <p class="event-time-location">
-                            ⏰ Horario: 
-                            <strong>
-                                {{ !empty($event->hora_inicio) ? substr($event->hora_inicio, 0, 5) : '00:00' }} 
-                                @if(!empty($event->hora_fin))
-                                    - {{ substr($event->hora_fin, 0, 5) }}
-                                @endif
-                            </strong>
-                            @if(!empty($event->ubicacion))
-                                &nbsp;&bull;&nbsp; 📍 Ubicación: <strong>{{ $event->ubicacion }}</strong>
-                            @endif
-                        </p>
                         
                         @if(!empty($event->descripcion))
                             <p class="event-description">{{ $event->descripcion }}</p>

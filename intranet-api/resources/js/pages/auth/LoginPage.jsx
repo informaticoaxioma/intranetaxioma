@@ -53,7 +53,7 @@ export default function LoginPage() {
 
     } catch (error) {
       console.error(error);
-      alert("Credenciales incorrectas");
+      alert(error.message || "Credenciales incorrectas");
     } finally {
       setIsLoading(false);
     }
