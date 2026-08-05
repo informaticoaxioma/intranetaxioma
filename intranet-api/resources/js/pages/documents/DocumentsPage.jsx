@@ -87,23 +87,23 @@ function FileIcon({ type }) {
 // ==========================
 
 const carpetas = [
-  { id: 1, nombre: "Politicas y Normativas", color: "#722F37" },
-  { id: 2, nombre: "Contabilidad y RRHH", color: "#4A1C23" },
+  { id: 1, nombre: "Recursos humanos", color: "#722F37" },
+  { id: 2, nombre: "Politicas y Normativas", color: "#4A1C23" },
   { id: 3, nombre: "Finanzas", color: "#8B4513" },
-  { id: 4, nombre: "Corporativo", color: "#5D6D7E" },
-  { id: 5, nombre: "Formación", color: "#1E88E5" },
-  { id: 7, nombre: "Tecnología", color: "#1E88E5" },
+  { id: 4, nombre: "Prevención de Riesgo", color: "#D35400" },
+  { id: 5, nombre: "Servicios Técnicos", color: "#1F618D" },
+  { id: 6, nombre: "Flota", color: "#1E8449" },
 ]
 
 
 const categorias = [
   "Todos",
+  "Recursos humanos",
   "Politicas y Normativas",
-  "Contabilidad y RRHH",
   "Finanzas",
-  "Corporativo",
-  "Formación",
-  "Tecnología",
+  "Prevención de Riesgo",
+  "Servicios Técnicos",
+  "Flota",
 ]
 
 // ==========================

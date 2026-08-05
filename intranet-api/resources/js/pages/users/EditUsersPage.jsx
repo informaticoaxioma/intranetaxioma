@@ -456,7 +456,7 @@ export default function EditUsersPage() {
         <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)} sx={{ borderBottom: 1, borderColor: "divider", px: 2 }} variant="scrollable" scrollButtons="auto">
           <Tab iconPosition="start" label="Información Personal" />
           <Tab iconPosition="start" label="Seguridad" />
-          <Tab iconPosition="start" label="Documentos Laborales" />
+          {/* <Tab iconPosition="start" label="Documentos Laborales" /> */}
         </Tabs>
 
         {/* Tab 0: Información Personal */}
@@ -764,6 +764,7 @@ export default function EditUsersPage() {
         </TabPanel>
 
         {/* Tab 2: Documentos Laborales */}
+        {/* 
         <TabPanel value={tabValue} index={2}>
           <Box sx={{ px: 3, pb: 2 }}>
             <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, justifyContent: "space-between", alignItems: { xs: "flex-start", sm: "center" }, gap: 2, mb: 3 }}>
@@ -874,6 +875,7 @@ export default function EditUsersPage() {
             )}
           </Box>
         </TabPanel>
+        */}
 
       </Paper>
 

@@ -527,7 +527,7 @@ export default function ProfilePage() {
         }}
       >
         <Tab label="Información" value="info" />
-        <Tab label="Documentos Laborales" value="documents" />
+        {/* <Tab label="Documentos Laborales" value="documents" /> */}
         {/* <Tab label="Vacaciones" value="vacations" /> */}
       </Tabs>
 
@@ -628,6 +628,7 @@ export default function ProfilePage() {
 
 
       {/* DOCUMENTOS LABORALES */}
+      {/* 
       {tab === "documents" && (
         <Card sx={{ borderRadius: 2 }}>
           <CardHeader
@@ -646,7 +647,6 @@ export default function ProfilePage() {
 
           <CardContent>
             <Stack >
-              {/* FILTROS */}
               <Box className="flex flex-col lg:flex-row justify-between gap-4 mb-6">
 
 
@@ -663,7 +663,6 @@ export default function ProfilePage() {
                 </Box>
               </Box>
 
-              {/* TABLA */}
               {vistaMode === "list" ? (
                 <TableContainer component={Paper}>
 
@@ -842,6 +841,7 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
       )}
+      */}
 
       {/* VACACIONES */}
       {tab === "vacations" && (

@@ -80,6 +80,8 @@ export default function NoticiasPage() {
   }, []);
 
 
+  const [currentPage, setCurrentPage] = useState(1);
+
   const [form, setForm] = useState({
     titulo: "",
     resumen: "",
@@ -88,6 +90,10 @@ export default function NoticiasPage() {
     autor: "",
     imagen: null,
   });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [tabValue, busqueda]);
 
   const noticiasFiltradas = noticias.filter((noticia) => {
     const matchCategoria =
@@ -104,6 +110,13 @@ export default function NoticiasPage() {
 
     return matchCategoria && matchBusqueda;
   });
+
+  const itemsPerPage = 6;
+  const totalPages = Math.ceil(noticiasFiltradas.length / itemsPerPage);
+  const paginatedNoticias = noticiasFiltradas.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const noticiasDestacadas = noticias.filter(
     (n) => n.destacada
@@ -320,7 +333,7 @@ export default function NoticiasPage() {
       {/* LISTA */}
       <Grid container spacing={3} sx={{ marginTop: 3 }} >
 
-        {noticiasFiltradas.map((noticia) => (
+        {paginatedNoticias.map((noticia) => (
 
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={noticia.id}>
 
@@ -394,7 +407,12 @@ export default function NoticiasPage() {
 
       {/* PAGINACION */}
       <Box className="flex justify-center mt-8">
-        <Pagination count={3} color="primary" />
+        <Pagination
+          count={totalPages || 1}
+          page={currentPage}
+          onChange={(_, page) => setCurrentPage(page)}
+          color="primary"
+        />
       </Box>
 
       {/* MODAL */}

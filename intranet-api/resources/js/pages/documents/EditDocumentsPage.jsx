@@ -19,15 +19,15 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import {getDocumentById, updateDocument} from "../../services/api";
+import { getDocumentById, updateDocument } from "../../services/api";
 
 const categorias = [
-  "Recursos Humanos",
+  "Recursos humanos",
+  "Politicas y Normativas",
   "Finanzas",
-  "Corporativo",
-  "Formación",
-  "Legal",
-  "Tecnología",
+  "Prevención de Riesgo",
+  "Servicios Técnicos",
+  "Flota",
 ];
 
 export default function EditarDocumentoPage() {
@@ -103,7 +103,7 @@ export default function EditarDocumentoPage() {
         </Typography>
 
         <Grid container sx={{ pt: 2 }} spacing={3}>
-          <Grid size={{ xs: 12}}>
+          <Grid size={{ xs: 12 }}>
             <TextField
               fullWidth
               label="Nombre del documento"
@@ -141,22 +141,22 @@ export default function EditarDocumentoPage() {
           </Grid>
 
           {/* Upload */}
-          <Grid size={{ xs: 12}}>
+          <Grid size={{ xs: 12 }}>
             <Button
               variant="outlined"
               component="label"
               startIcon={<UploadFileIcon />}
             >
               Reemplazar Archivo
-                <input
-                    type="file"
-                    onChange={(e) =>
-                        handleChange(
-                            "archivo",
-                            e.target.files[0]
-                        )
-                    }
-                />
+              <input
+                type="file"
+                onChange={(e) =>
+                  handleChange(
+                    "archivo",
+                    e.target.files[0]
+                  )
+                }
+              />
             </Button>
 
             {form.archivo && (
@@ -166,7 +166,7 @@ export default function EditarDocumentoPage() {
             )}
           </Grid>
 
-          <Grid size={{ xs: 12}}>
+          <Grid size={{ xs: 12 }}>
             <Stack direction="row" spacing={2}>
               <Button
                 variant="outlined"

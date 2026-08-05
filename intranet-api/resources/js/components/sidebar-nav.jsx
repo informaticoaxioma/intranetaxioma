@@ -89,12 +89,12 @@ const navItems = [
     //     roles: ["admin"],
     // },
 
-    {
-        path: "/dashboard/labor-documents",
-        label: "Documentos Laborales",
-        icon: Description,
-        roles: ["admin"],
-    },
+    // {
+    //     path: "/dashboard/labor-documents",
+    //     label: "Documentos Laborales",
+    //     icon: Description,
+    //     roles: ["admin"],
+    // },
 ];
 
 /*

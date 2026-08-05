@@ -1,4 +1,4 @@
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Paper,
@@ -20,13 +20,12 @@ import { useNavigate } from "react-router-dom";
 import { createDocument } from "../../services/api";
 
 const categorias = [
+  "Recursos humanos",
   "Politicas y Normativas",
-  "Contabilidad y RRHH",
   "Finanzas",
-  "Corporativo",
-  "Formación",
-  "Legal",
-  "Tecnología",
+  "Prevención de Riesgo",
+  "Servicios Técnicos",
+  "Flota",
 ];
 
 export default function CreateDocumentsPage() {
@@ -46,40 +45,40 @@ export default function CreateDocumentsPage() {
   });
 
   const handleChange = (field, value) => {
-        setForm({ ...form, [field]: value });
-    };
+    setForm({ ...form, [field]: value });
+  };
 
-    const handleSave = async () => {
+  const handleSave = async () => {
 
-        try {
+    try {
 
-            const response =
-                await createDocument(
-                    form
-                );
+      const response =
+        await createDocument(
+          form
+        );
 
-            console.log(response);
+      console.log(response);
 
-            setSnackbar({
-                open: true,
-                message:
-                    "Documento creado correctamente",
-                severity: "success",
-            });
+      setSnackbar({
+        open: true,
+        message:
+          "Documento creado correctamente",
+        severity: "success",
+      });
 
-        } catch (error) {
+    } catch (error) {
 
-            console.error(error);
+      console.error(error);
 
-            setSnackbar({
-                open: true,
-                message:
-                    error.message,
-                severity: "error",
-            });
-        }
-    };
-  
+      setSnackbar({
+        open: true,
+        message:
+          error.message,
+        severity: "error",
+      });
+    }
+  };
+
   return (
     <Box sx={{ maxWidth: 800, mx: "auto", p: 3 }}>
       <Paper sx={{ p: 4, borderRadius: 4 }}>
@@ -88,7 +87,7 @@ export default function CreateDocumentsPage() {
         </Typography>
 
         <Grid container spacing={3}>
-          <Grid size={{ xs: 12}}>
+          <Grid size={{ xs: 12 }}>
             <TextField
               fullWidth
               label="Nombre del documento"
@@ -126,22 +125,22 @@ export default function CreateDocumentsPage() {
           </Grid>
 
           {/* Upload */}
-          <Grid size={{ xs: 12}}>
+          <Grid size={{ xs: 12 }}>
             <Button
               variant="outlined"
               component="label"
               startIcon={<UploadFileIcon />}
             >
               Adjuntar archivo
-                <input
-                    type="file"
-                    onChange={(e) =>
-                        handleChange(
-                            "archivo",
-                            e.target.files[0]
-                        )
-                    }
-                />
+              <input
+                type="file"
+                onChange={(e) =>
+                  handleChange(
+                    "archivo",
+                    e.target.files[0]
+                  )
+                }
+              />
             </Button>
 
             {form.archivo && (
@@ -151,7 +150,7 @@ export default function CreateDocumentsPage() {
             )}
           </Grid>
 
-          <Grid size={{ xs: 12}}>
+          <Grid size={{ xs: 12 }}>
             <Stack direction="row" justifyContent="flex-end" spacing={2}>
               <Button
                 variant="outlined"

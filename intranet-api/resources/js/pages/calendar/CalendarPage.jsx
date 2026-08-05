@@ -457,6 +457,32 @@ export default function CalendarPage() {
                             overflow: "hidden",
                           }}
                         >
+                          {event.type && (
+                            <>
+                              <Typography
+                                component="span"
+                                noWrap
+                                sx={{
+                                  fontSize: "0.75rem",
+                                  color: eventTypeColors[event.type]?.text || "#6a1936",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                {eventTypeLabels[event.type] || event.type}
+                              </Typography>
+                              <Typography
+                                component="span"
+                                noWrap
+                                sx={{
+                                  fontSize: "0.75rem",
+                                  color: "#999",
+                                }}
+                              >
+                                |
+                              </Typography>
+                            </>
+                          )}
+
                           <Typography
                             component="span"
                             noWrap
@@ -510,22 +536,43 @@ export default function CalendarPage() {
                     {getEventsForDate(selectedDate.getDate()).map(event => (
                       <ListItem
                         key={event.id}
-                        sx={{ px: 0, py: 1, cursor: "pointer" }}
+                        sx={{
+                          px: 1,
+                          py: 1,
+                          cursor: "pointer",
+                          borderRadius: 1,
+                          "&:hover": { bgcolor: "#F5F1EB" },
+                          borderLeft: `3px solid ${eventTypeColors[event.type]?.border || "#6a1936"}`,
+                          mb: 0.5
+                        }}
                         onClick={() => setSelectedEvent(event)}
                       >
-                        <Chip
-                          label={`${event.startTime} - ${event.title}`}
-                          size="small"
-                          sx={{
-                            maxWidth: "100%",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                            bgcolor: eventTypeColors[event.type].bg,
-                            color: eventTypeColors[event.type].text,
-                            borderLeft: `3px solid ${eventTypeColors[event.type].border}`,
-                          }}
-                        />
+                        <Box sx={{ display: "flex", flexDirection: "column", minWidth: 0, width: "100%" }}>
+                          <Typography sx={{ fontWeight: 500, color: "#4A1C23", fontSize: "0.875rem" }}>
+                            {event.title}
+                          </Typography>
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.25 }}>
+                            {event.type && (
+                              <Typography
+                                sx={{
+                                  fontSize: "0.75rem",
+                                  color: eventTypeColors[event.type]?.text || "#6a1936",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                {eventTypeLabels[event.type] || event.type}
+                              </Typography>
+                            )}
+                            {event.type && (
+                              <Typography sx={{ fontSize: "0.75rem", color: "#999" }}>
+                                |
+                              </Typography>
+                            )}
+                            <Typography sx={{ fontSize: "0.75rem", color: "text.secondary" }}>
+                              {event.startTime} - {event.endTime}
+                            </Typography>
+                          </Box>
+                        </Box>
                       </ListItem>
                     ))}
                   </List>
@@ -551,15 +598,18 @@ export default function CalendarPage() {
               <DialogTitle sx={{ bgcolor: eventTypeColors[selectedEvent.type].bg, pb: 2 }}>
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                   <Box>
-                    <Chip
-                      label={eventTypeLabels[selectedEvent.type]}
-                      size="small"
+                    <Typography
                       sx={{
-                        bgcolor: eventTypeColors[selectedEvent.type].border,
-                        color: "white",
-                        mb: 1,
+                        color: eventTypeColors[selectedEvent.type].text,
+                        fontWeight: "bold",
+                        fontSize: "0.85rem",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.5px",
+                        mb: 0.5,
                       }}
-                    />
+                    >
+                      {eventTypeLabels[selectedEvent.type] || selectedEvent.type}
+                    </Typography>
                     <Typography variant="h6" sx={{ color: "#4A1C23", fontWeight: 600 }}>
                       {selectedEvent.title}
                     </Typography>

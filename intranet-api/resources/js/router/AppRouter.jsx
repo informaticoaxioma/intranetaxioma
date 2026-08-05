@@ -26,9 +26,9 @@ import PayrollsPage from "../pages/payroll/PayrollsPage";
 import CreatePayrollsPage from "../pages/payroll/CreatePayrollsPage";
 import EditPayrollPage from "../pages/payroll/EditPayrollPage";
 import VacationsPage from "../pages/vacations/VacationsPage";
-import LaborDocumentsPage from "../pages/labor_documents/LaborDocumentsPage";
-import CreateLaborDocumentPage from "../pages/labor_documents/CreateLaborDocumentPage";
-import EditLaborDocumentPage from "../pages/labor_documents/EditLaborDocumentPage";
+// import LaborDocumentsPage from "../pages/labor_documents/LaborDocumentsPage";
+// import CreateLaborDocumentPage from "../pages/labor_documents/CreateLaborDocumentPage";
+// import EditLaborDocumentPage from "../pages/labor_documents/EditLaborDocumentPage";
 import WallPage from "../pages/wall/WallPage";
 
 
@@ -283,7 +283,7 @@ export default function AppRouter() {
                 />
 
                 {/* LABOR DOCUMENTS */}
-
+                {/* 
                 <Route
 
                     path="/dashboard/labor-documents"
@@ -322,6 +322,7 @@ export default function AppRouter() {
                         </AdminRoute>
                     }
                 />
+                */}
 
             </Routes>
 

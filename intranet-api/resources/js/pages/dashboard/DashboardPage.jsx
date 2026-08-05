@@ -16,10 +16,19 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 
-import { Typography, Box, IconButton } from "@mui/material";
+import { Typography, Box, IconButton, Button, Chip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/AuthContext";
 import { getNews, getEvents, getDashboardStats } from '../../services/api';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+
+const eventTypeLabels = {
+  capacitacion: "Capacitación",
+  evento: "Evento",
+  cumpleanos: "Cumpleaños",
+  festivo: "Festivo",
+};
 
 
 const stats = [
@@ -29,27 +38,27 @@ const stats = [
 
 const slidesComite = [
   {
-    title: "Comité Paritario - Higiene y Seguridad",
+    title: "Comité Paritario",
     description: "Organismo encargado de velar por el cumplimiento del reglamento interno, promover buenas prácticas laborales, fomentar ambientes de trabajo seguros y colaborar en la aplicación de las políticas internas de la empresa.",
-    image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80",
+    image: "/imagenes/comite_paritario_banner.jpg",
     link: "/dashboard/documents"
   },
   {
-    title: "Comité Paritario - Prevención y Seguridad",
+    title: "Prevención y Seguridad",
     description: "Promovemos una cultura de autocuidado e identificamos riesgos en nuestras instalaciones, velando por que cada miembro del equipo trabaje en condiciones óptimas y protegidas.",
-    image: "/imagenes/imagen-principal-mutual.avif",
+    image: "/imagenes/Logo-Def-Mutual.png",
     link: "https://www.mutual.cl/portal/publico/empresa/home"
   },
   {
-    title: "Comité Paritario - Bienestar Laboral",
+    title: "Caja de Compensación",
     description: "Fomentamos la salud y calidad de vida de nuestros trabajadores, impulsando la mejora continua de los espacios de trabajo y el equilibrio entre vida laboral y personal.",
-    image: "/imagenes/bannercajalosandes.png",
+    image: "/imagenes/BANNER-CAJA.jpg",
     link: "https://somosandes.cajalosandes.cl/"
   },
   {
-    title: "Sistema Ticketera Informatica",
+    title: "Sistema Ticketera Informática",
     description: "Enlace directo a nuestro sistema de ticketing informático para la gestión de incidencias y solicitudes de soporte técnico.",
-    image: "/imagenes/consorsio-logo.png",
+    image: "/imagenes/ticketera_informatica.jpg",
     link: "https://faceted-tilapia-231.notion.site/2e17837f803980dfa073f2e3ce488fe2?pvs=105"
   }
 ];
@@ -67,7 +76,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveSlide((prev) => (prev + 1) % slidesComite.length);
-    }, 5000);
+    }, 15000);
     return () => clearInterval(timer);
   }, [activeSlide]);
 
@@ -250,12 +259,10 @@ export default function DashboardPage() {
             sx={{
               width: "100%",
               height: "100%",
-              objectFit: "cover",
+              objectFit: "contain",
+              backgroundColor: "#fcfaf7",
               cursor: "pointer",
-              transition: "transform 0.5s ease, opacity 0.5s ease",
-              "&:hover": {
-                transform: "scale(1.03)"
-              }
+              transition: "opacity 0.5s ease"
             }}
           />
 
@@ -354,42 +361,111 @@ export default function DashboardPage() {
             subheader="Últimas novedades de la empresa"
           />
           <CardContent>
-            <div className="space-y-4">
-              {corporateNews
-                .slice(0, 3)
-                .map((news) => (
-
-                  <div
-                    key={news.id}
-                    onClick={() =>
-                      navigate(
-                        `/dashboard/news/${news.id}`
-                      )
+            {corporateNews.length > 0 ? (
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <Box
+                  onClick={() => navigate(`/dashboard/news/${corporateNews[0].id}`)}
+                  sx={{
+                    cursor: "pointer",
+                    borderRadius: 2,
+                    overflow: "hidden",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      boxShadow: 3,
+                      transform: "translateY(-2px)",
+                    },
+                    display: "flex",
+                    flexDirection: { xs: "column", sm: "row" },
+                    gap: 2,
+                    p: 2,
+                    bgcolor: "action.hover",
+                  }}
+                >
+                  <Box
+                    component="img"
+                    src={
+                      corporateNews[0].path_imagen
+                        ? `${API_BASE_URL}/storage/${corporateNews[0].path_imagen}`
+                        : "https://picsum.photos/600/300"
                     }
-                    className="
-                                  p-4
-                                  rounded-lg
-                                  bg-secondary/50
-                                  hover:bg-secondary
-                                  transition-colors
-                              "
+                    alt={corporateNews[0].titulo}
+                    sx={{
+                      width: { xs: "100%", sm: 160 },
+                      height: 120,
+                      objectFit: "cover",
+                      borderRadius: 1.5,
+                      flexShrink: 0,
+                    }}
+                  />
+                  <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between", flex: 1, minWidth: 0 }}>
+                    <Box>
+                      <Typography
+                        variant="h6"
+                        fontWeight="bold"
+                        sx={{
+                          color: "#4A1C23",
+                          mb: 1,
+                          fontSize: "1.1rem",
+                          lineHeight: 1.3,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                        }}
+                      >
+                        {corporateNews[0].titulo}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          lineHeight: 1.4,
+                          mb: 1
+                        }}
+                      >
+                        {corporateNews[0].resumen}
+                      </Typography>
+                    </Box>
+                    <Typography variant="caption" color="text.secondary">
+                      {corporateNews[0].created_at?.substring(0, 10)} | Por {corporateNews[0].autor}
+                    </Typography>
+                  </Box>
+                </Box>
+
+                <Box sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
+                  <Button
+                    variant="outlined"
+                    onClick={() => navigate("/dashboard/news")}
+                    sx={{
+                      textTransform: "none",
+                      borderColor: "#7B1E3A",
+                      color: "#7B1E3A",
+                      fontWeight: 600,
+                      px: 3,
+                      borderRadius: 2,
+                      "&:hover": {
+                        borderColor: "#4A0E1B",
+                        backgroundColor: "rgba(123, 30, 58, 0.04)",
+                      },
+                    }}
                   >
-
-                    <p className="font-medium text-foreground">
-                      {news.titulo}
-                    </p>
-
-                    <p className="text-sm text-muted-foreground">
-                      {
-                        news.created_at?.substring(
-                          0,
-                          10
-                        )
-                      }
-                    </p>
-                  </div>
-                ))}
-            </div>
+                    Ver más noticias
+                  </Button>
+                </Box>
+              </Box>
+            ) : (
+              <Typography variant="body2" color="text.secondary" align="center">
+                No hay noticias corporativas publicadas.
+              </Typography>
+            )}
           </CardContent>
         </Card>
 
@@ -463,15 +539,44 @@ export default function DashboardPage() {
                         {event.titulo}
                       </p>
 
-                      <p className="text-sm text-muted-foreground">
-
-                        {
-                          new Date(`${event.fecha}T00:00:00`).toLocaleDateString(
-                            "es-CL"
-                          )
-                        }
-
-                      </p>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.5 }}>
+                        {event.tipo && (
+                          <>
+                            <Typography
+                              component="span"
+                              sx={{
+                                fontSize: "0.75rem",
+                                color: "#6a1936",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {eventTypeLabels[event.tipo?.toLowerCase()] || event.tipo}
+                            </Typography>
+                            <Typography
+                              component="span"
+                              sx={{
+                                fontSize: "0.75rem",
+                                color: "#999",
+                              }}
+                            >
+                              |
+                            </Typography>
+                          </>
+                        )}
+                        <Typography
+                          component="span"
+                          sx={{
+                            fontSize: "0.75rem",
+                            color: "text.secondary",
+                          }}
+                        >
+                          {
+                            new Date(`${event.fecha}T00:00:00`).toLocaleDateString(
+                              "es-CL"
+                            )
+                          }
+                        </Typography>
+                      </Box>
 
                     </div>
 
