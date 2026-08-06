@@ -557,7 +557,6 @@ export default function EditUsersPage() {
                       console.log("Departamento seleccionado:", e.target.value);
 
                       handleChange("departamento", e.target.value);
-                      handleChange("cargo", "");
                     }}
                   >
                     {departamentos.map((dep) => (
@@ -574,23 +573,14 @@ export default function EditUsersPage() {
                 </FormControl>
               </Grid>
               <Grid size={{ xs: 12, md: 6 }}>
-                <FormControl fullWidth error={!!errors.cargo}>
-                  <InputLabel>Cargo</InputLabel>
-
-                  <Select
-                    value={formData.cargo || ""}
-                    label="Cargo"
-                    onChange={(e) => handleChange("cargo", e.target.value)}
-                    disabled={!formData.departamento}
-                  >
-                    {(cargos[formData.departamento] || []).map((cargo) => (
-                      <MenuItem key={cargo} value={cargo}>
-                        {cargo}
-                      </MenuItem>
-                    ))}
-                  </Select>
-
-                </FormControl>
+                <TextField
+                  fullWidth
+                  label="Cargo"
+                  value={formData.cargo || ""}
+                  onChange={(e) => handleChange("cargo", e.target.value)}
+                  error={!!errors.cargo}
+                  helperText={errors.cargo}
+                />
               </Grid>
               <Grid size={{ xs: 12, md: 6 }}>
                 <TextField
