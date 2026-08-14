@@ -39,11 +39,11 @@ const departamentos = [
   "Flota",
   "Calidad",
   "Contabilidad",
-  "Marketing",
-  "Ventas",
   "Operaciones",
   "Legal",
   "Administración",
+  "Asesorías",
+  "Estudio",
   "Concesiones",
   "Prevención de Riesgos"
 ]
