@@ -11,9 +11,14 @@ use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\VacationController;
 use App\Http\Controllers\LaborDocumentController;
 use App\Http\Controllers\WallController;
+use App\Http\Controllers\PasswordResetController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+// Recuperación de contraseña (rutas públicas)
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink']);
+Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
 Route::get('/news', [NewsController::class, 'index']);
 Route::get('/news/{id}', [NewsController::class, 'show']);
 

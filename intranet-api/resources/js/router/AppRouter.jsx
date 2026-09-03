@@ -8,6 +8,8 @@ import {
 } from "react-router-dom";
 
 import LoginPage from "../pages/auth/LoginPage";
+import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage";
+import ResetPasswordPage from "../pages/auth/ResetPasswordPage";
 
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import DashboardLayout from "../layouts/DashboardLayout";
@@ -48,6 +50,18 @@ export default function AppRouter() {
                 <Route
                     path="/"
                     element={<LoginPage />}
+                />
+
+                {/* RECUPERACIÓN DE CONTRASEÑA */}
+
+                <Route
+                    path="/auth/forgot-password"
+                    element={<ForgotPasswordPage />}
+                />
+
+                <Route
+                    path="/auth/reset-password"
+                    element={<ResetPasswordPage />}
                 />
 
                 {/* DASHBOARD */}

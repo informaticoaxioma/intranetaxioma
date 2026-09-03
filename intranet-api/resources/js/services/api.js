@@ -25,6 +25,42 @@ export async function login(email, password) {
     return data;
 }
 
+export async function forgotPassword(email) {
+    const response = await fetch(`${API_URL}/forgot-password`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || "Error al enviar el correo de recuperación.");
+    }
+
+    return data;
+}
+
+export async function resetPassword({ email, token, password, password_confirmation }) {
+    const response = await fetch(`${API_URL}/reset-password`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, token, password, password_confirmation }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || "Error al restablecer la contraseña. El enlace puede haber expirado.");
+    }
+
+    return data;
+}
+
 export async function getUsers() {
 
     const token =
