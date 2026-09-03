@@ -8,8 +8,8 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Lock from "@mui/icons-material/Lock";
 import ArrowBack from "@mui/icons-material/ArrowBack";
-import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
-import ErrorOutline from "@mui/icons-material/ErrorOutline";
+import CheckCircle from "@mui/icons-material/CheckCircle";
+import ErrorOutlined from "@mui/icons-material/ErrorOutlined";
 
 import { resetPassword } from "../../services/api";
 
@@ -134,7 +134,7 @@ export default function ResetPasswordPage() {
             <div className="text-center space-y-6">
               <div className="flex justify-center">
                 <div className="w-20 h-20 rounded-full flex items-center justify-center bg-red-50">
-                  <ErrorOutline style={{ fontSize: 48, color: "#b91c1c" }} />
+                  <ErrorOutlined style={{ fontSize: 48, color: "#b91c1c" }} />
                 </div>
               </div>
               <div>
@@ -161,7 +161,7 @@ export default function ResetPasswordPage() {
                   className="w-20 h-20 rounded-full flex items-center justify-center"
                   style={{ backgroundColor: "color-mix(in srgb, var(--primary) 15%, transparent)" }}
                 >
-                  <CheckCircleOutline style={{ fontSize: 48, color: "var(--primary)" }} />
+                  <CheckCircle style={{ fontSize: 48, color: "var(--primary)" }} />
                 </div>
               </div>
               <div>

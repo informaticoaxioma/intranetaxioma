@@ -5,7 +5,7 @@ import FormLabel from "@mui/material/FormLabel";
 import TextField from "@mui/material/TextField";
 import Mail from "@mui/icons-material/Mail";
 import ArrowBack from "@mui/icons-material/ArrowBack";
-import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
+import CheckCircle from "@mui/icons-material/CheckCircle";
 
 import { forgotPassword } from "../../services/api";
 
@@ -85,7 +85,7 @@ export default function ForgotPasswordPage() {
               <div className="flex justify-center">
                 <div className="w-20 h-20 rounded-full flex items-center justify-center"
                   style={{ backgroundColor: "color-mix(in srgb, var(--primary) 15%, transparent)" }}>
-                  <CheckCircleOutline style={{ fontSize: 48, color: "var(--primary)" }} />
+                  <CheckCircle style={{ fontSize: 48, color: "var(--primary)" }} />
                 </div>
               </div>
               <div>
