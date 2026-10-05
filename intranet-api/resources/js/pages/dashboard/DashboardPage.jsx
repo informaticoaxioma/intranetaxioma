@@ -16,10 +16,12 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 
-import { Typography, Box, IconButton, Button, Chip } from "@mui/material";
+import { Typography, Box, IconButton, Button, Chip, Dialog, DialogTitle, DialogContent, DialogActions, TextField as MuiTextField, Snackbar, Alert } from "@mui/material";
+import ForumIcon from '@mui/icons-material/Forum';
+import SendIcon from '@mui/icons-material/Send';
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/AuthContext";
-import { getNews, getEvents, getDashboardStats } from '../../services/api';
+import { getNews, getEvents, getDashboardStats, sendFeedback } from '../../services/api';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
@@ -40,7 +42,7 @@ const slidesComite = [
   {
     title: "Comité Paritario",
     description: "Organismo encargado de velar por el cumplimiento del reglamento interno, promover buenas prácticas laborales, fomentar ambientes de trabajo seguros y colaborar en la aplicación de las políticas internas de la empresa.",
-    image: "/imagenes/comite_paritario_banner.jpg",
+    image: "/imagenes/banner_comite_paritario_axioma_burdeos.png",
     link: "/dashboard/documents"
   },
   {
@@ -72,6 +74,10 @@ export default function DashboardPage() {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [stats, setStats] = useState([]);
   const [activeSlide, setActiveSlide] = useState(0);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -623,6 +629,213 @@ export default function DashboardPage() {
         {/* Upcoming events */}
       </div>
 
+      {/* === SECCIÓN CONVERSACIÓN CON EL COMITÉ PARITARIO === */}
+      <Box
+        sx={{
+          mt: 3,
+          mb: 2,
+          borderRadius: 3,
+          background: "linear-gradient(135deg, #FFFFFF 0%, #FAF7F2 100%)",
+          border: "1px solid #E8E0D5",
+          borderLeft: "6px solid #722F37",
+          p: { xs: 3, md: 3.5 },
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          alignItems: { xs: "flex-start", md: "center" },
+          justifyContent: "space-between",
+          gap: 3,
+          boxShadow: "0 6px 20px rgba(74,28,35,0.06)",
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2.5 }}>
+          <Box
+            sx={{
+              width: 58,
+              height: 58,
+              borderRadius: "50%",
+              background: "linear-gradient(135deg, #722F37 0%, #4A1C23 100%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+              boxShadow: "0 4px 14px rgba(114, 47, 55, 0.3)",
+            }}
+          >
+            <ForumIcon sx={{ color: "white", fontSize: 32 }} />
+          </Box>
+          <Box>
+            <Typography
+              sx={{
+                color: "#4A1C23",
+                fontWeight: 700,
+                fontSize: "1.25rem",
+                lineHeight: 1.2,
+              }}
+            >
+              Comité Paritario
+            </Typography>
+            <Typography
+              sx={{
+                color: "#6D5257",
+                fontSize: "0.92rem",
+                mt: 0.5,
+                maxWidth: 520,
+              }}
+            >
+              ¿Tienes dudas, inquietudes o sugerencias sobre seguridad y bienestar? Comunícate directamente con el Comité Paritario.
+            </Typography>
+          </Box>
+        </Box>
+
+        <Button
+          variant="contained"
+          onClick={() => setFeedbackOpen(true)}
+          startIcon={
+            <ForumIcon
+              sx={{
+                fontSize: 24,
+                color: "#FFFFFF",
+                filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.25))",
+              }}
+            />
+          }
+          sx={{
+            background: "linear-gradient(135deg, #722F37 0%, #4A1C23 100%)",
+            color: "#FFFFFF",
+            fontWeight: 700,
+            fontSize: "0.95rem",
+            px: 3.5,
+            py: 1.6,
+            borderRadius: 2.5,
+            whiteSpace: "nowrap",
+            flexShrink: 0,
+            boxShadow: "0 4px 16px rgba(114, 47, 55, 0.35)",
+            border: "1px solid rgba(255,255,255,0.15)",
+            transition: "all 0.25s ease-in-out",
+            "&:hover": {
+              background: "linear-gradient(135deg, #8B4049 0%, #5A1E24 100%)",
+              boxShadow: "0 6px 22px rgba(114, 47, 55, 0.5)",
+              transform: "translateY(-1px)",
+            },
+          }}
+        >
+          Conversar con el Comité
+        </Button>
+      </Box>
+
+      {/* === MODAL FORMULARIO DE FEEDBACK === */}
+      <Dialog
+        open={feedbackOpen}
+        onClose={() => {
+          setFeedbackOpen(false);
+          setFeedbackMessage("");
+        }}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: { borderRadius: 3 }
+        }}
+      >
+        <DialogTitle
+          sx={{
+            background: "linear-gradient(135deg, #722F37 0%, #4A1C23 100%)",
+            color: "white",
+            display: "flex",
+            alignItems: "center",
+            gap: 1.5,
+            py: 2.5,
+          }}
+        >
+          <ForumIcon sx={{ fontSize: 28 }} />
+          Conversación con el Comité Paritario
+        </DialogTitle>
+
+        <DialogContent sx={{ pt: 3, pb: 1 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5, lineHeight: 1.6 }}>
+            Tu mensaje será enviado directamente al <strong>Comité Paritario</strong> de Axioma. Tu nombre, correo y área serán incluidos para que puedan responderte.
+          </Typography>
+
+          <MuiTextField
+            label="Tu mensaje o consulta"
+            multiline
+            rows={5}
+            fullWidth
+            required
+            value={feedbackMessage}
+            onChange={(e) => setFeedbackMessage(e.target.value)}
+            placeholder="Escribe aquí tus comentarios, sugerencias o recomendaciones..."
+            inputProps={{ maxLength: 2000 }}
+            helperText={`${feedbackMessage.length} / 2000 caracteres`}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 2,
+                "&.Mui-focused fieldset": { borderColor: "#722F37" },
+              },
+              "& .MuiInputLabel-root.Mui-focused": { color: "#722F37" },
+            }}
+          />
+        </DialogContent>
+
+        <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>
+          <Button
+            onClick={() => {
+              setFeedbackOpen(false);
+              setFeedbackMessage("");
+            }}
+            sx={{ color: "text.secondary", borderRadius: 2 }}
+          >
+            Cancelar
+          </Button>
+          <Button
+            variant="contained"
+            endIcon={feedbackLoading ? null : <SendIcon />}
+            disabled={feedbackLoading || feedbackMessage.trim().length < 10}
+            onClick={async () => {
+              setFeedbackLoading(true);
+              try {
+                const res = await sendFeedback(feedbackMessage.trim());
+                setSnackbar({ open: true, message: res.message, severity: "success" });
+                setFeedbackOpen(false);
+                setFeedbackMessage("");
+              } catch (err) {
+                setSnackbar({ open: true, message: err.message, severity: "error" });
+              } finally {
+                setFeedbackLoading(false);
+              }
+            }}
+            sx={{
+              background: "linear-gradient(135deg, #722F37 0%, #4A1C23 100%)",
+              color: "#FFFFFF",
+              px: 3,
+              borderRadius: 2,
+              fontWeight: 700,
+              boxShadow: "0 4px 14px rgba(114, 47, 55, 0.3)",
+              "&:hover": {
+                background: "linear-gradient(135deg, #8B4049 0%, #5A1E24 100%)",
+              },
+              "&.Mui-disabled": { opacity: 0.5 },
+            }}
+          >
+            {feedbackLoading ? "Enviando..." : "Enviar mensaje"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar de confirmación / error */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={5000}
+        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          severity={snackbar.severity}
+          onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+          sx={{ borderRadius: 2, boxShadow: 4 }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
 
     </Box>
   );

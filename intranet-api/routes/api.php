@@ -12,6 +12,7 @@ use App\Http\Controllers\VacationController;
 use App\Http\Controllers\LaborDocumentController;
 use App\Http\Controllers\WallController;
 use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\FeedbackController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -28,6 +29,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/me/avatar', [AuthController::class, 'updateAvatar']);
     Route::get('/stats', [AuthController::class, 'stats']);
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    // Comentarios y recomendaciones (Comité Paritario)
+    Route::post('/feedback', [FeedbackController::class, 'send']);
 
     // Usuarios normales
 
