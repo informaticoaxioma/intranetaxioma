@@ -59,7 +59,7 @@ const slidesComite = [
   },
   {
     title: "Sistema Ticketera Informática",
-    description: "Enlace directo a nuestro sistema de ticketing informático para la gestión de incidencias y solicitudes de soporte técnico.",
+    description: "Haz click en la imagen y serás redirigido a nuestro sistema de tickets de gestión de solicitudes área de informática.",
     image: "/imagenes/TicketeraAxioma.JPG",
     link: "https://faceted-tilapia-231.notion.site/2e17837f803980dfa073f2e3ce488fe2?pvs=105"
   }
