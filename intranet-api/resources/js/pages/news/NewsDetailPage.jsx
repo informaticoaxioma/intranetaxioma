@@ -19,6 +19,7 @@ import InputLabel from "@mui/material/InputLabel"
 import Select from "@mui/material/Select"
 import MenuItem from "@mui/material/MenuItem"
 import { Avatar, TextField } from "@mui/material"
+import { renderTextWithLinks } from "../../components/LinkifiedText";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || (
   window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
@@ -292,7 +293,7 @@ export default function NewsDetailPage() {
                       pl: 2,
                     }}
                   >
-                    {formData.resumen}
+                    {renderTextWithLinks(formData.resumen)}
                   </Typography>
 
                   <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -324,7 +325,7 @@ export default function NewsDetailPage() {
                             color: "text.primary",
                           }}
                         >
-                          {p}
+                          {renderTextWithLinks(p)}
                         </Typography>
                       ))}
                   </Box>

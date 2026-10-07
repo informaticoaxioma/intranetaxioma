@@ -22,6 +22,7 @@ import SendIcon from '@mui/icons-material/Send';
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/AuthContext";
 import { getNews, getEvents, getDashboardStats, sendFeedback } from '../../services/api';
+import { renderTextWithLinks } from "../../components/LinkifiedText";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
@@ -437,7 +438,7 @@ export default function DashboardPage() {
                           mb: 1
                         }}
                       >
-                        {corporateNews[0].resumen}
+                        {renderTextWithLinks(corporateNews[0].resumen)}
                       </Typography>
                     </Box>
                     <Typography variant="caption" color="text.secondary">

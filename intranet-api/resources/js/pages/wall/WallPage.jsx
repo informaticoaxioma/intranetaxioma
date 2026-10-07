@@ -37,6 +37,7 @@ import {
     deleteWallComment,
     reactToWallPost,
 } from "../../services/api";
+import { renderTextWithLinks } from "../../components/LinkifiedText";
 
 const isVideoUrl = (url) => {
     if (!url) return false;
@@ -426,7 +427,7 @@ export default function WallPage() {
 
                                     {/* Post Text */}
                                     <Typography className="text-gray-800 whitespace-pre-line mt-4 mb-3">
-                                        {post.contenido}
+                                        {renderTextWithLinks(post.contenido)}
                                     </Typography>
 
                                     {/* Post Media (Image/GIF/Video) */}
@@ -529,8 +530,8 @@ export default function WallPage() {
                                                                 </IconButton>
                                                             )}
                                                         </Box>
-                                                        <Typography className="text-gray-700 text-sm mt-1 leading-relaxed">
-                                                            {comment.contenido}
+                                                        <Typography className="text-gray-700 text-sm mt-1 leading-relaxed whitespace-pre-line">
+                                                            {renderTextWithLinks(comment.contenido)}
                                                         </Typography>
                                                     </Box>
                                                 </Box>

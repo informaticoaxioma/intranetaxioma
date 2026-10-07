@@ -27,6 +27,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
+import { renderTextWithLinks } from "../../components/LinkifiedText";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || (
   window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
@@ -263,7 +264,7 @@ export default function NoticiasPage() {
                     </Typography>
 
                     <Typography>
-                      {noticia.resumen}
+                      {renderTextWithLinks(noticia.resumen)}
                     </Typography>
 
                     <Box className="flex justify-between">
@@ -380,7 +381,7 @@ export default function NoticiasPage() {
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                     }}>
-                    {noticia.resumen}
+                    {renderTextWithLinks(noticia.resumen)}
                   </Typography>
 
                   <Box className="flex justify-between mt-4">
