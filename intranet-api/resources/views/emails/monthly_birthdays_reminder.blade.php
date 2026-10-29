@@ -18,34 +18,35 @@
             background-color: #ffffff;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 25px -5px rgba(74, 28, 35, 0.12), 0 8px 10px -6px rgba(74, 28, 35, 0.08);
+            border: 1px solid #e8e0d5;
         }
         .header {
-            background: linear-gradient(135deg, #8a251eff 0%, #f6573bff 100%);
-            padding: 50px 20px;
+            background: linear-gradient(135deg, #722F37 0%, #4A1C23 100%);
+            padding: 44px 20px;
             text-align: center;
         }
         .header h1 {
-            color: #591725;
+            color: #722F37;
             margin: 0;
-            font-size: 32px;
+            font-size: 30px;
             font-weight: 800;
-            letter-spacing: -0.05em;
+            letter-spacing: -0.02em;
         }
         .header p {
-            color: #fec7bfff;
+            color: #111827;
             margin: 8px 0 0 0;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 500;
         }
         .content {
             padding: 40px 30px;
-            color: #1f2937;
+            color: #111827;
             text-align: center;
         }
         .content h2 {
-            font-size: 20px;
-            font-weight: 700;
+            font-size: 21px;
+            font-weight: 800;
             margin-top: 0;
             color: #4A1C23;
             text-align: center;
@@ -53,7 +54,7 @@
         .intro-text {
             font-size: 15px;
             line-height: 1.6;
-            color: #4b5563;
+            color: #111827;
             text-align: center;
             margin-bottom: 30px;
         }
@@ -63,12 +64,13 @@
         .birthday-card {
             display: table;
             width: 100%;
-            background-color: #faf8f5;
+            background-color: #FAF7F2;
             border: 1px solid #e8e0d5;
             border-radius: 12px;
             padding: 15px;
             margin-bottom: 12px;
             box-sizing: border-box;
+            border-left: 4px solid #722F37;
         }
         .card-left {
             display: table-cell;
@@ -127,16 +129,17 @@
             display: table-cell;
             vertical-align: middle;
             padding-left: 15px;
+            text-align: left;
         }
         .user-name {
             font-size: 16px;
-            font-weight: 700;
-            color: #2a110f;
+            font-weight: 800;
+            color: #4A1C23;
             margin: 0 0 2px 0;
         }
         .user-details {
             font-size: 13px;
-            color: #6b7280;
+            color: #111827;
             margin: 0;
         }
         .empty-state {
@@ -145,7 +148,7 @@
             background-color: #fafafa;
             border: 1px dashed #cccccc;
             border-radius: 12px;
-            color: #6b7280;
+            color: #111827;
         }
         .empty-icon {
             font-size: 36px;
@@ -156,22 +159,22 @@
             padding: 24px;
             text-align: center;
             font-size: 12px;
-            color: #9ca3af;
-            border-top: 1px solid #f3f4f6;
+            color: #64748b;
+            border-top: 1px solid #e8e0d5;
         }
         .celebration-banner {
             text-align: center;
             margin-top: 30px;
-            padding: 15px;
-            background-color: #fdf8f8;
+            padding: 16px;
+            background-color: #FAF7F2;
             border-radius: 10px;
-            border: 1px dashed #af201eff;
+            border: 1px dashed #722F37;
         }
         .celebration-banner p {
             margin: 0;
             font-size: 14px;
-            color: #722F37;
-            font-weight: 600;
+            color: #4A1C23;
+            font-weight: 700;
         }
     </style>
 </head>

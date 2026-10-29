@@ -82,6 +82,213 @@ export async function sendFeedback(message) {
     return data;
 }
 
+export async function createTicket(ticketData) {
+    const token = localStorage.getItem("token");
+    const isFormData = ticketData instanceof FormData;
+
+    const headers = {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+    };
+
+    if (!isFormData) {
+        headers["Content-Type"] = "application/json";
+    }
+
+    const response = await fetch(`${API_URL}/tickets`, {
+        method: "POST",
+        headers,
+        body: isFormData ? ticketData : JSON.stringify(ticketData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || "Error al crear el ticket.");
+    }
+
+    return data;
+}
+
+export async function getMyTickets() {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${API_URL}/my-tickets`, {
+        headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error("Error al obtener los tickets.");
+    }
+
+    return response.json();
+}
+
+export async function getAdminTickets(filters = {}) {
+    const token = localStorage.getItem("token");
+    const params = new URLSearchParams();
+
+    if (filters.status && filters.status !== "todos") params.append("status", filters.status);
+    if (filters.priority && filters.priority !== "todas") params.append("priority", filters.priority);
+    if (filters.category && filters.category !== "todas") params.append("category", filters.category);
+    if (filters.assigned_to && filters.assigned_to !== "todos") params.append("assigned_to", filters.assigned_to);
+    if (filters.search) params.append("search", filters.search);
+
+    const queryString = params.toString() ? `?${params.toString()}` : "";
+
+    const response = await fetch(`${API_URL}/tickets${queryString}`, {
+        headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error("Error al cargar los tickets.");
+    }
+
+    return response.json();
+}
+
+export async function getAdminTicketStats() {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${API_URL}/tickets/stats`, {
+        headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error("Error al cargar estadísticas de tickets.");
+    }
+
+    return response.json();
+}
+
+export async function getTicket(id) {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${API_URL}/tickets/${id}`, {
+        headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error("Error al obtener el ticket.");
+    }
+
+    return response.json();
+}
+
+export async function getTechUsers() {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${API_URL}/tickets/tech-users`, {
+        headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error("Error al obtener usuarios de tecnología.");
+    }
+
+    return response.json();
+}
+
+export async function updateTicket(id, ticketData) {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${API_URL}/tickets/${id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(ticketData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || "Error al actualizar el ticket.");
+    }
+
+    return data;
+}
+
+export async function getTicketMessages(ticketId) {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${API_URL}/tickets/${ticketId}/messages`, {
+        headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error("Error al obtener los mensajes del ticket.");
+    }
+
+    return response.json();
+}
+
+export async function sendTicketMessage(ticketId, messageData) {
+    const token = localStorage.getItem("token");
+    const isFormData = messageData instanceof FormData;
+
+    const headers = {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+    };
+
+    if (!isFormData) {
+        headers["Content-Type"] = "application/json";
+    }
+
+    const response = await fetch(`${API_URL}/tickets/${ticketId}/messages`, {
+        method: "POST",
+        headers,
+        body: isFormData ? messageData : JSON.stringify(messageData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || "Error al enviar el mensaje.");
+    }
+
+    return data;
+}
+
+export async function markTicketMessagesAsRead(ticketId) {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${API_URL}/tickets/${ticketId}/messages/read`, {
+        method: "POST",
+        headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error("Error al marcar los mensajes como leídos.");
+    }
+
+    return response.json();
+}
+
 export async function getUsers() {
 
     const token =

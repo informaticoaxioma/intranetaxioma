@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\WallPost;
 use App\Models\WallComment;
 use App\Models\WallReaction;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 class WallService
@@ -19,14 +20,39 @@ class WallService
 
     public function createPost(array $data)
     {
+        if ( array_key_exists('imagenes', $data) && !Schema::hasColumn('wall_posts', 'imagenes') ) {
+            if (!empty($data['imagenes'])) {
+                $data['imagen'] = json_encode($data['imagenes']);
+            }
+            unset($data['imagenes']);
+        }
+
         return WallPost::create($data);
     }
 
     public function deletePost(WallPost $post)
     {
-        if ($post->path_imagen) {
-            Storage::disk('public')->delete($post->path_imagen);
+        $pathsToDelete = [];
+
+        if (!empty($post->imagenes) && is_array($post->imagenes)) {
+            $pathsToDelete = array_merge($pathsToDelete, $post->imagenes);
+        } elseif (!empty($post->imagen) && is_string($post->imagen) && str_starts_with(trim($post->imagen), '[')) {
+            $decoded = json_decode($post->imagen, true);
+            if (is_array($decoded)) {
+                $pathsToDelete = array_merge($pathsToDelete, $decoded);
+            }
         }
+
+        if ($post->path_imagen && !in_array($post->path_imagen, $pathsToDelete, true)) {
+            $pathsToDelete[] = $post->path_imagen;
+        }
+
+        foreach ($pathsToDelete as $path) {
+            if ($path) {
+                Storage::disk('public')->delete($path);
+            }
+        }
+
         return $post->delete();
     }
 

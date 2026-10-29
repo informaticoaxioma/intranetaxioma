@@ -32,11 +32,13 @@ import VacationsPage from "../pages/vacations/VacationsPage";
 // import CreateLaborDocumentPage from "../pages/labor_documents/CreateLaborDocumentPage";
 // import EditLaborDocumentPage from "../pages/labor_documents/EditLaborDocumentPage";
 import WallPage from "../pages/wall/WallPage";
+import TicketsPage from "../pages/tickets/TicketsPage";
 
 
 
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
+import TechAdminRoute from "./TechAdminRoute";
 export default function AppRouter() {
 
     return (
@@ -239,6 +241,18 @@ export default function AppRouter() {
                                 <CreateUsersPage />
                             </DashboardLayout>
                         </AdminRoute>
+                    }
+                />
+
+                {/* TICKETERA (ADMIN - EXCLUSIVO TECNOLOGÍA) */}
+                <Route
+                    path="/dashboard/tickets"
+                    element={
+                        <TechAdminRoute>
+                            <DashboardLayout>
+                                <TicketsPage />
+                            </DashboardLayout>
+                        </TechAdminRoute>
                     }
                 />
 

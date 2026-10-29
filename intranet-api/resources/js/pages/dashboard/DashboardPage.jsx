@@ -16,13 +16,22 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 
-import { Typography, Box, IconButton, Button, Chip, Dialog, DialogTitle, DialogContent, DialogActions, TextField as MuiTextField, Snackbar, Alert } from "@mui/material";
+import { Typography, Box, IconButton, Button, Chip, Dialog, DialogTitle, DialogContent, DialogActions, TextField as MuiTextField, Snackbar, Alert, Select, MenuItem, FormControl, InputLabel, CircularProgress, Tooltip, Badge } from "@mui/material";
 import ForumIcon from '@mui/icons-material/Forum';
 import SendIcon from '@mui/icons-material/Send';
+import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CloseIcon from '@mui/icons-material/Close';
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ImageIcon from '@mui/icons-material/Image';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/AuthContext";
-import { getNews, getEvents, getDashboardStats, sendFeedback } from '../../services/api';
+import { getNews, getEvents, getDashboardStats, sendFeedback, createTicket, getMyTickets } from '../../services/api';
 import { renderTextWithLinks } from "../../components/LinkifiedText";
+import TicketChat from "../../components/TicketChat";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
@@ -57,12 +66,6 @@ const slidesComite = [
     description: "Fomentamos la salud y calidad de vida de nuestros trabajadores, impulsando la mejora continua de los espacios de trabajo y el equilibrio entre vida laboral y personal.",
     image: "/imagenes/BANNER-CAJA.jpg",
     link: "https://somosandes.cajalosandes.cl/"
-  },
-  {
-    title: "Sistema Ticketera Informática",
-    description: "Haz click en la imagen y serás redirigido a nuestro sistema de tickets de gestión de solicitudes área de informática.",
-    image: "/imagenes/TicketeraAxioma.JPG",
-    link: "https://faceted-tilapia-231.notion.site/2e17837f803980dfa073f2e3ce488fe2?pvs=105"
   }
 ];
 
@@ -79,6 +82,129 @@ export default function DashboardPage() {
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [feedbackLoading, setFeedbackLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
+
+  // === ESTADO TICKETERA / MESA DE AYUDA ===
+  const [ticketModalOpen, setTicketModalOpen] = useState(false);
+  const [ticketForm, setTicketForm] = useState({
+    title: "",
+    category: "Soporte TI",
+    priority: "media",
+    description: "",
+  });
+  const [ticketLoading, setTicketLoading] = useState(false);
+  const [ticketSuccessModalOpen, setTicketSuccessModalOpen] = useState(false);
+  const [createdTicketInfo, setCreatedTicketInfo] = useState(null);
+
+  // Mis Tickets Modal
+  const [myTicketsModalOpen, setMyTicketsModalOpen] = useState(false);
+  const [myTickets, setMyTickets] = useState([]);
+  const [myTicketsLoading, setMyTicketsLoading] = useState(false);
+  const [ticketImage, setTicketImage] = useState(null);
+  const [ticketImagePreview, setTicketImagePreview] = useState(null);
+  const [previewZoomImage, setPreviewZoomImage] = useState(null);
+  const [activeChatTicket, setActiveChatTicket] = useState(null);
+
+  const totalUnreadMyTickets = myTickets.reduce(
+    (sum, t) => sum + (Number(t.unread_messages_count) || 0),
+    0
+  );
+
+  useEffect(() => {
+    const fetchInitialMyTickets = async () => {
+      try {
+        const data = await getMyTickets();
+        setMyTickets(data);
+      } catch (err) {
+        // silent
+      }
+    };
+    fetchInitialMyTickets();
+  }, []);
+
+  const handleOpenTicketModal = () => {
+    setTicketForm({
+      title: "",
+      category: "Soporte TI",
+      priority: "media",
+      description: "",
+    });
+    setTicketImage(null);
+    if (ticketImagePreview) URL.revokeObjectURL(ticketImagePreview);
+    setTicketImagePreview(null);
+    setTicketModalOpen(true);
+  };
+
+  const handleTicketImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) {
+      setSnackbar({ open: true, message: "La imagen no debe superar los 10MB.", severity: "warning" });
+      return;
+    }
+    setTicketImage(file);
+    if (ticketImagePreview) URL.revokeObjectURL(ticketImagePreview);
+    setTicketImagePreview(URL.createObjectURL(file));
+  };
+
+  const handleRemoveTicketImage = () => {
+    setTicketImage(null);
+    if (ticketImagePreview) URL.revokeObjectURL(ticketImagePreview);
+    setTicketImagePreview(null);
+  };
+
+  const handleCreateTicketSubmit = async (e) => {
+    e.preventDefault();
+    if (!ticketForm.title.trim() || !ticketForm.description.trim()) {
+      setSnackbar({ open: true, message: "Por favor completa el asunto y la descripción.", severity: "warning" });
+      return;
+    }
+
+    setTicketLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("title", ticketForm.title.trim());
+      formData.append("category", ticketForm.category);
+      formData.append("priority", ticketForm.priority);
+      formData.append("description", ticketForm.description.trim());
+      if (ticketImage) {
+        formData.append("imagen", ticketImage);
+      }
+
+      const res = await createTicket(formData);
+
+      setTicketModalOpen(false);
+      setTicketImage(null);
+      if (ticketImagePreview) URL.revokeObjectURL(ticketImagePreview);
+      setTicketImagePreview(null);
+      setCreatedTicketInfo(res.ticket);
+      setTicketSuccessModalOpen(true);
+    } catch (err) {
+      setSnackbar({
+        open: true,
+        message: err.message || "Error al crear ticket",
+        severity: "error",
+      });
+    } finally {
+      setTicketLoading(false);
+    }
+  };
+
+  const handleOpenMyTickets = async () => {
+    setMyTicketsModalOpen(true);
+    setMyTicketsLoading(true);
+    try {
+      const data = await getMyTickets();
+      setMyTickets(data);
+    } catch (err) {
+      setSnackbar({
+        open: true,
+        message: "Error al cargar tus tickets",
+        severity: "error",
+      });
+    } finally {
+      setMyTicketsLoading(false);
+    }
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -197,32 +323,167 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Stats grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-2">
-        {stats.map((stat) => {
-          const Icon = stat.icon
-          return (
-            <Card
-              sx={{ borderRadius: 2 }}
-              key={stat.label} className="  rounded-lg ">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between rounded-lg ">
-                  <div>
-                    <p className="text-sm text-muted-foreground">{stat.label}</p>
-                    <p className="text-3xl font-bold text-foreground mt-1">{stat.value}</p>
-                    <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                      <TrendingUpIcon className="w-3 h-3 text-green-600" />
-                      {stat.change}
-                    </p>
+      {/* SECCIÓN SUPERIOR: TICKET Y MESA DE AYUDA (IZQUIERDA) + 3 KPIS (MITAD DERECHA) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 mb-2 items-stretch">
+        {/* TARJETA MESA DE AYUDA / LEVANTAR TICKET (AL PRINCIPIO, MITAD IZQUIERDA) */}
+        <div className="lg:col-span-6 flex">
+          <Card
+            sx={{
+              borderRadius: 2,
+              border: "1px solid #E8E0D5",
+              borderLeft: "6px solid #722F37",
+              background: "linear-gradient(135deg, #FFFFFF 0%, #FAF7F2 100%)",
+              boxShadow: "0 4px 14px rgba(74, 28, 35, 0.05)",
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+            className="rounded-lg"
+          >
+            <CardContent className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                <Box
+                  sx={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: 2.5,
+                    background: "linear-gradient(135deg, #722F37 0%, #4A1C23 100%)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow: "0 4px 12px rgba(114, 47, 55, 0.25)",
+                    flexShrink: 0,
+                  }}
+                >
+                  <ConfirmationNumberIcon sx={{ fontSize: 26, color: "white" }} />
+                </Box>
+                <Box>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "#4A1C23", lineHeight: 1.2 }}>
+                      Mesa de Ayuda y Soporte
+                    </Typography>
+                    <Chip
+                      label="Atención hoy"
+                      size="small"
+                      sx={{
+                        fontSize: "0.65rem",
+                        fontWeight: 800,
+                        height: 20,
+                        bgcolor: "#dcfce7",
+                        color: "#15803d",
+                        border: "1px solid #bbf7d0",
+                      }}
+                    />
+                  </Box>
+                  <Typography variant="body2" sx={{ color: "text.secondary", fontSize: "0.8rem", mt: 0.3 }}>
+                    ¿Requieres asistencia o soporte técnico? Levanta tu requerimiento aquí.
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: { xs: "100%", sm: "auto" }, justifyContent: "flex-end", flexShrink: 0 }}>
+                <Badge
+                  badgeContent={totalUnreadMyTickets}
+                  color="error"
+                  sx={{
+                    "& .MuiBadge-badge": {
+                      fontWeight: 800,
+                      fontSize: "0.72rem",
+                      boxShadow: "0 0 10px rgba(239, 68, 68, 0.7)",
+                      animation: totalUnreadMyTickets > 0 ? "pulse 2s infinite" : "none",
+                    },
+                  }}
+                >
+                  <Button
+                    variant={totalUnreadMyTickets > 0 ? "contained" : "outlined"}
+                    size="small"
+                    onClick={handleOpenMyTickets}
+                    startIcon={totalUnreadMyTickets > 0 ? <ForumIcon sx={{ fontSize: "16px !important" }} /> : null}
+                    sx={{
+                      borderColor: totalUnreadMyTickets > 0 ? "#ef4444" : "#E8E0D5",
+                      bgcolor: totalUnreadMyTickets > 0 ? "#b91c1c" : "transparent",
+                      color: totalUnreadMyTickets > 0 ? "#ffffff" : "#4A1C23",
+                      fontWeight: 700,
+                      fontSize: "0.8rem",
+                      textTransform: "none",
+                      py: 0.8,
+                      px: 1.8,
+                      borderRadius: 2,
+                      "&:hover": {
+                        borderColor: totalUnreadMyTickets > 0 ? "#991b1b" : "#722F37",
+                        backgroundColor: totalUnreadMyTickets > 0 ? "#991b1b" : "#FAF7F2",
+                      },
+                    }}
+                  >
+                    Mis Tickets {totalUnreadMyTickets > 0 ? `(${totalUnreadMyTickets} nuevo${totalUnreadMyTickets > 1 ? "s" : ""})` : ""}
+                  </Button>
+                </Badge>
+
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={handleOpenTicketModal}
+                  startIcon={<ConfirmationNumberIcon sx={{ fontSize: 18 }} />}
+                  sx={{
+                    background: "linear-gradient(135deg, #722F37 0%, #4A1C23 100%)",
+                    color: "#FFFFFF",
+                    fontWeight: 700,
+                    fontSize: "0.85rem",
+                    textTransform: "none",
+                    py: 0.9,
+                    px: 2.2,
+                    borderRadius: 2,
+                    boxShadow: "0 4px 12px rgba(114, 47, 55, 0.3)",
+                    whiteSpace: "nowrap",
+                    "&:hover": {
+                      background: "linear-gradient(135deg, #8B4049 0%, #5A1E24 100%)",
+                      boxShadow: "0 6px 16px rgba(114, 47, 55, 0.45)",
+                    },
+                  }}
+                >
+                  Levantar Ticket
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* LOS 3 KPIS (MITAD DERECHA) */}
+        <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-3 gap-2">
+          {stats.map((stat) => {
+            const Icon = stat.icon;
+            return (
+              <Card
+                sx={{
+                  borderRadius: 2,
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+                key={stat.label}
+                className="rounded-lg"
+              >
+                <CardContent sx={{ p: 3, "&:last-child": { pb: 3 } }}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-muted-foreground font-medium">{stat.label}</p>
+                      <p className="text-2xl font-bold text-foreground mt-0.5">{stat.value}</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1">
+                        <TrendingUpIcon className="w-3 h-3 text-green-600" />
+                        {stat.change}
+                      </p>
+                    </div>
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-5 h-5 text-primary" />
+                    </div>
                   </div>
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Icon className="w-6 h-6 text-primary" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )
-        })}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
       </div>
       <Card
         sx={{
@@ -822,6 +1083,600 @@ export default function DashboardPage() {
         </DialogActions>
       </Dialog>
 
+      {/* === MODAL 1: FORMULARIO LEVANTAR TICKET === */}
+      <Dialog
+        open={ticketModalOpen}
+        onClose={() => !ticketLoading && setTicketModalOpen(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: 3 } }}
+      >
+        <DialogTitle
+          sx={{
+            background: "linear-gradient(135deg, #722F37 0%, #4A1C23 100%)",
+            color: "white",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            py: 2.5,
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+            <ConfirmationNumberIcon sx={{ fontSize: 26 }} />
+            <Box>
+              <Typography variant="h6" sx={{ fontWeight: 800, lineHeight: 1.2 }}>
+                Levantar Requerimiento / Ticket
+              </Typography>
+              <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.85)" }}>
+                Mesa de Ayuda &bull; Intranet Axioma
+              </Typography>
+            </Box>
+          </Box>
+          <IconButton onClick={() => setTicketModalOpen(false)} sx={{ color: "white" }} disabled={ticketLoading}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+
+        <form onSubmit={handleCreateTicketSubmit}>
+          <DialogContent sx={{ pt: 3, pb: 1 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5, lineHeight: 1.6 }}>
+              Ingresa el detalle de tu solicitud técnica o requerimiento. Al enviarlo se le asignará un código <strong>AXM-XXXX</strong> y te llegará una confirmación a tu correo.
+            </Typography>
+
+            <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mb: 2.5 }}>
+              <FormControl fullWidth size="small" sx={{ flex: 1, minWidth: 200 }}>
+                <InputLabel>Categoría</InputLabel>
+                <Select
+                  value={ticketForm.category}
+                  label="Categoría"
+                  onChange={(e) => setTicketForm({ ...ticketForm, category: e.target.value })}
+                >
+                  <MenuItem value="Soporte TI">Soporte TI</MenuItem>
+                  <MenuItem value="Sistemas / Software">Sistemas / Software</MenuItem>
+                  <MenuItem value="Hardware / Equipos">Hardware / Equipos</MenuItem>
+                  <MenuItem value="Cuentas y Accesos">Cuentas y Accesos</MenuItem>
+                  <MenuItem value="Otro">Otro</MenuItem>
+                </Select>
+              </FormControl>
+
+              <FormControl fullWidth size="small" sx={{ flex: 1, minWidth: 160 }}>
+                <InputLabel>Prioridad</InputLabel>
+                <Select
+                  value={ticketForm.priority}
+                  label="Prioridad"
+                  onChange={(e) => setTicketForm({ ...ticketForm, priority: e.target.value })}
+                >
+                  <MenuItem value="baja">Baja</MenuItem>
+                  <MenuItem value="media">Media</MenuItem>
+                  <MenuItem value="alta">Alta</MenuItem>
+                  <MenuItem value="urgente">🚨 Urgente</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+
+            <MuiTextField
+              label="Asunto o Título del Requerimiento"
+              fullWidth
+              required
+              size="small"
+              value={ticketForm.title}
+              onChange={(e) => setTicketForm({ ...ticketForm, title: e.target.value })}
+              placeholder="Ej: Problema al acceder a VPN / Falla de correo"
+              inputProps={{ maxLength: 200 }}
+              sx={{
+                mb: 2.5,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                  "&.Mui-focused fieldset": { borderColor: "#722F37" },
+                },
+                "& .MuiInputLabel-root.Mui-focused": { color: "#722F37" },
+              }}
+            />
+
+            <MuiTextField
+              label="Descripción detallada del problema o solicitud"
+              multiline
+              rows={4}
+              fullWidth
+              required
+              value={ticketForm.description}
+              onChange={(e) => setTicketForm({ ...ticketForm, description: e.target.value })}
+              placeholder="Explica detalladamente qué ocurre, pasos para reproducir o qué necesitas..."
+              inputProps={{ maxLength: 5000 }}
+              helperText={`${ticketForm.description.length} / 5000 caracteres`}
+              sx={{
+                mb: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                  "&.Mui-focused fieldset": { borderColor: "#722F37" },
+                },
+                "& .MuiInputLabel-root.Mui-focused": { color: "#722F37" },
+              }}
+            />
+
+            {/* ADJUNTAR FOTOGRAFÍA OPCIONAL */}
+            <Box sx={{ mb: 1.5 }}>
+              <Typography variant="caption" sx={{ fontWeight: 700, color: "text.secondary", textTransform: "uppercase", display: "block", mb: 1 }}>
+                Fotografía o Captura de Pantalla (Opcional)
+              </Typography>
+
+              {!ticketImagePreview ? (
+                <Button
+                  component="label"
+                  variant="outlined"
+                  startIcon={<AddPhotoAlternateIcon />}
+                  sx={{
+                    borderRadius: 2,
+                    borderColor: "#E8E0D5",
+                    color: "#4A1C23",
+                    py: 1.2,
+                    px: 2,
+                    textTransform: "none",
+                    fontWeight: 600,
+                    borderStyle: "dashed",
+                    borderWidth: 1.5,
+                    bgcolor: "#FAF7F2",
+                    width: "100%",
+                    justifyContent: "center",
+                    "&:hover": {
+                      borderColor: "#722F37",
+                      bgcolor: "rgba(114, 47, 55, 0.04)",
+                      borderStyle: "dashed",
+                    },
+                  }}
+                >
+                  Adjuntar fotografía o captura (JPG, PNG, WEBP)
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg,image/webp,image/gif"
+                    hidden
+                    onChange={handleTicketImageChange}
+                  />
+                </Button>
+              ) : (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.8,
+                    p: 1.5,
+                    bgcolor: "#FAF7F2",
+                    border: "1px solid #E8E0D5",
+                    borderRadius: 2,
+                  }}
+                >
+                  <Box
+                    component="img"
+                    src={ticketImagePreview}
+                    alt="Vista previa"
+                    onClick={() => setPreviewZoomImage(ticketImagePreview)}
+                    sx={{
+                      width: 54,
+                      height: 54,
+                      objectFit: "cover",
+                      borderRadius: 1.5,
+                      cursor: "pointer",
+                      border: "1px solid rgba(114, 47, 55, 0.25)",
+                      transition: "transform 0.15s ease",
+                      "&:hover": { transform: "scale(1.05)" },
+                    }}
+                  />
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Typography variant="body2" sx={{ fontWeight: 700, color: "#1e293b", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {ticketImage?.name}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
+                      {ticketImage ? (ticketImage.size / (1024 * 1024)).toFixed(2) : "0"} MB &bull; Clic en la imagen para ampliar
+                    </Typography>
+                  </Box>
+                  <Tooltip title="Quitar fotografía">
+                    <IconButton size="small" onClick={handleRemoveTicketImage} sx={{ color: "#b91c1c" }}>
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              )}
+            </Box>
+          </DialogContent>
+
+          <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>
+            <Button
+              onClick={() => setTicketModalOpen(false)}
+              disabled={ticketLoading}
+              sx={{ color: "text.secondary", fontWeight: 600 }}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={ticketLoading || !ticketForm.title.trim() || !ticketForm.description.trim()}
+              sx={{
+                background: "linear-gradient(135deg, #722F37 0%, #4A1C23 100%)",
+                color: "#FFFFFF",
+                px: 3.5,
+                py: 1,
+                borderRadius: 2,
+                fontWeight: 700,
+                boxShadow: "0 4px 14px rgba(114, 47, 55, 0.3)",
+                "&:hover": {
+                  background: "linear-gradient(135deg, #8B4049 0%, #5A1E24 100%)",
+                },
+                "&.Mui-disabled": { opacity: 0.5 },
+              }}
+            >
+              {ticketLoading ? "Enviando Ticket..." : "Enviar Requerimiento"}
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+
+      {/* === MODAL 2: ÉXITO AL CREAR TICKET (AVISO ATENCIÓN DURANTE EL DÍA) === */}
+      {createdTicketInfo && (
+        <Dialog
+          open={ticketSuccessModalOpen}
+          onClose={() => setTicketSuccessModalOpen(false)}
+          maxWidth="xs"
+          fullWidth
+          PaperProps={{ sx: { borderRadius: 3, p: 1 } }}
+        >
+          <DialogContent sx={{ textAlign: "center", pt: 4, pb: 2 }}>
+            <Box
+              sx={{
+                width: 64,
+                height: 64,
+                borderRadius: "50%",
+                bgcolor: "#dcfce7",
+                color: "#15803d",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 16px",
+                border: "2px solid #bbf7d0",
+              }}
+            >
+              <CheckCircleIcon sx={{ fontSize: 38 }} />
+            </Box>
+
+            <Typography variant="h5" sx={{ fontWeight: 800, color: "#4A1C23", mb: 1 }}>
+              ¡Ticket Generado con Éxito!
+            </Typography>
+
+            <Chip
+              label={createdTicketInfo.code || `AXM-${createdTicketInfo.id}`}
+              sx={{
+                fontSize: "1.1rem",
+                fontWeight: 800,
+                py: 2.2,
+                px: 2,
+                bgcolor: "rgba(114, 47, 55, 0.08)",
+                color: "#722F37",
+                border: "1.5px solid rgba(114, 47, 55, 0.25)",
+                borderRadius: 2,
+                letterSpacing: "0.8px",
+                mb: 2.5,
+              }}
+            />
+
+            <Box
+              sx={{
+                bgcolor: "#FAF7F2",
+                border: "1px solid #E8E0D5",
+                borderLeft: "5px solid #722F37",
+                borderRadius: 2,
+                p: 2,
+                textAlign: "left",
+                mb: 2.5,
+              }}
+            >
+              <Typography variant="body2" sx={{ fontWeight: 700, color: "#4A1C23", mb: 0.5 }}>
+                Se le asignó el ticket {createdTicketInfo.code || `AXM-${createdTicketInfo.id}`} y se le atenderá durante el día.
+              </Typography>
+              <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
+                Hemos enviado un correo de confirmación con los detalles de tu requerimiento.
+              </Typography>
+            </Box>
+          </DialogContent>
+
+          <DialogActions sx={{ px: 3, pb: 3, justifyContent: "center" }}>
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={() => setTicketSuccessModalOpen(false)}
+              sx={{
+                background: "linear-gradient(135deg, #722F37 0%, #4A1C23 100%)",
+                fontWeight: 700,
+                py: 1.2,
+                borderRadius: 2,
+              }}
+            >
+              Entendido
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+
+      {/* === MODAL 3: MIS TICKETS (HISTORIAL DEL USUARIO) === */}
+      <Dialog
+        open={myTicketsModalOpen}
+        onClose={() => setMyTicketsModalOpen(false)}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: 3 } }}
+      >
+        <DialogTitle
+          sx={{
+            background: "linear-gradient(135deg, #722F37 0%, #4A1C23 100%)",
+            color: "white",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            py: 2.5,
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+            <ConfirmationNumberIcon sx={{ fontSize: 26 }} />
+            <Typography variant="h6" sx={{ fontWeight: 800 }}>
+              Mis Tickets y Solicitudes
+            </Typography>
+          </Box>
+          <IconButton onClick={() => setMyTicketsModalOpen(false)} sx={{ color: "white" }}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+
+        <DialogContent sx={{ pt: 3, pb: 2 }}>
+          {myTicketsLoading ? (
+            <Box sx={{ py: 6, textAlign: "center" }}>
+              <CircularProgress size={32} sx={{ color: "#722F37" }} />
+              <Typography variant="body2" sx={{ color: "text.secondary", mt: 1 }}>
+                Cargando tus tickets...
+              </Typography>
+            </Box>
+          ) : myTickets.length === 0 ? (
+            <Box sx={{ py: 6, textAlign: "center" }}>
+              <SupportAgentIcon sx={{ fontSize: 48, color: "#cbd5e1", mb: 1 }} />
+              <Typography variant="subtitle1" sx={{ fontWeight: 700, color: "#475569" }}>
+                Aún no has levantado ningún ticket
+              </Typography>
+              <Typography variant="body2" sx={{ color: "text.secondary", mt: 0.5 }}>
+                Cuando tengas un problema técnico o requerimiento, haz clic en "Levantar Ticket".
+              </Typography>
+            </Box>
+          ) : (
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              {myTickets.map((t) => {
+                const statusStyles = {
+                  pendiente: { label: "Pendiente", color: "#b45309", bg: "#fef3c7", border: "#fde68a" },
+                  en_proceso: { label: "En Proceso", color: "#1d4ed8", bg: "#dbeafe", border: "#bfdbfe" },
+                  resuelto: { label: "Resuelto", color: "#15803d", bg: "#dcfce7", border: "#bbf7d0" },
+                  cerrado: { label: "Cerrado", color: "#475569", bg: "#f1f5f9", border: "#e2e8f0" },
+                }[t.status] || { label: t.status, color: "#475569", bg: "#f1f5f9", border: "#e2e8f0" };
+
+                return (
+                  <Box
+                    key={t.id}
+                    sx={{
+                      p: 2.5,
+                      border: "1px solid #E8E0D5",
+                      borderRadius: 2.5,
+                      bgcolor: "#FAF7F2",
+                      transition: "all 0.2s ease",
+                      "&:hover": { borderColor: "#722F37", bgcolor: "#FFFFFF" },
+                    }}
+                  >
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 2, flexWrap: "wrap", mb: 1.5 }}>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                        <Chip
+                          label={t.code || `AXM-${t.id}`}
+                          sx={{
+                            fontWeight: 800,
+                            bgcolor: "rgba(114, 47, 55, 0.08)",
+                            color: "#722F37",
+                            border: "1px solid rgba(114, 47, 55, 0.2)",
+                            borderRadius: 1.5,
+                          }}
+                        />
+                        <Chip
+                          size="small"
+                          label={t.category}
+                          sx={{ bgcolor: "#E8E0D5", color: "#4A1C23", fontWeight: 600 }}
+                        />
+                        {t.assigned_user ? (
+                          <Chip
+                            size="small"
+                            label={`🛠️ Responsable: ${t.assigned_user.name} ${t.assigned_user.apellido}`}
+                            sx={{ bgcolor: "#dcfce7", color: "#166534", fontWeight: 700, fontSize: "0.72rem", border: "1px solid #bbf7d0" }}
+                          />
+                        ) : (
+                          <Chip
+                            size="small"
+                            label="⏳ Pendiente de asignación"
+                            sx={{ bgcolor: "#fef3c7", color: "#92400e", fontWeight: 600, fontSize: "0.7rem", border: "1px solid #fde68a" }}
+                          />
+                        )}
+                        {t.unread_messages_count > 0 && (
+                          <Chip
+                            size="small"
+                            icon={<ForumIcon sx={{ fontSize: "13px !important", color: "#b91c1c !important" }} />}
+                            label={`${t.unread_messages_count} NUEVO${t.unread_messages_count !== 1 ? "S" : ""} MENSAJE${t.unread_messages_count !== 1 ? "S" : ""}`}
+                            sx={{
+                              bgcolor: "#fef2f2",
+                              color: "#b91c1c",
+                              border: "1.5px solid #ef4444",
+                              fontWeight: 900,
+                              fontSize: "0.7rem",
+                              letterSpacing: "0.3px",
+                              animation: "pulse 1.8s infinite",
+                              boxShadow: "0 0 8px rgba(239, 68, 68, 0.35)",
+                            }}
+                          />
+                        )}
+                        <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                          {t.created_at ? new Date(t.created_at).toLocaleDateString("es-CL", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }) : ""}
+                        </Typography>
+                      </Box>
+
+                      <Chip
+                        size="small"
+                        label={statusStyles.label}
+                        sx={{
+                          fontWeight: 700,
+                          color: statusStyles.color,
+                          bgcolor: statusStyles.bg,
+                          border: `1px solid ${statusStyles.border}`,
+                        }}
+                      />
+                    </Box>
+
+                    <Typography variant="subtitle1" sx={{ fontWeight: 700, color: "#1e293b", mb: 0.5 }}>
+                      {t.title}
+                    </Typography>
+
+                    <Typography variant="body2" sx={{ color: "#475569", mb: t.admin_notes ? 2 : 0, lineHeight: 1.6 }}>
+                      {t.description}
+                    </Typography>
+
+                    {t.imagen_url && (
+                      <Box sx={{ mt: 1.8, pt: 1.5, borderTop: "1px dashed #E8E0D5", display: "flex", alignItems: "center", gap: 1.5 }}>
+                        <Box
+                          component="img"
+                          src={t.imagen_url}
+                          alt="Fotografía adjunta"
+                          onClick={() => setPreviewZoomImage(t.imagen_url)}
+                          sx={{
+                            width: 52,
+                            height: 52,
+                            borderRadius: 1.5,
+                            objectFit: "cover",
+                            cursor: "pointer",
+                            border: "1px solid #cbd5e1",
+                            transition: "all 0.15s ease",
+                            "&:hover": { transform: "scale(1.05)", borderColor: "#722F37" },
+                          }}
+                        />
+                        <Box>
+                          <Typography variant="caption" sx={{ fontWeight: 700, color: "#4A1C23", display: "flex", alignItems: "center", gap: 0.5 }}>
+                            <ImageIcon sx={{ fontSize: 16 }} /> Fotografía adjunta
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            onClick={() => setPreviewZoomImage(t.imagen_url)}
+                            sx={{ color: "#722F37", cursor: "pointer", textDecoration: "underline", fontWeight: 600, display: "block" }}
+                          >
+                            Ver fotografía completa
+                          </Typography>
+                        </Box>
+                      </Box>
+                    )}
+
+                    {t.admin_notes && (
+                      <Box
+                        sx={{
+                          mt: 1.5,
+                          p: 2,
+                          bgcolor: "#f0fdf4",
+                          border: "1px solid #bbf7d0",
+                          borderRadius: 2,
+                        }}
+                      >
+                        <Typography variant="caption" sx={{ fontWeight: 800, color: "#15803d", textTransform: "uppercase", display: "block", mb: 0.5 }}>
+                          Respuesta del Equipo de Soporte:
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: "#166534", lineHeight: 1.5 }}>
+                          {t.admin_notes}
+                        </Typography>
+                      </Box>
+                    )}
+
+                    {/* BOTÓN SEGUIMIENTO Y CHAT */}
+                    <Box sx={{ mt: 2, pt: 1.5, borderTop: "1px solid #E8E0D5", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1.5 }}>
+                      <Typography variant="caption" sx={{ color: t.unread_messages_count > 0 ? "#b91c1c" : "text.secondary", fontWeight: t.unread_messages_count > 0 ? 800 : 600 }}>
+                        {t.unread_messages_count > 0
+                          ? `🔴 Tienes ${t.unread_messages_count} nuevo${t.unread_messages_count !== 1 ? "s" : ""} mensaje${t.unread_messages_count !== 1 ? "s" : ""} sin leer del soporte`
+                          : t.messages_count > 0
+                          ? `💬 ${t.messages_count} mensaje${t.messages_count !== 1 ? "s" : ""} en conversación`
+                          : "Sin mensajes adicionales aún"}
+                      </Typography>
+                      <Button
+                        size="small"
+                        variant="contained"
+                        startIcon={
+                          t.unread_messages_count > 0 ? (
+                            <Badge badgeContent={t.unread_messages_count} color="error">
+                              <ForumIcon sx={{ fontSize: "16px !important" }} />
+                            </Badge>
+                          ) : (
+                            <ForumIcon sx={{ fontSize: "16px !important" }} />
+                          )
+                        }
+                        onClick={() => {
+                          setActiveChatTicket(t);
+                          // Marcar localmente como leídos para actualizar el badge de inmediato
+                          setMyTickets((prev) =>
+                            prev.map((item) => (item.id === t.id ? { ...item, unread_messages_count: 0 } : item))
+                          );
+                        }}
+                        sx={{
+                          background: t.unread_messages_count > 0 ? "linear-gradient(135deg, #dc2626 0%, #991b1b 100%)" : "linear-gradient(135deg, #722F37 0%, #4A1C23 100%)",
+                          color: "#ffffff",
+                          textTransform: "none",
+                          fontWeight: 800,
+                          fontSize: "0.82rem",
+                          borderRadius: 2,
+                          px: 2,
+                          py: 0.7,
+                          boxShadow: t.unread_messages_count > 0 ? "0 4px 14px rgba(220, 38, 38, 0.4)" : "0 2px 8px rgba(114, 47, 55, 0.25)",
+                          "&:hover": {
+                            background: t.unread_messages_count > 0 ? "linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)" : "linear-gradient(135deg, #8B4049 0%, #5A1E24 100%)",
+                          },
+                        }}
+                      >
+                        {t.unread_messages_count > 0
+                          ? `Ver Chat (${t.unread_messages_count} nuevo${t.unread_messages_count !== 1 ? "s" : ""})`
+                          : `Seguimiento y Chat ${t.messages_count > 0 ? `(${t.messages_count})` : ""}`}
+                      </Button>
+                    </Box>
+                  </Box>
+                );
+              })}
+            </Box>
+          )}
+        </DialogContent>
+
+        <DialogActions sx={{ px: 3, pb: 3 }}>
+          <Button onClick={() => setMyTicketsModalOpen(false)} sx={{ color: "text.secondary", fontWeight: 600 }}>
+            Cerrar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* === MODAL 4: CHAT Y SEGUIMIENTO DEL TICKET === */}
+      {activeChatTicket && (
+        <TicketChat
+          ticket={activeChatTicket}
+          onClose={() => {
+            setActiveChatTicket(null);
+            handleOpenMyTickets();
+          }}
+          onMessagesRead={(ticketId) => {
+            setMyTickets((prev) =>
+              prev.map((item) => (item.id === ticketId ? { ...item, unread_messages_count: 0 } : item))
+            );
+          }}
+          onMessageSent={() => {
+            // Actualizar en el estado local de myTickets
+            setMyTickets((prev) =>
+              prev.map((item) =>
+                item.id === activeChatTicket.id
+                  ? { ...item, messages_count: (item.messages_count || 0) + 1 }
+                  : item
+              )
+            );
+          }}
+        />
+      )}
+
       {/* Snackbar de confirmación / error */}
       <Snackbar
         open={snackbar.open}
@@ -837,6 +1692,36 @@ export default function DashboardPage() {
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      {/* MODAL ZOOM DE IMAGEN */}
+      <Dialog
+        open={Boolean(previewZoomImage)}
+        onClose={() => setPreviewZoomImage(null)}
+        maxWidth="md"
+        PaperProps={{ sx: { borderRadius: 3, bgcolor: "transparent", boxShadow: "none", overflow: "hidden" } }}
+      >
+        <Box sx={{ position: "relative", bgcolor: "#0f172a", p: 1.5, textAlign: "center", borderRadius: 2 }}>
+          <IconButton
+            onClick={() => setPreviewZoomImage(null)}
+            sx={{
+              position: "absolute",
+              top: 10,
+              right: 10,
+              color: "white",
+              bgcolor: "rgba(0,0,0,0.6)",
+              "&:hover": { bgcolor: "rgba(0,0,0,0.85)" },
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+          <Box
+            component="img"
+            src={previewZoomImage}
+            alt="Fotografía ampliada"
+            sx={{ maxWidth: "100%", maxHeight: "80vh", objectFit: "contain", borderRadius: 1.5, display: "block", mx: "auto" }}
+          />
+        </Box>
+      </Dialog>
 
     </Box>
   );

@@ -10,7 +10,8 @@ import {
     Business,
     Logout,
     Sunny,
-    Forum
+    Forum,
+    ConfirmationNumber
 } from "@mui/icons-material";
 
 import {
@@ -19,6 +20,7 @@ import {
 } from "react-router-dom";
 
 import { useAuth } from "../hooks/AuthContext";
+import { isTechAdmin } from "../router/TechAdminRoute";
 
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +77,14 @@ const navItems = [
         label: "Usuarios",
         icon: Work,
         roles: ["admin"],
+    },
+
+    {
+        path: "/dashboard/tickets",
+        label: "Ticketera",
+        icon: ConfirmationNumber,
+        roles: ["admin"],
+        isTechOnly: true,
     },
     // {
     //     path: "/dashboard/payrolls",
@@ -141,11 +151,13 @@ export function SidebarNav({ open, onClose }) {
     const { user } = useAuth();
 
     const filteredNavItems =
-        navItems.filter(
-            item =>
-                (user && item.roles.includes(user.role)) ||
-                (!user && item.path === "/dashboard/news")
-        );
+        navItems.filter(item => {
+            if (!user && item.path === "/dashboard/news") return true;
+            if (!user) return false;
+            if (!item.roles.includes(user.role)) return false;
+            if (item.isTechOnly && !isTechAdmin(user)) return false;
+            return true;
+        });
 
     return (
         <>

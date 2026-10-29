@@ -14,14 +14,16 @@ class CalendarEventReminderMail extends Mailable
 
     public $events;
     public string $date;
+    public bool $isToday;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($events, string $date)
+    public function __construct($events, string $date, bool $isToday = false)
     {
         $this->events = $events;
         $this->date = $date;
+        $this->isToday = $isToday;
     }
 
     /**
@@ -29,8 +31,9 @@ class CalendarEventReminderMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        $dayWord = $this->isToday ? 'hoy' : 'mañana';
         return new Envelope(
-            subject: 'Recordatorio: Eventos programados para mañana (' . $this->date . ')',
+            subject: "Recordatorio: Eventos programados para {$dayWord} ({$this->date})",
         );
     }
 

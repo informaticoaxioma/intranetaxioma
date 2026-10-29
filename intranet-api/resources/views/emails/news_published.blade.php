@@ -18,88 +18,91 @@
             background-color: #ffffff;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 25px -5px rgba(74, 28, 35, 0.12), 0 8px 10px -6px rgba(74, 28, 35, 0.08);
+            border: 1px solid #e8e0d5;
         }
         .header {
-            background: linear-gradient(135deg, #8a251eff 0%, #f6573bff 100%);
+            background: linear-gradient(135deg, #722F37 0%, #4A1C23 100%);
             padding: 40px 20px;
             text-align: center;
         }
         .header h1 {
-            color: #591725;
+            color: #722F37;
             margin: 0;
             font-size: 28px;
-            font-weight: 700;
-            letter-spacing: -0.05em;
+            font-weight: 800;
+            letter-spacing: -0.02em;
         }
         .header p {
-            color: #fec7bfff;
+            color: #111827;
             margin: 5px 0 0 0;
             font-size: 14px;
         }
         .content {
             padding: 40px 30px;
-            color: #1f2937;
+            color: #111827;
         }
         .category-badge {
-            background-color: #fedfdbff;
-            color: #af201eff;
-            padding: 6px 14px;
+            background-color: rgba(114, 47, 55, 0.08);
+            color: #722F37;
+            border: 1px solid rgba(114, 47, 55, 0.25);
+            padding: 5px 14px;
             border-radius: 9999px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
             display: inline-block;
             margin-bottom: 16px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
         .news-title {
-            font-size: 24px;
-            font-weight: 700;
+            font-size: 23px;
+            font-weight: 800;
             margin: 0 0 12px 0;
-            color: #2a110fff;
-            line-height: 1.3;
+            color: #4A1C23;
+            line-height: 1.35;
         }
         .news-meta {
             font-size: 14px;
-            color: #64748b;
+            color: #111827;
             margin-bottom: 24px;
         }
         .news-summary {
-            font-size: 16px;
+            font-size: 15.5px;
             line-height: 1.6;
-            color: #334155;
-            background-color: #f8fafc;
-            border-left: 4px solid #f6483bff;
+            color: #111827;
+            background-color: #FAF7F2;
+            border: 1px solid #E8E0D5;
+            border-left: 5px solid #722F37;
             padding: 16px 20px;
             border-radius: 0 12px 12px 0;
-            margin-bottom: 30px;
+            margin-bottom: 28px;
         }
         .btn-container {
             text-align: center;
             margin-top: 30px;
         }
         .btn {
-            background: linear-gradient(135deg, #f64b3bff 0%, #eb3525ff 100%);
+            background: linear-gradient(135deg, #722F37 0%, #4A1C23 100%);
             color: #ffffff !important;
             text-decoration: none;
-            padding: 14px 32px;
+            padding: 14px 34px;
             border-radius: 8px;
-            font-weight: 600;
-            font-size: 16px;
+            font-weight: 700;
+            font-size: 15px;
             display: inline-block;
-            box-shadow: 0 4px 6px -1px rgba(246, 81, 59, 0.3);
+            box-shadow: 0 4px 10px rgba(114, 47, 55, 0.3);
         }
         .footer {
             background-color: #f9fafb;
             padding: 24px;
             text-align: center;
             font-size: 12px;
-            color: #9ca3af;
-            border-top: 1px solid #f3f4f6;
+            color: #64748b;
+            border-top: 1px solid #e8e0d5;
         }
         .footer a {
-            color: #f6443bff;
+            color: #722F37;
             text-decoration: none;
         }
     </style>
@@ -119,7 +122,7 @@
                 {{ $news->resumen }}
             </div>
             
-            <p style="font-size: 15px; color: #64748b; line-height: 1.5;">Ingresa a la plataforma de Intranet para leer la noticia completa y mantenerte al día con las últimas novedades.</p>
+            <p style="font-size: 15px; color: #111827; line-height: 1.5;">Ingresa a la plataforma de Intranet para leer la noticia completa y mantenerte al día con las últimas novedades.</p>
             
             <div class="btn-container">
                 <a href="https://intranet.axioma.cl/dashboard/news/{{ $news->id }}" class="btn">Leer noticia completa</a>

@@ -71,6 +71,10 @@ class User extends Authenticatable
         'fecha_ingreso' => 'date'
     ];
 
+    protected $appends = [
+        'can_access_ticketera'
+    ];
+
     public function vacations()
     {
         return $this->hasMany(Vacation::class);
@@ -84,5 +88,49 @@ class User extends Authenticatable
     public function laborDocuments()
     {
         return $this->hasMany(LaborDocument::class);
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
+
+    /**
+     * Determina si el usuario pertenece al departamento de Tecnología / TI / Informática.
+     */
+    public function isTechDepartment(): bool
+    {
+        if (empty($this->departamento)) {
+            return false;
+        }
+
+        $dept = mb_strtolower(trim($this->departamento));
+        $unaccented = str_replace(
+            ['á', 'é', 'í', 'ó', 'ú', 'Á', 'É', 'Í', 'Ó', 'Ú'],
+            ['a', 'e', 'i', 'o', 'u', 'a', 'e', 'i', 'o', 'u'],
+            $dept
+        );
+
+        return in_array($unaccented, ['tecnologia', 'ti', 'it', 'sistemas', 'informatica', 'tecnologia e informatica'])
+            || str_contains($unaccented, 'tecnolog')
+            || str_contains($unaccented, 'informatic')
+            || $unaccented === 'ti';
+    }
+
+    /**
+     * Determina si el usuario tiene acceso a la administración de la ticketera.
+     * Solo los administradores del departamento de tecnología tienen acceso.
+     */
+    public function canAccessTicketera(): bool
+    {
+        return $this->role === 'admin' && $this->isTechDepartment();
+    }
+
+    /**
+     * Atributo computado para serialización JSON automática.
+     */
+    public function getCanAccessTicketeraAttribute(): bool
+    {
+        return $this->canAccessTicketera();
     }
 }

@@ -18,67 +18,70 @@
             background-color: #ffffff;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 25px -5px rgba(74, 28, 35, 0.12), 0 8px 10px -6px rgba(74, 28, 35, 0.08);
+            border: 1px solid #e8e0d5;
         }
         .header {
-            background: linear-gradient(135deg, #8a251eff 0%, #f6573bff 100%);
-            padding: 50px 20px;
+            background: linear-gradient(135deg, #722F37 0%, #4A1C23 100%);
+            padding: 44px 20px;
             text-align: center;
         }
         .header h1 {
-            color: #591725;
+            color: #722F37;
             margin: 0;
             font-size: 32px;
             font-weight: 800;
-            letter-spacing: -0.05em;
+            letter-spacing: -0.02em;
         }
         .header p {
-            color: #ffd0de;
+            color: #111827;
             margin: 8px 0 0 0;
             font-size: 15px;
             font-weight: 500;
         }
         .content {
             padding: 40px 30px;
-            color: #1f2937;
+            color: #111827;
         }
         .celebration-icon {
             font-size: 48px;
             margin-bottom: 20px;
         }
         .content h2 {
-            font-size: 18px;
-            font-weight: 700;
+            font-size: 21px;
+            font-weight: 800;
             margin-top: 0;
-            color: #7b1e3f;
-            margin-bottom: 10px;
-            border-bottom: 2px solid #f3f4f6;
+            color: #4A1C23;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #FAF7F2;
             padding-bottom: 10px;
         }
         .content p {
-            font-size: 16px;
+            font-size: 15.5px;
             line-height: 1.6;
-            color: #4b5563;
-            margin-bottom: 24px;
+            color: #111827;
+            margin-bottom: 20px;
         }
         .message-box {
-            background-color: #fedfdbff;
-            border: 1px dashed #af201eff;
+            background-color: #FAF7F2;
+            border: 1px dashed #722F37;
+            border-left: 5px solid #722F37;
             border-radius: 12px;
             padding: 24px;
-            margin: 30px 0;
+            margin: 28px 0;
             font-style: italic;
             font-size: 16px;
-            color: #591725;
-            line-height: 1.6;
+            color: #4A1C23;
+            line-height: 1.65;
+            font-weight: 500;
         }
         .footer {
             background-color: #f9fafb;
             padding: 24px;
             text-align: center;
             font-size: 12px;
-            color: #9ca3af;
-            border-top: 1px solid #f3f4f6;
+            color: #64748b;
+            border-top: 1px solid #e8e0d5;
         }
     </style>
 </head>

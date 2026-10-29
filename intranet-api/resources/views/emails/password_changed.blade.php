@@ -18,53 +18,56 @@
             background-color: #ffffff;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 25px -5px rgba(74, 28, 35, 0.12), 0 8px 10px -6px rgba(74, 28, 35, 0.08);
+            border: 1px solid #e8e0d5;
         }
         .header {
-            background: linear-gradient(135deg, #8a251eff 0%, #f6573bff 100%);
+            background: linear-gradient(135deg, #722F37 0%, #4A1C23 100%);
             padding: 40px 20px;
             text-align: center;
         }
         .header h1 {
-            color: #591725;
+            color: #722F37;
             margin: 0;
             font-size: 28px;
-            font-weight: 700;
-            letter-spacing: -0.05em;
+            font-weight: 800;
+            letter-spacing: -0.02em;
         }
         .header p {
-            color: #fec7bfff;
+            color: #111827;
             margin: 5px 0 0 0;
             font-size: 14px;
         }
         .content {
             padding: 40px 30px;
-            color: #1f2937;
+            color: #111827;
         }
         .content h2 {
             font-size: 20px;
-            font-weight: 600;
+            font-weight: 700;
             margin-top: 0;
-            color: #111827;
+            color: #4A1C23;
         }
         .content p {
-            font-size: 16px;
+            font-size: 15.5px;
             line-height: 1.6;
-            color: #4b5563;
+            color: #111827;
         }
         .warning-box {
-            background-color: #fef3c7;
-            border: 1px solid #fcd34d;
+            background-color: #FAF7F2;
+            border: 1px solid #E8E0D5;
+            border-left: 5px solid #dc2626;
             border-radius: 12px;
-            padding: 16px;
+            padding: 16px 20px;
             margin-bottom: 24px;
-            color: #78350f;
+            color: #111827;
             font-size: 14px;
             line-height: 1.5;
         }
         .credentials-box {
-            background-color: #fedfdbff;
-            border: 1px solid #af201eff;
+            background-color: #FAF7F2;
+            border: 1px solid #E8E0D5;
+            border-left: 5px solid #722F37;
             border-radius: 12px;
             padding: 24px;
             margin: 30px 0;
@@ -79,17 +82,18 @@
             font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: #64748b;
-            font-weight: 600;
-            margin-bottom: 4px;
+            color: #722F37;
+            font-weight: 700;
+            margin-bottom: 6px;
         }
         .credentials-value {
             font-size: 16px;
             font-family: 'Fira Code', 'Courier New', Courier, monospace;
-            color: #0f172a;
-            font-weight: 600;
-            background-color: #f1f5f9;
-            padding: 8px 12px;
+            color: #000000;
+            font-weight: 700;
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            padding: 8px 14px;
             border-radius: 6px;
             display: inline-block;
         }
@@ -98,26 +102,26 @@
             margin-top: 30px;
         }
         .btn {
-            background: linear-gradient(135deg, #f64b3bff 0%, #eb3525ff 100%);
+            background: linear-gradient(135deg, #722F37 0%, #4A1C23 100%);
             color: #ffffff !important;
             text-decoration: none;
-            padding: 14px 32px;
+            padding: 14px 34px;
             border-radius: 8px;
-            font-weight: 600;
-            font-size: 16px;
+            font-weight: 700;
+            font-size: 15px;
             display: inline-block;
-            box-shadow: 0 4px 6px -1px rgba(246, 81, 59, 0.3);
+            box-shadow: 0 4px 10px rgba(114, 47, 55, 0.3);
         }
         .footer {
             background-color: #f9fafb;
             padding: 24px;
             text-align: center;
             font-size: 12px;
-            color: #9ca3af;
-            border-top: 1px solid #f3f4f6;
+            color: #64748b;
+            border-top: 1px solid #e8e0d5;
         }
         .footer a {
-            color: #f6443bff;
+            color: #722F37;
             text-decoration: none;
         }
     </style>

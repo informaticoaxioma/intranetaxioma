@@ -13,6 +13,7 @@ use App\Http\Controllers\LaborDocumentController;
 use App\Http\Controllers\WallController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\TicketController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -32,6 +33,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Comentarios y recomendaciones (Comité Paritario)
     Route::post('/feedback', [FeedbackController::class, 'send']);
+
+    // Tickets (Mesa de Ayuda) y Chat de Seguimiento
+    Route::post('/tickets', [TicketController::class, 'store']);
+    Route::get('/my-tickets', [TicketController::class, 'myTickets']);
+    Route::get('/tickets/tech-users', [TicketController::class, 'techUsers']);
+    Route::get('/tickets/{id}/messages', [TicketController::class, 'getMessages']);
+    Route::post('/tickets/{id}/messages', [TicketController::class, 'storeMessage']);
+    Route::post('/tickets/{id}/messages/read', [TicketController::class, 'markMessagesAsRead']);
 
     // Usuarios normales
 
@@ -101,6 +110,12 @@ Route::middleware('auth:sanctum')->group(function () {
             VacationController::class,
             'reject'
         ]);
+
+        // Ticketera (Admin)
+        Route::get('/tickets', [TicketController::class, 'index']);
+        Route::get('/tickets/stats', [TicketController::class, 'stats']);
+        Route::get('/tickets/{id}', [TicketController::class, 'show']);
+        Route::patch('/tickets/{id}', [TicketController::class, 'update']);
 
     });
 });

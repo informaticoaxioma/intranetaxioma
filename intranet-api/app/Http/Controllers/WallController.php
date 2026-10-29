@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\WallPost;
 use App\Models\WallComment;
+use App\Models\User;
+use App\Mail\WallPostPublishedMail;
 use App\Services\WallService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class WallController extends Controller
 {
@@ -40,21 +44,63 @@ class WallController extends Controller
         }
 
         $validated = $request->validate([
-            'contenido' => 'required|string',
+            'contenido' => 'nullable|string',
             'imagen' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,mp4,mov,avi,webm,ogg,ogv|max:51200',
+            'imagenes' => 'nullable|array',
+            'imagenes.*' => 'file|mimes:jpg,jpeg,png,gif,webp,mp4,mov,avi,webm,ogg,ogv|max:51200',
         ]);
 
-        $path = null;
-        if ($request->hasFile('imagen')) {
-            $path = $request->file('imagen')->store('wallphotos', 'public');
+        $contenido = isset($validated['contenido']) ? trim($validated['contenido']) : '';
+        $hasMedia = $request->hasFile('imagen') || $request->hasFile('imagenes');
+
+        if ($contenido === '' && !$hasMedia) {
+            return response()->json([
+                'message' => 'Debes escribir un contenido o adjuntar al menos una fotografía o video.'
+            ], 422);
+        }
+
+        $paths = [];
+        if ($request->hasFile('imagenes')) {
+            foreach ($request->file('imagenes') as $file) {
+                $paths[] = $file->store('wallphotos', 'public');
+            }
+        } elseif ($request->hasFile('imagen')) {
+            $paths[] = $request->file('imagen')->store('wallphotos', 'public');
         }
 
         $post = $this->wallService->createPost([
             'user_id' => $user->id,
             'contrato' => $user->contrato,
-            'contenido' => $validated['contenido'],
-            'path_imagen' => $path,
+            'contenido' => $contenido,
+            'path_imagen' => $paths[0] ?? null,
+            'imagenes' => !empty($paths) ? $paths : null,
         ]);
+
+        // Notificar por correo a los miembros del contrato y administradores (excepto al autor)
+        try {
+            $recipients = User::where('id', '!=', $user->id)
+                ->where(function ($q) {
+                    $q->whereNull('estado_cuenta')
+                      ->orWhere('estado_cuenta', '!=', 'inactivo');
+                })
+                ->where(function ($q) use ($user) {
+                    $q->where('contrato', $user->contrato)
+                      ->orWhere('role', 'admin');
+                })
+                ->get();
+
+            foreach ($recipients as $recipient) {
+                if ($recipient->email) {
+                    try {
+                        Mail::to($recipient->email)->send(new WallPostPublishedMail($post, $user));
+                    } catch (\Exception $e) {
+                        Log::error("Error enviando notificación de publicación en Muro a {$recipient->email}: " . $e->getMessage());
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error("Error procesando destinatarios de correo para publicación en Muro: " . $e->getMessage());
+        }
 
         return response()->json(
             $post->load(['user', 'comments.user', 'reactions.user']),
