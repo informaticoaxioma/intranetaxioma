@@ -1412,14 +1412,20 @@ export const deleteWallPost = async (id) => {
 
 export const createWallComment = async (postId, contentData) => {
     const token = localStorage.getItem("token");
+    const isFormData = contentData instanceof FormData;
+    const headers = {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+    };
+
+    if (!isFormData) {
+        headers["Content-Type"] = "application/json";
+    }
+
     const response = await fetch(`${API_URL}/wall/posts/${postId}/comments`, {
         method: "POST",
-        headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-        },
-        body: JSON.stringify(contentData),
+        headers,
+        body: isFormData ? contentData : JSON.stringify(contentData),
     });
     const data = await response.json();
     if (!response.ok) {

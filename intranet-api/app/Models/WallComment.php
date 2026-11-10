@@ -15,7 +15,10 @@ class WallComment extends Model
         'post_id',
         'user_id',
         'contenido',
+        'path_imagen',
     ];
+
+    protected $appends = ['imagen_url'];
 
     public function user()
     {
@@ -25,5 +28,14 @@ class WallComment extends Model
     public function post()
     {
         return $this->belongsTo(WallPost::class);
+    }
+
+    public function getImagenUrlAttribute()
+    {
+        if (!$this->path_imagen) {
+            return null;
+        }
+
+        return asset('storage/' . $this->path_imagen);
     }
 }

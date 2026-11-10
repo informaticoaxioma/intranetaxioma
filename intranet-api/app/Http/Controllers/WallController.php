@@ -134,12 +134,28 @@ class WallController extends Controller
         }
 
         $validated = $request->validate([
-            'contenido' => 'required|string',
+            'contenido' => 'nullable|string',
+            'imagen' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,mp4,mov,avi,webm,ogg,ogv|max:51200',
         ]);
+
+        $contenido = isset($validated['contenido']) ? trim($validated['contenido']) : '';
+        $hasMedia = $request->hasFile('imagen');
+
+        if ($contenido === '' && !$hasMedia) {
+            return response()->json([
+                'message' => 'Debes escribir un comentario o adjuntar una fotografía.'
+            ], 422);
+        }
+
+        $path = null;
+        if ($hasMedia) {
+            $path = $request->file('imagen')->store('wallcomments', 'public');
+        }
 
         $comment = $this->wallService->createComment($post, [
             'user_id' => $user->id,
-            'contenido' => $validated['contenido'],
+            'contenido' => $contenido,
+            'path_imagen' => $path,
         ]);
 
         return response()->json(

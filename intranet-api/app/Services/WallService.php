@@ -47,6 +47,12 @@ class WallService
             $pathsToDelete[] = $post->path_imagen;
         }
 
+        foreach ($post->comments as $comment) {
+            if ($comment->path_imagen) {
+                $pathsToDelete[] = $comment->path_imagen;
+            }
+        }
+
         foreach ($pathsToDelete as $path) {
             if ($path) {
                 Storage::disk('public')->delete($path);
@@ -58,11 +64,19 @@ class WallService
 
     public function createComment(WallPost $post, array $data)
     {
+        if (array_key_exists('path_imagen', $data) && !Schema::hasColumn('wall_comments', 'path_imagen')) {
+            unset($data['path_imagen']);
+        }
+
         return $post->comments()->create($data);
     }
 
     public function deleteComment(WallComment $comment)
     {
+        if ($comment->path_imagen) {
+            Storage::disk('public')->delete($comment->path_imagen);
+        }
+
         return $comment->delete();
     }
 

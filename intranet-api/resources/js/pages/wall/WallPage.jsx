@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
     Box,
     Card,
@@ -15,6 +15,7 @@ import {
     CircularProgress,
     Badge,
     Dialog,
+    Popover,
 } from "@mui/material";
 import {
     ThumbUp,
@@ -32,6 +33,7 @@ import {
     ChevronRight as ChevronRightIcon,
     AddPhotoAlternate as AddPhotoAlternateIcon,
     Collections as CollectionsIcon,
+    EmojiEmotionsOutlined as EmojiEmotionsOutlinedIcon,
 } from "@mui/icons-material";
 import {
     getWallPosts,
@@ -60,6 +62,52 @@ const getPostMediaList = (post) => {
     return [];
 };
 
+const EMOJI_CATEGORIES = [
+    {
+        label: "Caras",
+        icon: "😀",
+        emojis: [
+            "😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣",
+            "😊", "😇", "🙂", "😉", "😌", "😍", "🥰", "😘",
+            "😋", "😛", "😜", "🤪", "🤨", "🧐", "🤓", "😎",
+            "🤩", "🥳", "😏", "😒", "😞", "😔", "😟", "😕",
+            "😮", "😯", "😲", "😳", "🥺", "😢", "😭", "😤",
+            "🤔", "🤗", "🤭", "🤫", "😴", "😷", "🤒", "🤕",
+        ],
+    },
+    {
+        label: "Gestos",
+        icon: "👍",
+        emojis: [
+            "👍", "👎", "👌", "✌️", "🤞", "🤟", "🤘", "🤙",
+            "👏", "🙌", "👐", "🤲", "🤝", "🙏", "✍️", "💪",
+            "🦾", "👋", "🤚", "🖐️", "✋", "👆", "👇", "👈",
+            "👉", "🫡", "🫶", "❤️", "🧡", "💛", "💚", "💙",
+            "💜", "🖤", "🤍", "💔", "❣️", "💕", "💞", "💓",
+        ],
+    },
+    {
+        label: "Celebración",
+        icon: "🎉",
+        emojis: [
+            "🎉", "🎊", "🎈", "🎂", "🎁", "🏆", "🥇", "🥈",
+            "🥉", "🏅", "🎖️", "🌟", "⭐", "✨", "🔥", "💥",
+            "💯", "✅", "☑️", "🚀", "💡", "📢", "📣", "🔔",
+            "🎶", "🎵", "☕", "🍕", "🍔", "🍰", "🥂", "🍻",
+        ],
+    },
+    {
+        label: "Trabajo",
+        icon: "💼",
+        emojis: [
+            "💼", "📁", "📂", "📅", "📆", "📊", "📈", "📉",
+            "📋", "📌", "📍", "📎", "📝", "✏️", "🔍", "🔒",
+            "💻", "🖥️", "📱", "⌨️", "🖨️", "🛠️", "⚙️", "👷",
+            "👷‍♀️", "👷‍♂️", "🦺", "🪖", "🏗️", "🏢", "🚗", "🚛",
+        ],
+    },
+];
+
 export default function WallPage() {
     const user = JSON.parse(localStorage.getItem("user"));
     const [posts, setPosts] = useState([]);
@@ -71,8 +119,18 @@ export default function WallPage() {
     const [selectedMedia, setSelectedMedia] = useState([]); // [{ file, previewUrl, isVideo }]
     const [submittingPost, setSubmittingPost] = useState(false);
 
+    // Emoji picker states (shared between post composer and comment inputs)
+    const [emojiAnchorEl, setEmojiAnchorEl] = useState(null);
+    const [emojiTarget, setEmojiTarget] = useState({ type: "post", postId: null });
+    const [activeEmojiTab, setActiveEmojiTab] = useState(0);
+    const postInputRef = useRef(null);
+    const commentInputRefs = useRef({});
+
     // Comment states
     const [commentTexts, setCommentTexts] = useState({}); // key: postId, value: commentText
+    const [commentMedia, setCommentMedia] = useState({}); // key: postId, value: { file, previewUrl, isVideo }
+    const [submittingComments, setSubmittingComments] = useState({}); // key: postId, value: boolean
+    const [expandedComments, setExpandedComments] = useState({}); // key: postId, value: boolean
 
     // Facebook-style Lightbox state
     const [lightbox, setLightbox] = useState({
@@ -140,6 +198,56 @@ export default function WallPage() {
         setSelectedMedia([]);
     };
 
+    const handleOpenEmojiPicker = (event, target = { type: "post", postId: null }) => {
+        setEmojiTarget(target);
+        setEmojiAnchorEl(event.currentTarget);
+    };
+
+    const handleInsertEmoji = (emoji) => {
+        if (emojiTarget.type === "comment" && emojiTarget.postId) {
+            const postId = emojiTarget.postId;
+            const inputEl = commentInputRefs.current[postId];
+            const currentText = commentTexts[postId] || "";
+
+            if (inputEl && typeof inputEl.selectionStart === "number") {
+                const start = inputEl.selectionStart;
+                const end = inputEl.selectionEnd;
+                const updatedText =
+                    currentText.slice(0, start) + emoji + currentText.slice(end);
+                setCommentTexts((prev) => ({ ...prev, [postId]: updatedText }));
+
+                setTimeout(() => {
+                    inputEl.focus();
+                    const newPos = start + emoji.length;
+                    inputEl.setSelectionRange(newPos, newPos);
+                }, 0);
+            } else {
+                setCommentTexts((prev) => ({
+                    ...prev,
+                    [postId]: currentText + emoji,
+                }));
+            }
+            return;
+        }
+
+        const inputEl = postInputRef.current;
+        if (inputEl && typeof inputEl.selectionStart === "number") {
+            const start = inputEl.selectionStart;
+            const end = inputEl.selectionEnd;
+            const updatedText =
+                newPostText.slice(0, start) + emoji + newPostText.slice(end);
+            setNewPostText(updatedText);
+
+            setTimeout(() => {
+                inputEl.focus();
+                const newPos = start + emoji.length;
+                inputEl.setSelectionRange(newPos, newPos);
+            }, 0);
+        } else {
+            setNewPostText((prev) => prev + emoji);
+        }
+    };
+
     const handleCreatePost = async (e) => {
         e.preventDefault();
         if (!newPostText.trim() && selectedMedia.length === 0) return;
@@ -190,12 +298,52 @@ export default function WallPage() {
         }));
     };
 
+    const handleCommentMediaChange = (postId, e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setCommentMedia((prev) => {
+            if (prev[postId]?.previewUrl) {
+                URL.revokeObjectURL(prev[postId].previewUrl);
+            }
+            return {
+                ...prev,
+                [postId]: {
+                    file,
+                    previewUrl: URL.createObjectURL(file),
+                    isVideo: file.type?.startsWith("video/"),
+                },
+            };
+        });
+        e.target.value = "";
+    };
+
+    const handleRemoveCommentMedia = (postId) => {
+        setCommentMedia((prev) => {
+            if (prev[postId]?.previewUrl) {
+                URL.revokeObjectURL(prev[postId].previewUrl);
+            }
+            const next = { ...prev };
+            delete next[postId];
+            return next;
+        });
+    };
+
     const handleCreateComment = async (postId) => {
-        const text = commentTexts[postId];
-        if (!text || !text.trim()) return;
+        const text = commentTexts[postId] || "";
+        const mediaItem = commentMedia[postId];
+        if (!text.trim() && !mediaItem) return;
 
         try {
-            const commentResponse = await createWallComment(postId, { contenido: text });
+            setSubmittingComments((prev) => ({ ...prev, [postId]: true }));
+
+            const formData = new FormData();
+            formData.append("contenido", text.trim());
+            if (mediaItem?.file) {
+                formData.append("imagen", mediaItem.file);
+            }
+
+            const commentResponse = await createWallComment(postId, formData);
 
             setPosts((prev) =>
                 prev.map((post) => {
@@ -209,13 +357,22 @@ export default function WallPage() {
                 })
             );
 
+            // Ensure comments are expanded if the user just added the 6th+ comment
+            setExpandedComments((prev) => ({
+                ...prev,
+                [postId]: true,
+            }));
+
             setCommentTexts((prev) => ({
                 ...prev,
                 [postId]: "",
             }));
+            handleRemoveCommentMedia(postId);
         } catch (err) {
             console.error(err);
             alert(err.message || "Error al comentar.");
+        } finally {
+            setSubmittingComments((prev) => ({ ...prev, [postId]: false }));
         }
     };
 
@@ -375,6 +532,7 @@ export default function WallPage() {
                                 fullWidth
                                 multiline
                                 minRows={3}
+                                inputRef={postInputRef}
                                 placeholder={`¿Qué quieres compartir en el Muro de ${user?.contrato || "tu contrato"}?`}
                                 value={newPostText}
                                 onChange={(e) => setNewPostText(e.target.value)}
@@ -466,31 +624,136 @@ export default function WallPage() {
 
                             <Divider className="my-4" />
 
-                            <Box className="flex justify-between items-center" sx={{ mt: 2 }}>
-                                <Button
-                                    variant="outlined"
-                                    component="label"
-                                    startIcon={<ImageIcon />}
-                                    sx={{
-                                        borderRadius: "20px",
-                                        textTransform: "none",
-                                        color: "#6a1936",
-                                        borderColor: "#6a1936",
-                                        "&:hover": {
-                                            borderColor: "#4a1025",
-                                            backgroundColor: "#6a1936/5",
+                            <Box className="flex flex-wrap justify-between items-center gap-2" sx={{ mt: 2 }}>
+                                <Stack direction="row" spacing={1} className="flex-wrap gap-y-2">
+                                    <Button
+                                        variant="outlined"
+                                        component="label"
+                                        startIcon={<ImageIcon />}
+                                        sx={{
+                                            borderRadius: "20px",
+                                            textTransform: "none",
+                                            color: "#6a1936",
+                                            borderColor: "#6a1936",
+                                            "&:hover": {
+                                                borderColor: "#4a1025",
+                                                backgroundColor: "#6a1936/5",
+                                            },
+                                        }}
+                                    >
+                                        Subir Fotos / Videos / GIF
+                                        <input
+                                            type="file"
+                                            hidden
+                                            multiple
+                                            accept="image/*,video/*"
+                                            onChange={handleMediaChange}
+                                        />
+                                    </Button>
+
+                                    <Button
+                                        variant="outlined"
+                                        onClick={(e) => handleOpenEmojiPicker(e, { type: "post", postId: null })}
+                                        startIcon={<EmojiEmotionsOutlinedIcon />}
+                                        sx={{
+                                            borderRadius: "20px",
+                                            textTransform: "none",
+                                            color: "#6a1936",
+                                            borderColor: "#6a1936",
+                                            "&:hover": {
+                                                borderColor: "#4a1025",
+                                                backgroundColor: "#6a1936/5",
+                                            },
+                                        }}
+                                    >
+                                        Emoticones
+                                    </Button>
+                                </Stack>
+
+                                {/* Emoji Picker Popover */}
+                                <Popover
+                                    open={Boolean(emojiAnchorEl)}
+                                    anchorEl={emojiAnchorEl}
+                                    onClose={() => setEmojiAnchorEl(null)}
+                                    anchorOrigin={{
+                                        vertical: "bottom",
+                                        horizontal: "left",
+                                    }}
+                                    transformOrigin={{
+                                        vertical: "top",
+                                        horizontal: "left",
+                                    }}
+                                    PaperProps={{
+                                        sx: {
+                                            mt: 1,
+                                            borderRadius: 3,
+                                            width: 320,
+                                            overflow: "hidden",
+                                            boxShadow: "0 12px 32px rgba(0,0,0,0.16)",
+                                            border: "1px solid #E8E0D5",
                                         },
                                     }}
                                 >
-                                    Subir Fotos / Videos / GIF
-                                    <input
-                                        type="file"
-                                        hidden
-                                        multiple
-                                        accept="image/*,video/*"
-                                        onChange={handleMediaChange}
-                                    />
-                                </Button>
+                                    <Box className="bg-[#FAF7F2] px-3 py-2 border-b border-gray-200 flex items-center justify-between">
+                                        <Typography variant="caption" className="font-bold text-[#4A1C23]">
+                                            Selecciona un emoticón
+                                        </Typography>
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => setEmojiAnchorEl(null)}
+                                            sx={{ p: 0.3 }}
+                                        >
+                                            <CloseIcon sx={{ fontSize: 16 }} />
+                                        </IconButton>
+                                    </Box>
+
+                                    {/* Category Tabs */}
+                                    <Box className="flex border-b border-gray-100 bg-white px-2 pt-1.5 gap-1">
+                                        {EMOJI_CATEGORIES.map((cat, idx) => (
+                                            <Button
+                                                key={cat.label}
+                                                size="small"
+                                                onClick={() => setActiveEmojiTab(idx)}
+                                                sx={{
+                                                    minWidth: 0,
+                                                    flex: 1,
+                                                    py: 0.6,
+                                                    px: 1,
+                                                    borderRadius: "8px 8px 0 0",
+                                                    textTransform: "none",
+                                                    fontSize: "0.72rem",
+                                                    fontWeight: activeEmojiTab === idx ? 700 : 500,
+                                                    color: activeEmojiTab === idx ? "#6a1936" : "text.secondary",
+                                                    borderBottom:
+                                                        activeEmojiTab === idx
+                                                            ? "2px solid #6a1936"
+                                                            : "2px solid transparent",
+                                                    bgcolor:
+                                                        activeEmojiTab === idx
+                                                            ? "rgba(106, 25, 54, 0.06)"
+                                                            : "transparent",
+                                                }}
+                                            >
+                                                <span className="mr-1">{cat.icon}</span>
+                                                {cat.label}
+                                            </Button>
+                                        ))}
+                                    </Box>
+
+                                    {/* Emoji Grid */}
+                                    <Box className="p-2.5 grid grid-cols-8 gap-1 max-h-[210px] overflow-y-auto bg-white">
+                                        {EMOJI_CATEGORIES[activeEmojiTab]?.emojis.map((emoji) => (
+                                            <button
+                                                key={emoji}
+                                                type="button"
+                                                onClick={() => handleInsertEmoji(emoji)}
+                                                className="w-8 h-8 flex items-center justify-center text-xl rounded-lg hover:bg-[#6a1936]/10 active:scale-90 transition-transform cursor-pointer"
+                                            >
+                                                {emoji}
+                                            </button>
+                                        ))}
+                                    </Box>
+                                </Popover>
 
                                 <Button
                                     onClick={handleCreatePost}
@@ -620,7 +883,21 @@ export default function WallPage() {
                                             />
                                         </Stack>
 
-                                        <Typography variant="caption" className="text-gray-400 font-medium">
+                                        <Typography
+                                            variant="caption"
+                                            onClick={() => {
+                                                if ((post.comments?.length || 0) > 5) {
+                                                    setExpandedComments((prev) => ({
+                                                        ...prev,
+                                                        [post.id]: !prev[post.id],
+                                                    }));
+                                                }
+                                            }}
+                                            className={`text-gray-400 font-medium ${(post.comments?.length || 0) > 5
+                                                ? "cursor-pointer hover:underline hover:text-[#6a1936]"
+                                                : ""
+                                                }`}
+                                        >
                                             {post.comments?.length || 0} comentario{post.comments?.length !== 1 && "s"}
                                         </Typography>
                                     </Box>
@@ -628,59 +905,164 @@ export default function WallPage() {
 
                                 {/* Comments Section */}
                                 <Box className="bg-gray-50 p-4 border-t border-gray-100">
-                                    <Stack spacing={2} className="mb-4">
-                                        {post.comments?.map((comment) => {
-                                            const isCommentOwner = comment.user_id === user.id;
-                                            const isCommentPostOwner = post.user_id === user.id;
-                                            const isCommentAdmin = user.role === "admin";
+                                    {(() => {
+                                        const allComments = post.comments || [];
+                                        const totalComments = allComments.length;
+                                        const isExpanded = Boolean(expandedComments[post.id]);
+                                        const visibleComments =
+                                            totalComments > 3 && !isExpanded
+                                                ? allComments.slice(0, 3)
+                                                : allComments;
 
-                                            return (
-                                                <Box
-                                                    key={comment.id}
-                                                    className="flex gap-2 items-start bg-white p-3 rounded-2xl shadow-sm border border-gray-100"
-                                                >
-                                                    <Avatar
-                                                        src={
-                                                            comment.user?.path_foto_perfil
-                                                                ? `${import.meta.env.VITE_API_URL || "https://intranet.axioma.cl"}/storage/${comment.user.path_foto_perfil}`
-                                                                : undefined
-                                                        }
-                                                        sx={{
-                                                            width: 32,
-                                                            height: 32,
-                                                            backgroundColor: "#7b1e3f",
-                                                        }}
-                                                    >
-                                                        {`${comment.user?.name?.[0] || ""}${comment.user?.apellido?.[0] || ""}`.toUpperCase() || "U"}
-                                                    </Avatar>
-                                                    <Box className="flex-1">
-                                                        <Box className="flex justify-between items-start">
-                                                            <Box>
-                                                                <Typography variant="subtitle2" className="font-semibold text-gray-900 leading-tight">
-                                                                    {comment.user ? `${comment.user.name} ${comment.user.apellido || ""}` : "Colaborador"}
-                                                                </Typography>
-                                                                <Typography variant="caption" className="text-gray-400 leading-none">
-                                                                    {comment.user?.cargo || "Colaborador"} • {new Date(comment.created_at).toLocaleString()}
-                                                                </Typography>
-                                                            </Box>
-                                                            {(isCommentOwner || isCommentPostOwner || isCommentAdmin) && (
-                                                                <IconButton
-                                                                    size="small"
-                                                                    onClick={() => handleDeleteComment(post.id, comment.id)}
-                                                                    className="hover:!text-red-600 hover:!bg-red-50"
+                                        return (
+                                            <>
+                                                <Stack spacing={2} className={totalComments > 0 ? "mb-3" : "mb-1"}>
+                                                    {visibleComments.map((comment) => {
+                                                        const isCommentOwner = comment.user_id === user.id;
+                                                        const isCommentPostOwner = post.user_id === user.id;
+                                                        const isCommentAdmin = user.role === "admin";
+
+                                                        return (
+                                                            <Box
+                                                                key={comment.id}
+                                                                className="flex gap-2 items-start bg-white p-3 rounded-2xl shadow-sm border border-gray-100"
+                                                            >
+                                                                <Avatar
+                                                                    src={
+                                                                        comment.user?.path_foto_perfil
+                                                                            ? `${import.meta.env.VITE_API_URL || "https://intranet.axioma.cl"}/storage/${comment.user.path_foto_perfil}`
+                                                                            : undefined
+                                                                    }
+                                                                    sx={{
+                                                                        width: 32,
+                                                                        height: 32,
+                                                                        backgroundColor: "#7b1e3f",
+                                                                    }}
                                                                 >
-                                                                    <Delete sx={{ fontSize: "16px" }} />
-                                                                </IconButton>
-                                                            )}
-                                                        </Box>
-                                                        <Typography className="text-gray-700 text-sm mt-1 leading-relaxed whitespace-pre-line">
-                                                            {renderTextWithLinks(comment.contenido)}
-                                                        </Typography>
+                                                                    {`${comment.user?.name?.[0] || ""}${comment.user?.apellido?.[0] || ""}`.toUpperCase() || "U"}
+                                                                </Avatar>
+                                                                <Box className="flex-1 min-w-0">
+                                                                    <Box className="flex justify-between items-start">
+                                                                        <Box>
+                                                                            <Typography variant="subtitle2" className="font-semibold text-gray-900 leading-tight">
+                                                                                {comment.user ? `${comment.user.name} ${comment.user.apellido || ""}` : "Colaborador"}
+                                                                            </Typography>
+                                                                            <Typography variant="caption" className="text-gray-400 leading-none">
+                                                                                {comment.user?.cargo || "Colaborador"} • {new Date(comment.created_at).toLocaleString()}
+                                                                            </Typography>
+                                                                        </Box>
+                                                                        {(isCommentOwner || isCommentPostOwner || isCommentAdmin) && (
+                                                                            <IconButton
+                                                                                size="small"
+                                                                                onClick={() => handleDeleteComment(post.id, comment.id)}
+                                                                                className="hover:!text-red-600 hover:!bg-red-50"
+                                                                            >
+                                                                                <Delete sx={{ fontSize: "16px" }} />
+                                                                            </IconButton>
+                                                                        )}
+                                                                    </Box>
+
+                                                                    {comment.contenido && (
+                                                                        <Typography className="text-gray-700 text-sm mt-1 leading-relaxed whitespace-pre-line break-words">
+                                                                            {renderTextWithLinks(comment.contenido)}
+                                                                        </Typography>
+                                                                    )}
+
+                                                                    {comment.imagen_url && (
+                                                                        <Box className="mt-2 inline-block max-w-[260px] sm:max-w-[320px] rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
+                                                                            {isVideoUrl(comment.imagen_url) ? (
+                                                                                <video
+                                                                                    src={comment.imagen_url}
+                                                                                    controls
+                                                                                    className="w-full h-auto max-h-[240px] object-contain"
+                                                                                />
+                                                                            ) : (
+                                                                                <img
+                                                                                    src={comment.imagen_url}
+                                                                                    alt="Adjunto de comentario"
+                                                                                    onClick={() =>
+                                                                                        setLightbox({
+                                                                                            open: true,
+                                                                                            mediaList: [comment.imagen_url],
+                                                                                            currentIndex: 0,
+                                                                                            post: {
+                                                                                                ...post,
+                                                                                                user: comment.user || post.user,
+                                                                                            },
+                                                                                        })
+                                                                                    }
+                                                                                    className="w-full h-auto max-h-[240px] object-cover cursor-pointer hover:opacity-95 transition-opacity"
+                                                                                />
+                                                                            )}
+                                                                        </Box>
+                                                                    )}
+                                                                </Box>
+                                                            </Box>
+                                                        );
+                                                    })}
+                                                </Stack>
+
+                                                {/* Facebook-style "Mostrar (cantidad comentarios)" button when > 5 comments */}
+                                                {totalComments > 5 && (
+                                                    <Box className="mb-3">
+                                                        <Button
+                                                            size="small"
+                                                            onClick={() =>
+                                                                setExpandedComments((prev) => ({
+                                                                    ...prev,
+                                                                    [post.id]: !isExpanded,
+                                                                }))
+                                                            }
+                                                            sx={{
+                                                                textTransform: "none",
+                                                                color: "#6a1936",
+                                                                fontWeight: 700,
+                                                                fontSize: "0.82rem",
+                                                                px: 1.5,
+                                                                py: 0.4,
+                                                                borderRadius: "12px",
+                                                                "&:hover": {
+                                                                    backgroundColor: "rgba(106, 25, 54, 0.08)",
+                                                                    textDecoration: "underline",
+                                                                },
+                                                            }}
+                                                        >
+                                                            {isExpanded
+                                                                ? "Ocultar comentarios"
+                                                                : `Mostrar (${totalComments} comentarios)`}
+                                                        </Button>
                                                     </Box>
-                                                </Box>
-                                            );
-                                        })}
-                                    </Stack>
+                                                )}
+                                            </>
+                                        );
+                                    })()}
+
+                                    {/* Comment Media Preview before sending */}
+                                    {commentMedia[post.id] && (
+                                        <Box className="mb-2.5 ml-10 relative inline-block max-w-[160px] rounded-xl overflow-hidden border border-gray-200 bg-white shadow-sm">
+                                            {commentMedia[post.id].isVideo ? (
+                                                <video
+                                                    src={commentMedia[post.id].previewUrl}
+                                                    className="w-full h-auto max-h-[120px] object-cover"
+                                                    muted
+                                                />
+                                            ) : (
+                                                <img
+                                                    src={commentMedia[post.id].previewUrl}
+                                                    alt="Vista previa comentario"
+                                                    className="w-full h-auto max-h-[120px] object-cover"
+                                                />
+                                            )}
+                                            <IconButton
+                                                size="small"
+                                                onClick={() => handleRemoveCommentMedia(post.id)}
+                                                className="!absolute top-1 right-1 !bg-black/65 hover:!bg-black/85 !text-white"
+                                                sx={{ width: 22, height: 22 }}
+                                            >
+                                                <CloseIcon sx={{ fontSize: 13 }} />
+                                            </IconButton>
+                                        </Box>
+                                    )}
 
                                     {/* New Comment Input */}
                                     <Stack direction="row" spacing={1} alignItems="center">
@@ -701,6 +1083,9 @@ export default function WallPage() {
                                         <TextField
                                             fullWidth
                                             size="small"
+                                            inputRef={(el) => {
+                                                commentInputRefs.current[post.id] = el;
+                                            }}
                                             placeholder="Escribe un comentario..."
                                             value={commentTexts[post.id] || ""}
                                             onChange={(e) => handleCommentChange(post.id, e.target.value)}
@@ -717,19 +1102,75 @@ export default function WallPage() {
                                                 },
                                             }}
                                         />
+
+                                        {/* Emoji Button for Comment */}
+                                        <Tooltip title="Agregar emoticón">
+                                            <IconButton
+                                                size="small"
+                                                onClick={(e) =>
+                                                    handleOpenEmojiPicker(e, {
+                                                        type: "comment",
+                                                        postId: post.id,
+                                                    })
+                                                }
+                                                sx={{
+                                                    color: "#6a1936",
+                                                    "&:hover": { bgcolor: "rgba(106, 25, 54, 0.08)" },
+                                                }}
+                                            >
+                                                <EmojiEmotionsOutlinedIcon fontSize="small" />
+                                            </IconButton>
+                                        </Tooltip>
+
+                                        {/* Photo Upload Button for Comment */}
+                                        <Tooltip title="Adjuntar foto al comentario">
+                                            <IconButton
+                                                size="small"
+                                                component="label"
+                                                sx={{
+                                                    color: "#6a1936",
+                                                    "&:hover": { bgcolor: "rgba(106, 25, 54, 0.08)" },
+                                                }}
+                                            >
+                                                <ImageIcon fontSize="small" />
+                                                <input
+                                                    type="file"
+                                                    hidden
+                                                    accept="image/*,video/*"
+                                                    onChange={(e) => handleCommentMediaChange(post.id, e)}
+                                                />
+                                            </IconButton>
+                                        </Tooltip>
+
                                         <IconButton
                                             color="primary"
                                             onClick={() => handleCreateComment(post.id)}
-                                            disabled={!commentTexts[post.id]?.trim()}
+                                            disabled={
+                                                submittingComments[post.id] ||
+                                                (!commentTexts[post.id]?.trim() && !commentMedia[post.id])
+                                            }
                                             sx={{
-                                                bgcolor: commentTexts[post.id]?.trim() ? "#6a1936" : "transparent",
-                                                color: commentTexts[post.id]?.trim() ? "white" : "gray",
+                                                bgcolor:
+                                                    commentTexts[post.id]?.trim() || commentMedia[post.id]
+                                                        ? "#6a1936"
+                                                        : "transparent",
+                                                color:
+                                                    commentTexts[post.id]?.trim() || commentMedia[post.id]
+                                                        ? "white"
+                                                        : "gray",
                                                 "&:hover": {
-                                                    bgcolor: commentTexts[post.id]?.trim() ? "#4a1025" : "transparent",
+                                                    bgcolor:
+                                                        commentTexts[post.id]?.trim() || commentMedia[post.id]
+                                                            ? "#4a1025"
+                                                            : "transparent",
                                                 },
                                             }}
                                         >
-                                            <Send fontSize="small" />
+                                            {submittingComments[post.id] ? (
+                                                <CircularProgress size={16} color="inherit" />
+                                            ) : (
+                                                <Send fontSize="small" />
+                                            )}
                                         </IconButton>
                                     </Stack>
                                 </Box>
@@ -874,11 +1315,10 @@ export default function WallPage() {
                                                     currentIndex: idx,
                                                 }))
                                             }
-                                            className={`relative w-14 h-14 rounded-lg overflow-hidden cursor-pointer shrink-0 transition-all ${
-                                                isActive
-                                                    ? "ring-2 ring-[#e11d48] scale-105 opacity-100"
-                                                    : "opacity-50 hover:opacity-85"
-                                            }`}
+                                            className={`relative w-14 h-14 rounded-lg overflow-hidden cursor-pointer shrink-0 transition-all ${isActive
+                                                ? "ring-2 ring-[#e11d48] scale-105 opacity-100"
+                                                : "opacity-50 hover:opacity-85"
+                                                }`}
                                         >
                                             {isVideoUrl(url) ? (
                                                 <video src={url} className="w-full h-full object-cover" muted />
@@ -919,17 +1359,15 @@ function PostMediaGrid({ mediaList, onSelectMedia }) {
                     <video
                         src={url}
                         controls={count === 1}
-                        className={`w-full h-full ${
-                            count === 1 ? "object-contain max-h-[480px]" : "object-cover"
-                        } transition-transform duration-300 group-hover:scale-[1.02]`}
+                        className={`w-full h-full ${count === 1 ? "object-contain max-h-[480px]" : "object-cover"
+                            } transition-transform duration-300 group-hover:scale-[1.02]`}
                     />
                 ) : (
                     <img
                         src={url}
                         alt={`Publicación ${idx + 1}`}
-                        className={`w-full h-full ${
-                            count === 1 ? "object-contain max-h-[480px]" : "object-cover"
-                        } transition-transform duration-300 group-hover:scale-[1.02]`}
+                        className={`w-full h-full ${count === 1 ? "object-contain max-h-[480px]" : "object-cover"
+                            } transition-transform duration-300 group-hover:scale-[1.02]`}
                     />
                 )}
                 <Box className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none" />
