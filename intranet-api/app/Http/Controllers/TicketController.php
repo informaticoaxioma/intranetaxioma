@@ -142,7 +142,7 @@ class TicketController extends Controller
             'category'    => 'required|string|max:100',
             'priority'    => 'required|in:baja,media,alta,urgente',
             'description' => 'required|string|min:10|max:5000',
-            'imagen'      => 'nullable|file|image|mimes:jpeg,png,jpg,webp,gif|max:10240',
+            'imagen'      => 'nullable|file|mimes:jpeg,png,jpg,webp,gif,pdf,doc,docx,xls,xlsx,csv,ppt,pptx,txt,zip,rar|max:10240',
             'assigned_to' => 'nullable|exists:users,id',
         ]);
 
@@ -360,7 +360,7 @@ class TicketController extends Controller
 
         $validated = $request->validate([
             'message'    => 'required|string|min:1|max:5000',
-            'attachment' => 'nullable|file|mimes:jpeg,png,jpg,webp,gif,pdf,doc,docx,xls,xlsx|max:10240',
+            'attachment' => 'nullable|file|mimes:jpeg,png,jpg,webp,gif,pdf,doc,docx,xls,xlsx,csv,ppt,pptx,txt,zip,rar|max:10240',
         ]);
 
         $attachmentPath = null;

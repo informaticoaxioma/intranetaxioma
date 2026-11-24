@@ -24,6 +24,7 @@ import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/Close';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ImageIcon from '@mui/icons-material/Image';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
@@ -138,12 +139,12 @@ export default function DashboardPage() {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 10 * 1024 * 1024) {
-      setSnackbar({ open: true, message: "La imagen no debe superar los 10MB.", severity: "warning" });
+      setSnackbar({ open: true, message: "El archivo no debe superar los 10MB.", severity: "warning" });
       return;
     }
     setTicketImage(file);
     if (ticketImagePreview) URL.revokeObjectURL(ticketImagePreview);
-    setTicketImagePreview(URL.createObjectURL(file));
+    setTicketImagePreview(file.type.startsWith("image/") ? URL.createObjectURL(file) : "file");
   };
 
   const handleRemoveTicketImage = () => {
@@ -1197,7 +1198,7 @@ export default function DashboardPage() {
             {/* ADJUNTAR FOTOGRAFÍA OPCIONAL */}
             <Box sx={{ mb: 1.5 }}>
               <Typography variant="caption" sx={{ fontWeight: 700, color: "text.secondary", textTransform: "uppercase", display: "block", mb: 1 }}>
-                Fotografía o Captura de Pantalla (Opcional)
+                Archivo adjunto: foto, PDF, Word, Excel, etc. (Opcional)
               </Typography>
 
               {!ticketImagePreview ? (
@@ -1225,10 +1226,10 @@ export default function DashboardPage() {
                     },
                   }}
                 >
-                  Adjuntar fotografía o captura (JPG, PNG, WEBP)
+                  Adjuntar archivo (imagen, PDF, Word, Excel, PowerPoint, TXT, ZIP)
                   <input
                     type="file"
-                    accept="image/png,image/jpeg,image/jpg,image/webp,image/gif"
+                    accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.ppt,.pptx,.txt,.zip,.rar"
                     hidden
                     onChange={handleTicketImageChange}
                   />
@@ -1245,6 +1246,9 @@ export default function DashboardPage() {
                     borderRadius: 2,
                   }}
                 >
+                  {ticketImagePreview === "file" ? (
+                    <AttachFileIcon sx={{ fontSize: 40, color: "#722F37" }} />
+                  ) : (
                   <Box
                     component="img"
                     src={ticketImagePreview}
@@ -1261,15 +1265,16 @@ export default function DashboardPage() {
                       "&:hover": { transform: "scale(1.05)" },
                     }}
                   />
+                  )}
                   <Box sx={{ flex: 1, minWidth: 0 }}>
                     <Typography variant="body2" sx={{ fontWeight: 700, color: "#1e293b", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                       {ticketImage?.name}
                     </Typography>
                     <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
-                      {ticketImage ? (ticketImage.size / (1024 * 1024)).toFixed(2) : "0"} MB &bull; Clic en la imagen para ampliar
+                      {ticketImage ? (ticketImage.size / (1024 * 1024)).toFixed(2) : "0"} MB{ticketImagePreview !== "file" && " • Clic en la imagen para ampliar"}
                     </Typography>
                   </Box>
-                  <Tooltip title="Quitar fotografía">
+                  <Tooltip title="Quitar archivo">
                     <IconButton size="small" onClick={handleRemoveTicketImage} sx={{ color: "#b91c1c" }}>
                       <DeleteIcon fontSize="small" />
                     </IconButton>
@@ -1539,6 +1544,18 @@ export default function DashboardPage() {
 
                     {t.imagen_url && (
                       <Box sx={{ mt: 1.8, pt: 1.5, borderTop: "1px dashed #E8E0D5", display: "flex", alignItems: "center", gap: 1.5 }}>
+                        {!/\.(jpe?g|png|gif|webp)$/i.test(t.imagen_url) ? (
+                          <Typography
+                            component="a"
+                            href={t.imagen_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            variant="caption"
+                            sx={{ color: "#722F37", fontWeight: 700, display: "flex", alignItems: "center", gap: 0.5, textDecoration: "underline" }}
+                          >
+                            <AttachFileIcon sx={{ fontSize: 16 }} /> Descargar archivo adjunto
+                          </Typography>
+                        ) : (<>
                         <Box
                           component="img"
                           src={t.imagen_url}
@@ -1567,6 +1584,7 @@ export default function DashboardPage() {
                             Ver fotografía completa
                           </Typography>
                         </Box>
+                        </>)}
                       </Box>
                     )}
 

@@ -243,6 +243,18 @@ export default function TicketChat({
           {/* Fotografía inicial si existe */}
           {ticket?.imagen_url && (
             <Box sx={{ mt: 1.5, pt: 1.5, borderTop: "1px dashed #E8E0D5", display: "flex", alignItems: "center", gap: 1.5 }}>
+              {!/\.(jpe?g|png|gif|webp)$/i.test(ticket.imagen_url) ? (
+                <Typography
+                  component="a"
+                  href={ticket.imagen_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="caption"
+                  sx={{ color: "#722F37", fontWeight: 700, textDecoration: "underline" }}
+                >
+                  📎 Descargar archivo adjunto inicial
+                </Typography>
+              ) : (<>
               <Box
                 component="img"
                 src={ticket.imagen_url}
@@ -270,6 +282,7 @@ export default function TicketChat({
                   Ver imagen ampliada
                 </Typography>
               </Box>
+              </>)}
             </Box>
           )}
         </Paper>
@@ -520,7 +533,7 @@ export default function TicketChat({
             type="file"
             ref={fileInputRef}
             onChange={handleFileChange}
-            accept="image/*,.pdf,.doc,.docx"
+            accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.ppt,.pptx,.txt,.zip,.rar"
             style={{ display: "none" }}
           />
           <Tooltip title="Adjuntar captura o archivo">

@@ -808,7 +808,7 @@ export default function TicketsPage() {
                                     <Chip
                                       size="small"
                                       icon={<Image sx={{ fontSize: "13px !important", color: "#0284c7 !important" }} />}
-                                      label="Foto"
+                                      label="Adjunto"
                                       sx={{
                                         fontSize: "0.68rem",
                                         bgcolor: "#e0f2fe",
@@ -1083,7 +1083,7 @@ export default function TicketsPage() {
                               <Chip
                                 size="small"
                                 icon={<Image sx={{ fontSize: "13px !important", color: "#0284c7 !important" }} />}
-                                label="Foto"
+                                label="Adjunto"
                                 sx={{
                                   fontSize: "0.72rem",
                                   bgcolor: "#e0f2fe",
@@ -1351,6 +1351,18 @@ export default function TicketsPage() {
                       gap: 2.5,
                     }}
                   >
+                    {!/\.(jpe?g|png|gif|webp)$/i.test(selectedTicket.imagen_url) ? (
+                      <Button
+                        variant="outlined"
+                        component="a"
+                        href={selectedTicket.imagen_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{ textTransform: "none", color: "#722F37", borderColor: "rgba(114, 47, 55, 0.3)" }}
+                      >
+                        📎 Descargar archivo adjunto
+                      </Button>
+                    ) : (<>
                     <Box
                       component="img"
                       src={selectedTicket.imagen_url}
@@ -1394,6 +1406,7 @@ export default function TicketsPage() {
                         Ampliar Fotografía
                       </Button>
                     </Box>
+                    </>)}
                   </Box>
                 </Box>
               )}
